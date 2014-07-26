@@ -1,0 +1,37 @@
+ 
+July 15: 6:57 AM
+    Been working on this for a few days, decided to write stuff down here.
+    Converted compilation system from cargo to .sh scripts
+    Changed folder structure and names to be more intuitive (including renaming routines to verses)
+    Added parsing of modification date info
+    Started on culling unchanged routines from the routines-to-reload list
+    
+July 16:
+    Failed to make culling unchanged routines work properly.
+    
+July 17:
+    Made culling unchanged routines work, I guess? Need to test with actual runtime modification. Time for a UI!
+    Init is called on all loaded verses, except ones that haven't beem modified.
+    Exec is called in the main loop
+    Started converting verse data vecs to be wrapped in a struct with safe getters/setters. This should ease the stress of ensuring they stay aligned.
+    
+July 21:
+    Shit happened these last few days. RAII + unsafe code = pain. 
+    Also, I was doing stupid things regarding process reloading. Selective reloading doesn't make sense, since the data would be cleared. Need Databases seperate from Processes. 
+    Rewrote everything. Everything is beautiful now.
+
+July 22:
+    Designing how the databases work.
+    
+    Orchestrator starts up
+        load_databases()
+        hotload()
+    
+    hotload()
+        Loads all the Processes
+        Asks Processes what Databases they read from
+        Asks Processes what Databases they write to
+        Send Processes references to their Databases
+    
+    This way, when the orchestrator is reloaded, the data in the Databases will be persistent, while the Processes can change.
+    If you need to change the data layout, you'll need to restart the orchestrator. Otherwise, just iterate it up.
