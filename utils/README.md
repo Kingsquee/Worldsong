@@ -1,3 +1,1 @@
-utils
-
-This folder stores the common tools used by processes. Raycasting and that sort of thing.
+This directory stores the common tools used by routines. Raycasting and that sort of thing.

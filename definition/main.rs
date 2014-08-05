@@ -8,28 +8,34 @@ use std::io::File;
 use std::io::BufferedReader;
 use std::dynamic_lib::DynamicLibrary;
 
-static PAUSABLE_PROCESSES_PATH          : &'static str = "./processes/pausable/binaries";
-static PAUSABLE_PROCESSES_MELODY_PATH   : &'static str = "./processes/pausable/melody";
-static UNPAUSABLE_PROCESSES_PATH        : &'static str = "./processes/unpausable/binaries";
-static UNPAUSABLE_PROCESSES_MELODY_PATH : &'static str = "./processes/unpausable/melody";
-static DATABASES_PATH                   : &'static str = "./databases/binaries/";
-
 fn main() {
     let mut app = Application::new();
     Application::exec(&mut app);
-    
 }
 
+// TODO: Pack this better
 struct Application {
     reload                      :   bool,
     paused                      :   bool,
     halted                      :   bool,
+    
     database_binaries           :   Vec<DynamicLibrary>,
     database_names              :   Vec<String>,
-    pausable_processes          :   Vec<DynamicLibrary>,
-    unpausable_processes        :   Vec<DynamicLibrary>,
-    pausable_exec_functions     :   Vec<extern fn() -> ()>,
-    unpausable_exec_functions   :   Vec<extern fn() -> ()>,
+    
+    pause_routine_binaries      :   Vec<DynamicLibrary>,
+    pause_exec_symbols          :   Vec<extern fn() -> ()>,
+    pause_melody_path           :   Path,
+    
+    unpause_routine_binaries    :   Vec<DynamicLibrary>,
+    unpause_exec_symbols        :   Vec<extern fn() -> ()>,
+    unpause_melody_path         :   Path,
+    
+    always_routine_binaries     :   Vec<DynamicLibrary>,
+    always_exec_symbols         :   Vec<extern fn() -> ()>,
+    always_melody_path          :   Path,
+    
+    database_binaries_path      :   Path,
+    routine_binaries_path       :   Path,
 }
 
 impl Application {
@@ -39,17 +45,30 @@ impl Application {
             reload                      :   false,
             paused                      :   false,
             halted                      :   false,
+            
             database_binaries           :   Vec::new(),
             database_names              :   Vec::new(),
-            pausable_processes          :   Vec::new(),
-            unpausable_processes        :   Vec::new(),
-            pausable_exec_functions     :   Vec::new(),
-            unpausable_exec_functions   :   Vec::new(),
+            
+            always_routine_binaries     :   Vec::new(),
+            always_exec_symbols         :   Vec::new(),
+            always_melody_path          :   Path::new("./routines/always.melody"),
+            
+            pause_routine_binaries      :   Vec::new(),
+            pause_exec_symbols          :   Vec::new(),
+            pause_melody_path           :   Path::new("./routines/pause.melody"),
+            
+            unpause_routine_binaries    :   Vec::new(),
+            unpause_exec_symbols        :   Vec::new(),
+            unpause_melody_path         :   Path::new("./routines/unpause.melody"),
+            
+            database_binaries_path      :   Path::new("./databases/binaries/"),
+            routine_binaries_path       :   Path::new("./routines/binaries"),
         };
-        Application::load_databases (&mut app);
-        Application::load_processes (&mut app);
+        app.hotload_databases();
+        app.hotload_routines();
         app
     }
+    
 
     fn exec(app: &mut Application) {       
         let     wait_time  : u64 = 1000000000 / 1; //60
@@ -63,117 +82,149 @@ impl Application {
                 next_tick += wait_time;
                 
                 if app.reload == true {
-                    if Application::load_processes(app).is_none() { println!("Execution Halted"); app.halted = true; };
+                    app.hotload_routines();
                     app.reload = false;
                 }
                 
+                //DEBUG: hotload every frame, since no UI yet.
+                app.hotload_routines();
+                
                 if app.halted { continue; }
-                for func in app.unpausable_exec_functions.iter() {
+                
+                for func in app.always_exec_symbols.iter() {
                     (*func)()
                 }
                 
-                if app.paused { continue; }
-                for func in app.pausable_exec_functions.iter() {
-                    (*func)()
+                if app.paused { 
+                    for func in app.pause_exec_symbols.iter() {
+                        (*func)()
+                    }
+                } else {
+                    for func in app.unpause_exec_symbols.iter() {
+                        (*func)()
+                    }
                 }
-                
             }
         }
     }
     
-    fn load_databases (app: &mut Application) {
+    //TODO: Test more
+    fn hotload_databases (&mut self) {
         println!("Loading databases");
         
         let mut database_binaries:  Vec<DynamicLibrary> = Vec::new();
         let mut database_names:     Vec<String> = Vec::new();
-        let dir = match fs::readdir(&Path::new(DATABASES_PATH)) {
+        let dir = match fs::readdir(&self.database_binaries_path) {
             Err (why)   => { fail!("Could not load database binaries directory. {}", why) }
             Ok  (dir)   => dir
         };
         
         for x in dir.iter() {
             if x.is_file() {
+            
+                let extension = x.extension_str();
+                
+                if extension.is_none() { continue; } 
+                else if extension.unwrap() != ".data" { continue; }
+                
                 let binary = match DynamicLibrary::open(Some(x)) {
-                Err (why)       => { fail! ("Error loading database binary: {}", why) }
-                Ok  (binary)    => { binary }
+                    Err (why)       => { fail! ("Error loading database binary: {}", why) }
+                    Ok  (binary)    => { binary }
                 };
                 database_binaries.push(binary);
                 
-                let name = x.filename_str();
-                database_names.push(name.to_str());
+                let name = String::from_str(x.filename_str().unwrap());
+                database_names.push(name);
+                
             }
         }
         println!("Loaded {} databases", database_binaries.len());
         
-        app.database_binaries = database_binaries;
-        app.database_names = database_names;
-        
+        self.database_binaries = database_binaries;
+        self.database_names = database_names;
     }
     
-/*
-    pub fn get_db<T> (name: String) -> T {
-        
-    }
-    */
-    fn load_processes (app: &mut Application) -> Option<()> {
+    fn hotload_routines(&mut self) {
     
-        println!("Loading pausable process binaries");
-        app.pausable_processes.clear();
-        app.pausable_processes = match Application::load_process_binaries(&Path::new(PAUSABLE_PROCESSES_PATH), &Path::new(PAUSABLE_PROCESSES_MELODY_PATH)) {
+        // All routine references need to be cleared first, so the OS cache can be cleared as well.
+        
+        self.always_exec_symbols.clear();
+        self.pause_exec_symbols.clear();
+        self.unpause_exec_symbols.clear();
+        
+        self.always_routine_binaries.clear();
+        self.pause_routine_binaries.clear();
+        self.unpause_routine_binaries.clear();
+        
+        // All routine types can then be loaded
+        
+        self.always_routine_binaries = match Application::load_routine_binaries(&self.routine_binaries_path, &self.always_melody_path) {
             Some(value) => value,
-            None        => { return None }
+            None        => { 
+                println!("Failed loading Always Processes. Execution Halted"); 
+                self.halted = true; 
+                return;
+            }
+        };
+
+        self.pause_routine_binaries = match Application::load_routine_binaries(&self.routine_binaries_path, &self.pause_melody_path) {
+            Some(value) => value,
+            None        => { 
+                println!("Failed loading Pause Processes. Execution Halted"); 
+                self.halted = true; 
+                return;
+            }
         };
         
-        println!("Loading unpausable process binaries");
-        app.unpausable_processes.clear();
-        app.unpausable_processes = match Application::load_process_binaries(&Path::new(UNPAUSABLE_PROCESSES_PATH), &Path::new(UNPAUSABLE_PROCESSES_MELODY_PATH)) {
+        self.unpause_routine_binaries = match Application::load_routine_binaries(&self.routine_binaries_path, &self.unpause_melody_path) {
             Some(value) => value,
-            None        => { return None; }
+            None        => { 
+                println!("Failed loading Unpause Processes. Execution Halted"); 
+                self.halted = true; 
+                return;
+            }
         };
+        
+        // Symbols can then be loaded
+        
+        self.always_exec_symbols =  Application::load_functions(&self.always_routine_binaries,  "exec");
+        self.pause_exec_symbols =   Application::load_functions(&self.pause_routine_binaries,   "exec");
+        self.unpause_exec_symbols = Application::load_functions(&self.unpause_routine_binaries, "exec");
+        
         /*
-        println!("Loading dbassigns symbols for pausable processes");
-        let pausable_dbassigns = match Application::load_functions(&app.pausable_processes, "_dbassign") {
-            Some(value) => value,
-            None        => { return None; }
-        }
-        
+        let dbrequest =    Application::load_functions(routines, "_dbrequest");
+        let dbassigns =    Application::load_functions(routines, "_dbassign");
         */
-        println!("Loading exec symbols for pausable processes");
-        app.pausable_exec_functions.clear();
-        app.pausable_exec_functions = match Application::load_functions(&app.pausable_processes, "exec") {
-            Some(value) => value,
-            None        => { return None; }
-        };
         
-        println!("Loading exec symbols for unpausable processes");
-        app.unpausable_exec_functions.clear();
-        app.unpausable_exec_functions = match Application::load_functions(&app.unpausable_processes, "exec") {
-            Some(value) => value,
-            None        => { return None; }
-        };
+        // Finally, databases can be relinked.
         
-        Some(())
+        // TODO: call dbrequest to see what dbs the routines want
+        //          return array of references to each requested db struct instance 
+
     }
     
-    fn load_functions (processes: &Vec<DynamicLibrary>, name: &str) -> Option<Vec<extern fn() -> ()>> {
-        let mut exec_functions: Vec<extern fn() -> ()> = Vec::new();
+    fn load_functions (routines: &Vec<DynamicLibrary>, name: &str) -> Vec<extern fn() -> ()> {
+        println!("Loading {} symbols", name);
         
-        for binary in processes.iter() {            
+        let mut exec_symbols: Vec<extern fn() -> ()> = Vec::new();
+
+        for binary in routines.iter() {            
             let func: extern fn() -> () = unsafe {
                 match binary.symbol::<()>(name) {
                     Err (why)       => { println! ("{}", why); continue; },
                     Ok  (func)      => { mem::transmute(func) }
                 }
             };
-            exec_functions.push(func);
+            exec_symbols.push(func);
         }
-        println!("Loaded {} {} funcs", exec_functions.len(), name);
-        Some(exec_functions)
+        println!("Loaded {} {} funcs", exec_symbols.len(), name);
+        exec_symbols
     }
-        
-    fn load_process_binaries (binaries_path: &Path, melody_path: &Path) -> Option<Vec<DynamicLibrary>> {
-
-        let mut processes: Vec<DynamicLibrary>    = Vec::new();
+    
+    
+    fn load_routine_binaries (binaries_path: &Path, melody_path: &Path) -> Option<Vec<DynamicLibrary>> {
+        println!("Loading routine binaries: ");
+        let mut routines: Vec<DynamicLibrary>    = Vec::new();
         
         let mut melody = BufferedReader::new(
         match File::open(melody_path) {
@@ -183,21 +234,23 @@ impl Application {
         
         for line in melody.lines() {
         
-            let mut name : String = line.unwrap();
-            name.pop_char(); // Remove newline char.
+            let name : String = line.unwrap().append(".routine");
+            //name.pop_char(); // FIXME: Remove empty lines and newline char when necessary.
             
             let binary_path = binaries_path.clone().join(name.clone());
-            
-            if !binary_path.exists() { continue; }
+            if !binary_path.exists() { 
+                println!("WARNING: '{}' doesn't exist. Did you misspell it?", name); 
+                continue; 
+            }
 
             let binary = match DynamicLibrary::open(Some(&binary_path)) {
-                Err (why)       => { println! ("        Error loading process binary: {}", why); return None; }
+                Err (why)       => { println! ("ERROR: {}", why); return None; }
                 Ok  (binary)    => { binary }
             };
             
-            processes.push(binary);
+            routines.push(binary);
             println!("Found {} in {}", name, binary_path.display());
         }        
-        Some(processes)
+        Some(routines)
     }
 }

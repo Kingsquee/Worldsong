@@ -1,0 +1,1 @@
+This directory stores all databases, in the ".data" binary format.

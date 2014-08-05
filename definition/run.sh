@@ -1,2 +1,2 @@
 #!/bin/bash
-cd /home/kingsley/Projects/rust/worldsong/ && ./orchestrator
+cd /home/kingsley/Projects/rust/Worldsong/ && ./orchestrator

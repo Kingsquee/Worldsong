@@ -35,3 +35,19 @@ July 22:
     
     This way, when the orchestrator is reloaded, the data in the Databases will be persistent, while the Processes can change.
     If you need to change the data layout, you'll need to restart the orchestrator. Otherwise, just iterate it up.
+
+August 3:
+    Tonsilitis sucks.
+    Figuring out my programming style for this project:
+        Static functions are I/O functions. They do not change global state, but they may produce side effects such as print statements. For all intents and purposes though, they are 'pure' functions.
+        Methods are not pure. They are managerial functions that change global state. 
+    Refactoring happened today can you tell?
+    
+August 4:
+    Removed all globals.
+    Merged load_processes into hotload_processes. It was a mistake, fed by a subconscious desire to organize-by-concept. It is forbidden love.
+    Changing pausable/unpausable distinction from a filesystem separation to melody separation.
+    There are now three kinds of updates: Always, Only When Paused, and Only When Unpaused. They are executed in that order.
+    Renamed processes back to routines, as I think that captures their intended use. Any data stored within them is temporary.
+    Added ".data" and ".routine" filetypes to make loading them from directories easier.
+    Added READMEs everywhere.
