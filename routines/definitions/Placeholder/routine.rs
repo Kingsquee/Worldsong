@@ -1,4 +1,4 @@
-static mut i: int = 250;
+static mut i: int = 1;
 /*
 databases!(
     ("a", var_a),
@@ -27,8 +27,8 @@ pub fn _dbassign <T> (dbs: Vec<&T>) {
 /// Execute your logic here. It's called at 60hz unless the game is lagging.
 pub fn exec () {
     unsafe {
-        println!("WOOEWOEWIHOOO");
-        println!("herpderp Exececuted {} times", i);
+        println!("Modification test");
+        println!("Exececuted {} times since last reload", i);
         i -= 1;
     }
 }
