@@ -51,3 +51,13 @@ August 4:
     Renamed processes back to routines, as I think that captures their intended use. Any data stored within them is temporary.
     Added ".data" and ".routine" filetypes to make loading them from directories easier.
     Added READMEs everywhere.
+    
+August 7:
+    Removed ".data" filetype, as Rust can't seem to load custom named libraries at compile time. Perhaps this will change in the future.
+        However, this may be a beneficial limitation, as 
+        a) it ensues databases are differentiated per platform ("was this .data compiled for lin or win? hmm.."), and
+        b) it makes linking routines to routines slightly more unpleasant. Which is good, as it should never be done anyway.
+    Got the core of runtime database linking functioning! Routines can now modify database data! 
+    
+    As of this point, Worldsong is a working proof-of-concept!
+    

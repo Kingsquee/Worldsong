@@ -1,2 +1,2 @@
 #!/bin/bash
-rustc --crate-type=dylib -o ../../binaries/${PWD##*/}.routine routine.rs
+rustc --crate-type=dylib -L ../../../databases/binaries/ -o ../../binaries/${PWD##*/}.routine routine.rs

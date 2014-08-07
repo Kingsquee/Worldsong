@@ -1,1 +1,1 @@
-This directory stores all databases, in the ".data" binary format.
+This directory stores all databases binaries. Since the rust compiler cannot load libraries with custom filenames/extension at compile time, we're using libPlayerData.so naming conventions, instead of the preferable Player.data.

@@ -1,16 +1,27 @@
+#![crate_name = "PlaceholderData"]
+
+pub struct PlaceholderDB {
+    pub a: u16,
+    pub b: u8
+}
+
+static mut db: PlaceholderDB = PlaceholderDB { a: 12, b: 3 };
+
 #[no_mangle]
-pub extern fn save() {
+/// Saves the database struct instance to the drive
+pub fn save(filepath: String) {
 
 }
 
 #[no_mangle]
-pub extern fn load() {
+/// Loads the database struct instance from the drive
+pub fn load(filepath: String) {
 
 }
 
-#[no_mangle]
-/// Allocates the 
-pub extern fn alloc() {
-
+#[no_mangle] 
+/// Returns a reference to the database struct instance
+pub fn get_ref() -> PlaceholderDB {
+    println!("Inside database's get_ref. Returning database reference!");
+    unsafe { db }
 }
-

@@ -23,15 +23,15 @@ struct Application {
     database_names              :   Vec<String>,
     
     pause_routine_binaries      :   Vec<DynamicLibrary>,
-    pause_exec_symbols          :   Vec<extern fn() -> ()>,
+    pause_exec_symbols          :   Vec<fn() -> ()>,
     pause_melody_path           :   Path,
     
     unpause_routine_binaries    :   Vec<DynamicLibrary>,
-    unpause_exec_symbols        :   Vec<extern fn() -> ()>,
+    unpause_exec_symbols        :   Vec<fn() -> ()>,
     unpause_melody_path         :   Path,
     
     always_routine_binaries     :   Vec<DynamicLibrary>,
-    always_exec_symbols         :   Vec<extern fn() -> ()>,
+    always_exec_symbols         :   Vec<fn() -> ()>,
     always_melody_path          :   Path,
     
     database_binaries_path      :   Path,
@@ -69,7 +69,7 @@ impl Application {
         app
     }
     
-
+    //TODO: make a method
     fn exec(app: &mut Application) {       
         let     wait_time  : u64 = 1000000000 / 1; //60
         let mut next_tick  : u64 = precise_time_ns();
@@ -121,11 +121,11 @@ impl Application {
         
         for x in dir.iter() {
             if x.is_file() {
-            
+                let filename = x.filename_str();
+                println!("Found {}", filename)
                 let extension = x.extension_str();
                 
-                if extension.is_none() { continue; } 
-                else if extension.unwrap() != ".data" { continue; }
+                if filename.is_none() || !filename.unwrap().starts_with("lib") || extension.is_none() || extension.unwrap() != "so" { continue; }
                 
                 let binary = match DynamicLibrary::open(Some(x)) {
                     Err (why)       => { fail! ("Error loading database binary: {}", why) }
@@ -157,7 +157,7 @@ impl Application {
         self.unpause_routine_binaries.clear();
         
         // All routine types can then be loaded
-        
+        /*
         self.always_routine_binaries = match Application::load_routine_binaries(&self.routine_binaries_path, &self.always_melody_path) {
             Some(value) => value,
             None        => { 
@@ -175,7 +175,7 @@ impl Application {
                 return;
             }
         };
-        
+        */
         self.unpause_routine_binaries = match Application::load_routine_binaries(&self.routine_binaries_path, &self.unpause_melody_path) {
             Some(value) => value,
             None        => { 
@@ -186,39 +186,83 @@ impl Application {
         };
         
         // Symbols can then be loaded
-        
-        self.always_exec_symbols =  Application::load_functions(&self.always_routine_binaries,  "exec");
-        self.pause_exec_symbols =   Application::load_functions(&self.pause_routine_binaries,   "exec");
+        //self.always_exec_symbols  = Application::load_functions(&self.always_routine_binaries,  "exec");
+        //self.pause_exec_symbols   = Application::load_functions(&self.pause_routine_binaries,   "exec");
         self.unpause_exec_symbols = Application::load_functions(&self.unpause_routine_binaries, "exec");
         
-        /*
-        let dbrequest =    Application::load_functions(routines, "_dbrequest");
-        let dbassigns =    Application::load_functions(routines, "_dbassign");
-        */
-        
         // Finally, databases can be relinked.
-        
-        // TODO: call dbrequest to see what dbs the routines want
-        //          return array of references to each requested db struct instance 
+        //Application::link_databases(&self.always_routine_binaries,  &self.database_binaries, &self.database_names);
+        //Application::link_databases(&self.pause_routine_binaries,   &self.database_binaries, &self.database_names);
+        Application::link_databases(&self.unpause_routine_binaries, &self.database_binaries, &self.database_names);
 
     }
-    
-    fn load_functions (routines: &Vec<DynamicLibrary>, name: &str) -> Vec<extern fn() -> ()> {
-        println!("Loading {} symbols", name);
-        
-        let mut exec_symbols: Vec<extern fn() -> ()> = Vec::new();
 
-        for binary in routines.iter() {            
-            let func: extern fn() -> () = unsafe {
-                match binary.symbol::<()>(name) {
+    /// @Assuptions: Databases and Database_names have the same length
+    fn link_databases (routines: &Vec<DynamicLibrary>, databases: &Vec<DynamicLibrary>, database_names: &Vec<String>) {
+        println!("Linking databases to routines");
+        assert!(databases.len() == database_names.len());
+    
+        for routine in routines.iter() {
+            // Load database functions. If they fail, continue to the next routine.
+            
+            println!("Loading dbrequest");
+            let dbrequest_func: fn<'a> () -> Vec<&'a str> = unsafe {
+                match routine.symbol::<()>("_dbrequest") {
+                    Err (why)       => { println! ("{}", why); continue; },
+                    Ok  (func)      => { println! ("success!"); mem::transmute(func) }
+                }
+            };
+            
+            println!("Loading dbassign");
+            let dbassign_func: fn(dbs: &Vec<&DynamicLibrary>) -> () = unsafe {
+                match routine.symbol::<()>("_dbassign") {
+                    Err (why)       => { println! ("{}", why); continue; },
+                    Ok  (func)      => { println! ("success!"); mem::transmute(func) }
+                }
+            };
+            
+            println!("Loaded DBs: {}", database_names);
+            
+            let requested_database_names: Vec<&str> = dbrequest_func();
+            println!("Requested DBs: {}", requested_database_names);
+            let mut requested_database_binaries: Vec<&DynamicLibrary> = Vec::new();
+            
+            for requested_database_name in requested_database_names.iter() {
+                let mut i: uint = 0;
+                while i < database_names.len() {
+                    if *requested_database_name == database_names[i].as_slice() {
+                        requested_database_binaries.push(&databases[i]);
+                        println!("Linked {}", database_names[i]);
+                        i += 1;
+                        continue
+                    }
+                    println!("Could not find {}, skipping.", database_names[i]); //TODO: Should halt application instead? Return None?
+                    i += 1;
+                }
+            }
+            
+            dbassign_func(&requested_database_binaries);
+        }
+        
+        // TODO: call dbrequest to see what dbs the routines want
+        //          return array of references to each requested db dynamiclibrary instance, so the routine may call the get_ref() function.
+        
+    }
+    
+    fn load_functions (routines: &Vec<DynamicLibrary>, name: &str) -> Vec<fn() -> ()> {        
+        let mut symbols: Vec<fn() -> ()> = Vec::new();
+
+        for routine in routines.iter() {            
+            let func: fn() -> () = unsafe {
+                match routine.symbol::<()>(name) {
                     Err (why)       => { println! ("{}", why); continue; },
                     Ok  (func)      => { mem::transmute(func) }
                 }
             };
-            exec_symbols.push(func);
+            symbols.push(func);
         }
-        println!("Loaded {} {} funcs", exec_symbols.len(), name);
-        exec_symbols
+        println!("Loaded {} {} symbols", symbols.len(), name);
+        symbols
     }
     
     
