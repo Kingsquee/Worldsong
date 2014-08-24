@@ -5,16 +5,6 @@ pub struct DB {
     pub b: u8
 }
 
-impl DB {
-    pub fn new() -> DB {
-        let pdb = DB {
-            a: 0,
-            b: 0,
-        };
-        pdb
-    }
-}
-
 static mut db: DB = DB { a: 0, b: 0 };
 
 #[no_mangle]

@@ -4,3 +4,22 @@ Mouse input routine
 Local rendering routine
 
 Figure out how to deal with assets
+
+
+
+Ideas worth exploring (pull requests welcome!):
+
+    'Solid' routine linking.
+        Each routine is currently it's own dylib. This makes compile times much quicker, but execution times *may* be degraded due to jumping about in memory. 'Scattered' linking. 
+        Have an alternate linking mode that compiles all the routines' source code into a single source file, each in their own module, called from exec() in the melody order, and compile *that* into one routine. 
+        This will allow result in O(1) dylib accesses per update cycle, rathern than O(n). Though there will be O(n+1) calls to get to each exec(), the n calls will likely have greater locality. Is this worth it?
+        The tradeoff is compile times will be longer. 
+        Note that modding is still easy with this method. The routines are still there - they're just compiled and linked differently. 
+          
+        Also, folklore claims modern processors make memory jumps almost negligable. I assume they mean due to caching. I don't buy it.
+        
+
+    Remove databases! macro?
+        It'd be possible to remove the databases! macro if the we throw IDE support out the window. 
+        Have Worldsong compile the source files itself after parsing the 'use' statements for databases (It'd know, as it's already loaded them.)
+        IDEs would get hella confused at accessing a getter function that doesn't exist though.
