@@ -4,20 +4,20 @@
 
 #[macro_export]
 macro_rules! databases {
-    ($($fnname:ident { $varname:ident = $dbname:ident })+) => {
+    ($($fnname:ident { $varname:ident = $libname:ident })+) => {
         mod _hack {
             $(
-                extern crate $dbname;
+                extern crate $libname;
             )+
             pub use std::dynamic_lib::DynamicLibrary;
             pub use std::mem;
         }
         $(
-            static mut $varname : *mut _hack::$dbname::DB = 0 as *mut _hack::$dbname::DB;
+            static mut $varname : *mut _hack::$libname::DB = 0 as *mut _hack::$libname::DB;
         )+
         
         $(
-            fn $fnname() -> &'static mut _hack::$dbname::DB {
+            fn $fnname() -> &'static mut _hack::$libname::DB {
                 unsafe { &mut*$varname }
             }
         )+
@@ -26,7 +26,7 @@ macro_rules! databases {
         pub fn _dbrequest<'a> () -> Vec<&'a str> {
             vec![
             $(
-                concat!("lib", stringify!($dbname),".so"),
+                concat!("lib", stringify!($libname),".so"),
             )+
             ]
         }
@@ -42,8 +42,8 @@ macro_rules! databases {
             let mut i: uint = 0;
             
             $(
-                //println!("Assigning {} to routine.", stringify!($dbname))
-                let get_ref: fn <'a> () -> &'a mut _hack::$dbname::DB = unsafe {
+                //println!("Assigning {} to routine.", stringify!($libname))
+                let get_ref: fn <'a> () -> &'a mut _hack::$libname::DB = unsafe {
                     match dbs.get(i).symbol::<()>("get_ref") {
                         Err (why)       => { println! ("{}", why); return; }, // What to do for error handling?
                         Ok  (func)      => { _hack::mem::transmute(func) }
@@ -51,11 +51,11 @@ macro_rules! databases {
                 };
                 
                 unsafe {
-                    $varname = get_ref() as *mut _hack::$dbname::DB;
+                    $varname = get_ref() as *mut _hack::$libname::DB;
                 }
                 
                 i += 1;
-                //println!("{} assigned!", stringify!($dbname));
+                //println!("{} assigned!", stringify!($libname));
             )+
         
         }

@@ -1,3 +1,4 @@
+Genericize databases! macro so we can hotload EVERYTHING. including Utils?
 Implement automatic saving and loading of databases
 Keyboard input routine
 Mouse input routine
