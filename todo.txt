@@ -1,0 +1,6 @@
+Implement automatic saving and loading of databases
+Keyboard input routine
+Mouse input routine
+Local rendering routine
+
+Figure out how to deal with assets

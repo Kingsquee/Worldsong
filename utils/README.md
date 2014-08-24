@@ -1,1 +1,1 @@
-This directory stores the common tools used by routines. Raycasting and that sort of thing.
+Utilities are dynamic libraries that store common functionality for routines. Raycasting, that kind of thing.
