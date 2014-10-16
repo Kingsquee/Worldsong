@@ -1,1 +1,0 @@
-'core' is the core library shipped with Worldsong.

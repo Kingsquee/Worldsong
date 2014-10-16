@@ -1,0 +1,9 @@
+[package]
+
+name = "worldsong-utils"
+version = "0.0.1"
+authors = ["Kingsley Tolmie <kingsley.tolmie@gmail.com>"]
+
+[lib]
+name = "utils"
+crate-type = ["rlib"]

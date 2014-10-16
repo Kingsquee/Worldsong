@@ -1,1 +1,0 @@
-This directory stores all routines, in the ".routine" binary format.

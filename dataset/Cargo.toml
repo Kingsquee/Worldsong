@@ -1,0 +1,12 @@
+[package]
+
+name = "dataset"
+version = "0.0.1"
+authors = ["Kingsley Tolmie <kingsley.tolmie@gmail.com>"]
+
+[lib]
+name = "dataset"
+path = "src/db.rs"
+
+[dependencies.worldsong-utils]
+path = "../utils"
