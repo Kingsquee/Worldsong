@@ -10,3 +10,7 @@ path = "src/db.rs"
 
 [dependencies.worldsong-utils]
 path = "../utils"
+
+[dependencies.glutin]
+git = "https://github.com/tomaka/glutin"
+features = ["window"]

@@ -13,5 +13,11 @@ pub fn per_cycle() {
 #[no_mangle]
 pub fn per_frame(data: &mut DB) {
     println!("{}", data.color_r);
-    (*data).color_r += 1;
+    data.color_r += 1;
+    
+    if data.window.is_closed() {
+        data.stop_execution = true;
+    }
+    
+    data.window.swap_buffers();
 }

@@ -49,6 +49,7 @@ impl Application {
             process_binaries_path       :   Path::new("./../../processes/targets"),
         };
         app.hotload_processes();
+        dataset::initialize(&app.dataset);
         app
     }
     
@@ -59,7 +60,7 @@ impl Application {
         let mut next_cycle  : u64 = precise_time_ns();
         
         loop {
-            if self.dataset.stop { break }
+            if self.dataset.stop_execution { break }
 
             for func in self.update_cycle_symbols.iter() {
                 (*func)()
@@ -69,7 +70,7 @@ impl Application {
                 next_cycle += skip_cycles;
                 
                 if self.dataset.reload_processes == true {
-                    self.dataset.halt = false;
+                    self.dataset.halt_execution = false;
                     self.hotload_processes();
                     self.dataset.reload_processes = false;
                 }
@@ -78,7 +79,7 @@ impl Application {
                 //self.reload_everything = true;
                 self.dataset.reload_processes = true;
                 
-                if self.dataset.halt { continue }
+                if self.dataset.halt_execution { continue }
                 
                 for func in self.update_frame_symbols.iter() {
                     (*func)(&mut self.dataset)
@@ -99,7 +100,7 @@ impl Application {
             Some(value) => value,
             None        => { 
                 println!("Failed to load process binaries. Execution Halted"); 
-                self.dataset.halt = true; 
+                self.dataset.halt_execution = true; 
                 return
             }
         };
