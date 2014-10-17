@@ -24,7 +24,7 @@ fn main() {
 }
 
 struct Application {
-    update_cycle_symbols        :   Vec<fn() -> ()>,
+    update_cycle_symbols        :   Vec<fn(&mut DB) -> ()>,
     update_frame_symbols        :   Vec<fn(&mut DB) -> ()>,
 
     update_process_binaries     :   Vec<DynamicLibrary>,
@@ -49,13 +49,13 @@ impl Application {
             process_binaries_path       :   Path::new("./../../processes/targets"),
         };
         app.hotload_processes();
-        dataset::initialize(&app.dataset);
+        dataset::initialize(&mut app.dataset);
         app
     }
     
     // TODO: Will the u64 overflow make this screw up?
     fn exec(&mut self) {       
-        let     max_fps     : u64 = 1;//60;
+        let     max_fps     : u64 = 60;
         let     skip_cycles : u64 = 1000000000 / max_fps;
         let mut next_cycle  : u64 = precise_time_ns();
         
@@ -63,7 +63,7 @@ impl Application {
             if self.dataset.stop_execution { break }
 
             for func in self.update_cycle_symbols.iter() {
-                (*func)()
+                (*func)(&mut self.dataset)
             }
             
             if precise_time_ns() >= next_cycle {
@@ -107,7 +107,22 @@ impl Application {
         
         // Symbols can then be loaded and stored        
         //self.update_frame_symbols = Application::load_functions(&self.update_process_binaries, "_per_frame");
-        self.update_cycle_symbols = Application::load_functions(&self.update_process_binaries, "per_cycle");
+        //self.update_cycle_symbols = Application::load_functions(&self.update_process_binaries, "per_cycle");
+        
+        let mut cycle_symbols: Vec<fn(&mut DB) -> ()> = Vec::new();
+
+        for process in self.update_process_binaries.iter() {            
+            let func: fn(&mut DB) -> () = unsafe {
+                match process.symbol::<()>("per_cycle") {
+                    Err (why)       => { println! ("{}", why); continue },
+                    Ok  (func)      => { mem::transmute(func) }
+                }
+            };
+            cycle_symbols.push(func);
+        }
+        //println!("Loaded {} {} symbols", symbols.len(), name);
+        self.update_cycle_symbols = cycle_symbols;
+        
         
         let mut frame_symbols: Vec<fn(&mut DB) -> ()> = Vec::new();
 
@@ -124,7 +139,7 @@ impl Application {
         self.update_frame_symbols = frame_symbols;
         
     }
-    
+    /*
     fn load_functions (processes: &Vec<DynamicLibrary>, name: &str) -> Vec<fn() -> ()> {        
         let mut symbols: Vec<fn() -> ()> = Vec::new();
 
@@ -140,7 +155,7 @@ impl Application {
         //println!("Loaded {} {} symbols", symbols.len(), name);
         symbols
     }
-    
+    */
     
     fn load_process_binaries (binaries_path: &Path, melody_path: &Path) -> Option<Vec<DynamicLibrary>> {
         //println!("Loading process binaries: ");
@@ -164,7 +179,7 @@ impl Application {
                 return None
             }
             
-            println!("Loading {}", binary_path.display());
+            //println!("Loading {}", binary_path.display());
 
             let binary = match DynamicLibrary::open(Some(&binary_path)) {
                 Err (why)       => { println! ("ERROR: {}", why); return None; }
