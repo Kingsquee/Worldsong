@@ -1,1 +1,0 @@
-Utilities are dynamic libraries that store common functionality for routines. Raycasting, that kind of thing.

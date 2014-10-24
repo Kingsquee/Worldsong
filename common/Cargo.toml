@@ -1,0 +1,16 @@
+[package]
+
+name = "worldsong-common"
+version = "0.0.1"
+authors = ["Kingsley Tolmie <kingsley.tolmie@gmail.com>"]
+
+[lib]
+name = "common"
+crate-type = ["dylib"]
+
+[profile.dev]
+opt-level=0
+debug=true
+
+[dependencies.sdl2]
+git = "https://github.com/AngryLawyer/rust-sdl2"
