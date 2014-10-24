@@ -1,7 +1,7 @@
 extern crate common;
 extern crate sdl2; 
 
-use common::Data;
+use common::data::Data;
 use sdl2::pixels;
 use sdl2::event;
 use sdl2::keycode;

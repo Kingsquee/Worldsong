@@ -10,7 +10,7 @@ use std::io::File;
 use std::io::BufferedReader;
 use std::io::fs::PathExtensions;
 
-use common::Data;
+use common::data::Data;
 
 #[start]
 fn start(argc: int, argv: *const *const u8) -> int {
