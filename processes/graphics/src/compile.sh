@@ -1,4 +1,3 @@
 #!/bin/bash
-rustc -L ./../../../common/target -L ./../../../common/target/deps -L ./../../../common/target/native --out-dir ./../target --crate-type="dylib" graphics.rs
-
-
+mkdir -p ./../target;
+rustc -L ./../../../common/target -L ./../../../common/target/deps -L ./../../../common/target/native --out-dir ./../target --crate-type="dylib" graphics.rs;
