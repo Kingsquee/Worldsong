@@ -6,7 +6,10 @@ use sdl2::pixels;
 use sdl2::event;
 use sdl2::keycode;
 
-// When errors are detected, this will never be called, so reloading won't occur.
+// Processes are stateless libraries that modify persistent state
+// (stored in data.rs)
+// Because they're stateless, they can be added, removed, and modified at runtime.
+
 #[no_mangle]
 pub fn variable_update(data: &mut Data) -> () {
     match event::poll_event() {
@@ -35,15 +38,17 @@ pub fn variable_update(data: &mut Data) -> () {
 pub fn fixed_update(data: &mut Data) -> () {
 
     let renderer = data.window.renderer.as_ref().unwrap();
+
+    // For example, while the kernel is running, try modifying these values,
+    // compiling this process via the local ./compile.sh, and
+    // re-focusing the Worldsong window.
     data.sim.color_r += 1;
     data.sim.color_g -= 1;
     data.sim.color_b *= 2;
+
+    // Your changes will be visible immediately. :)
     
     let _ = renderer.set_draw_color(pixels::RGB(data.sim.color_r, data.sim.color_g, data.sim.color_b));
     let _ = renderer.clear();
     renderer.present();
-    
-    //For opengl, use sdl_gl_swapwindow
-    //data.window.gl_swap_window();
-    
 }
