@@ -6,8 +6,7 @@ use sdl2::pixels;
 use sdl2::event;
 use sdl2::keycode;
 
-// Processes are stateless libraries that modify persistent state
-// (stored in data.rs)
+// Processes are stateless libraries that modify persistent state stored in data.rs.
 // Because they're stateless, they can be added, removed, and modified at runtime.
 
 #[no_mangle]
@@ -37,7 +36,7 @@ pub fn variable_update(data: &mut Data) -> () {
 #[no_mangle]
 pub fn fixed_update(data: &mut Data) -> () {
 
-    let renderer = data.window.renderer.as_ref().unwrap();
+    let renderer = &data.window.renderer;
 
     // For example, while the kernel is running, try modifying these values,
     // compiling this process via the local ./compile.sh, and

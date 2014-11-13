@@ -3,7 +3,7 @@
 #[macro_export]
 macro_rules! data {
     ($($structname:ident: $structtype:ident {$($var:ident: $vartype:ty = $val:expr)+})+) => {
-    
+
         $(
             pub struct $structtype {
                 $(
@@ -11,19 +11,23 @@ macro_rules! data {
                 )+
             }
         )+
-        
+
         $(
             impl $structtype {
                 pub fn new() -> $structtype{
+                    $(
+                        let $var = $val;
+                    )+
+
                     $structtype {
                         $(
-                            $var: $val,
+                            $var: $var,
                         )+
                     }
                 }
             }
         )+
-        
+
         #[no_mangle]
         #[allow(dead_code)]
         pub struct Data {
@@ -31,17 +35,16 @@ macro_rules! data {
                 pub $structname: $structtype,
             )+
         }
-        
-        #[no_mangle] 
+
+        #[no_mangle]
         #[allow(dead_code)]
         impl Data {
             pub fn new() -> Data {
-             let mut data = Data {
+             let data = Data {
                 $(
                     $structname: $structtype::new(),
                 )+
              };
-             initialize(&mut data);
              data
             }
         }
