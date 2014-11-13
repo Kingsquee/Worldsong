@@ -8,7 +8,7 @@ echo "" &&
 
 # compiling common
 cd ./common/src/ &&
-./compile.sh &&
+cargo build &&
 
 cd $path &&
 
