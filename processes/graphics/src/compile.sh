@@ -12,5 +12,5 @@ cd $path &&
 
 echo "Compiling $finalName process" &&
 mkdir -p ./../target &&
-rustc -L ./../../../common/target -L ./../../../common/target/deps -L ./../../../common/target/native --out-dir ./../target --crate-type="dylib" graphics.rs &&
+rustc -L ./../../../common/target -L ./../../../common/target/deps -L ./../../../common/target/native --out-dir ./../target --crate-type="dylib" $finalName.rs &&
 echo "Done"
