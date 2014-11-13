@@ -12,6 +12,7 @@ use sdl2::render::Renderer;
 // rather than appropriating hard coded values such as here.
 data!( 
     kernel: KernelState {
+        delta_time:             u64             = 0
         load_processes:         bool            = true
         quit:                   bool            = false
     }
@@ -24,10 +25,9 @@ data!(
         opengl_major_version:   u32             = 3
         opengl_minor_version:   u32             = 0
     }
-    
+
     sim: SimState {
         pause:                  bool            = false
-        delta_time:             u64             = 0
         color_r:                u8              = 0
         color_g:                u8              = 0
         color_b:                u8              = 255

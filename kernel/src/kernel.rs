@@ -38,7 +38,7 @@ fn main() {
 
         // variable update
         let current_time = precise_time_ns();
-        data.sim.delta_time = current_time - last_cycle_time;
+        data.kernel.delta_time = current_time - last_cycle_time;
         
         execute_symbols(&variable_update_symbols, &mut data);
         
