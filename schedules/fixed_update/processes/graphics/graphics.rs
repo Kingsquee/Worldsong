@@ -1,5 +1,5 @@
 extern crate common;
-extern crate sdl2; 
+extern crate sdl2;
 
 use common::data::Data;
 use sdl2::pixels;
@@ -12,20 +12,20 @@ use sdl2::keycode;
 #[no_mangle]
 pub fn variable_update(data: &mut Data) -> () {
     match event::poll_event() {
-        event::QuitEvent(_) => data.kernel.quit = true,
-        event::KeyDownEvent(_, _, key, _, _) => {
-            if key == keycode::EscapeKey {
-                data.kernel.quit = true;
+        event::Quit(_) => data.scheduler.quit = true,
+        event::KeyDown(_, _, key, _, _, _) => {
+            if key == keycode::KeyCode::Escape {
+                data.scheduler.quit = true;
             }
         },
-        event::WindowEvent(_, _, id, _, _) => {
-            if id as int == event::FocusGainedWindowEventId as int {
+        event::Window(_, _, id, _, _) => {
+            if id as int == event::WindowEventId::FocusGained as int {
                 if data.window.first_focus {
                     data.window.first_focus = false;
                     return;
                 }
-                if !data.kernel.load_processes {
-                    data.kernel.load_processes = true;
+                if !data.scheduler.reload {
+                    data.scheduler.reload = true;
                 }
             }
         }

@@ -50,3 +50,23 @@ macro_rules! data {
         }
     }
 }
+
+/* process_name(params) */
+#[macro_export]
+macro_rules! schedule {
+    ($($process_name:ident($($param:ident)*))*) => {
+        extern crate common;
+        $(
+            extern crate $process_name;
+        )*
+
+        using common::Data;
+
+        #[no_mangle]
+        pub fn exec(data: &mut Data) {
+            $(
+                $process_name::exec($($param,)*)
+            )*
+        }
+    }
+}

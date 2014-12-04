@@ -7,20 +7,20 @@ echo "Compiling Worldsong Suite" &&
 echo "" &&
 
 # compiling common
-cd ./common/src/ &&
+cd ./common/ &&
 cargo build &&
 
 cd $path &&
 
 # compiling kernel
-cd ./kernel/src/ &&
-./compile.sh &&
+cd ./kernel/ &&
+cargo build &&
 
 cd $path &&
 
 echo "" &&
 echo "Compiling Processes" &&
-cd ./processes/ &&
-find ./*/ -name "compile.sh" -type f -exec {} \;
+cd ./schedules/ &&
+find ./*/*/ -name 'Cargo.toml' -execdir cargo build \;
 echo "" &&
 echo "Worldsong Compiled Successfully!"

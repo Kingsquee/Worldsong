@@ -1,17 +1,17 @@
 [package]
 
-name = "worldsong-common"
+name = "worldsong-process-graphics"
 version = "0.0.1"
 authors = ["Kingsley Tolmie <kingsley.tolmie@gmail.com>"]
 
 [lib]
-name = "common"
+name = "graphics"
+path = "graphics.rs"
 crate-type = ["dylib"]
-path = "common.rs"
 
 [profile.dev]
 opt-level=0
 debug=true
 
-[dependencies.sdl2]
-git = "https://github.com/AngryLawyer/rust-sdl2"
+[dependencies.worldsong-common]
+path = "./../../../../common"
