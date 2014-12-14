@@ -1,4 +1,3 @@
-use std::os;
 use std::io;
 use std::io::fs;
 
@@ -7,6 +6,8 @@ mod compile_settings;
 
 /// Compiles the kernel, duh.
 fn main() {
+
+    //compile_settings::set_system_paths();
 
     let scripts_dir = compile_settings::get_compile_scripts_dir();
 
@@ -130,25 +131,10 @@ fn compile(tool_filename: Path) {
         Err(_) => (),
     }
 
-    let output = io::Command::new(compile_settings::get_rustc_path().as_str().unwrap())
-    .arg(tool_filename)
-    .arg("--out-dir").arg(target_dir.as_str().unwrap())
-    .output();
+    let mut command = io::Command::new(compile_settings::get_rustc_path().as_str().unwrap());
+    //command.arg("-C").arg("prefer-dynamic");
+    command.arg("--out-dir").arg(target_dir.as_str().unwrap());
+    command.arg(tool_filename);
 
-    // Try to run this command
-    let result = match output {
-        Ok(r) => r,
-        Err(e) => panic!("Failed to run rustc: {}", e),
-    };
-
-    // If it ran, how'd it do?
-    match result.status.success() {
-        true => {
-            println!("{}", String::from_utf8(result.output).unwrap());
-        }
-        false => {
-            println!("{}", String::from_utf8(result.error).unwrap());
-            os::set_exit_status(1)
-        }
-    };
+    compile_settings::execute_command(command);
 }

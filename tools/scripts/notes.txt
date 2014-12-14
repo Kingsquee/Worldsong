@@ -1,21 +1,13 @@
-rust scripts and custom cargo/diy package manager ahoy :D
 
 TODO:
-+ Custom Cargo
-    - Compiles everything to dylibs
++ run_kernel
+    + sets ld_library_path to
+        all worldsong library
+        paths
 
 + compile_common
-    - calls cargo
-    - calls all the other compile scripts
+    + calls all the other
+        compile scripts
 
-x compile_kernel
-    - What it says on the tin
-
-x compile_scheduler
-    - Finds and links n schedules
-
-x compile_schedule
-    - Finds and links n processes
-
-x compile_process
-    - Yup
+move project dir navigation to
+common

@@ -3,5 +3,5 @@
 extern crate common;
 
 schedule!(
-    input
+    input(core, window)
 )

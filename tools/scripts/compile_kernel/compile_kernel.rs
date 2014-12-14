@@ -1,12 +1,14 @@
 use std::os;
 use std::io;
 use std::io::fs;
-
+use std::io::fs::PathExtensions;
+    
 #[path = "./../compile_settings.rs"]
 mod compile_settings;
 
 /// Compiles the kernel, duh.
 fn main() {
+
     let current_dir = os::self_exe_path().unwrap();
     let current_dir_name = current_dir.filename_str().unwrap();
     let kernel_source_filename = current_dir_name.to_string() + ".rs";
@@ -19,28 +21,49 @@ fn main() {
 
     println!("Compiling kernel");
 
-    let output = io::Command::new(compile_settings::get_rustc_path().as_str().unwrap())
-        .arg("-L").arg(compile_settings::get_common_dir().join("target").as_str().unwrap())
-        .arg("-L").arg(compile_settings::get_common_dir().join("target/deps").as_str().unwrap())
-        .arg("-L").arg(compile_settings::get_common_dir().join("target/native").as_str().unwrap())
-        .arg("--out-dir").arg("./target")
-        .arg(kernel_source_filename)
-        .output();
+    let mut command = io::Command::new(compile_settings::get_rustc_path().as_str().unwrap());
+    command.arg("-L").arg(compile_settings::get_common_dir().join("target").as_str().unwrap());
+    command.arg("-L").arg(compile_settings::get_common_dir().join("target/deps").as_str().unwrap());
+    command.arg("-L").arg(compile_settings::get_common_dir().join("target/native").as_str().unwrap());
+    command.arg("-L").arg(compile_settings::get_scheduler_dir().join("target").as_str().unwrap());
 
-    // Try to run this thing
-    let result = match output {
-        Ok(r) => r,
-        Err(e) => panic!("Failed to run rustc: {}", e),
-    };
+    let mut schedule_dirs: Vec<&Path> = Vec::new();
 
-    // If it ran, how'd it do?
-    match result.status.success() {
-        true => {
-            println!("{}", String::from_utf8(result.output).unwrap());
+    let schedules_dir = fs::readdir(&compile_settings::get_schedules_dir()).unwrap();
+    for schedule_dir in schedules_dir.iter() {
+        if schedule_dir.is_dir() {
+            schedule_dirs.push(schedule_dir);
         }
-        false => {
-            println!("{}", String::from_utf8(result.error).unwrap());
-            os::set_exit_status(1)
-        }
-    };
+    }
+
+    // debug
+    for schedule_dir in schedule_dirs.iter() {
+        println!("Schedule found: {}", schedule_dir.filename_str().unwrap());
+    }
+
+    for schedule_dir in schedule_dirs.iter() {
+        command.arg("-L");
+        command.arg(schedule_dir.join("schedule/target").as_str().unwrap());
+    }
+
+    let mut process_dirs: Vec<Path> = Vec::new();
+
+    for schedule_dir in schedule_dirs.iter() {
+        process_dirs.push_all(compile_settings::get_all_process_dirs(schedule_dir.filename_str().unwrap()).as_slice());
+    }
+
+    // debug
+    for process_dir in process_dirs.iter() {
+        println!("Process found: {}", process_dir.filename_str().unwrap());
+    }
+
+    for process_dir in process_dirs.iter() {
+        command.arg("-L");
+        command.arg(process_dir.join("target").as_str().unwrap());
+    }
+
+    command.arg("--out-dir").arg("./target");
+    command.arg(kernel_source_filename);
+
+    compile_settings::execute_command(command);
 }

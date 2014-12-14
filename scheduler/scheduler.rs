@@ -1,35 +1,14 @@
-//Scheduler will call execution schedules.
-
-// Scheduler's role:
-//
-
-
-/*
-    extern crate variable_update_schedule;
-    extern crate fixed_update_schedule;
-
-    // this one will be function pointered, and that's it!
-    fn exec(fnpointer_get_data) {
-        let data = fnpointer_get_data();
-
-        variable_update_list.exec(data);
-
-        if whatever {
-            fixed_update_list.exec(data);
-        }
-    }
-*/
-
-// schedule locations will have to be loaded by scraping the ./../schedules/???/schedule/target dirs
-
 extern crate common;
-extern crate fixed_update_schedule;
-extern crate variable_update_schedule;
+extern crate fixed_update;
+extern crate variable_update;
 
-use common::Data;
+extern crate time;
+
+use common::data::Data;
+use time::precise_time_ns;
 
 #[no_mangle]
-pub fn exec(data: &mut Data) {
+pub fn run(data: &mut Data) {
     //NOTE: I want to have the simulation update with a maximum speed
     //      so, the simulation can go as slow as it needs but it can't go faster than X
     let     max_fps                     : u64 = 60;
@@ -37,24 +16,22 @@ pub fn exec(data: &mut Data) {
     let mut last_frame_time             : u64 = precise_time_ns();
     let mut last_cycle_time             : u64 = precise_time_ns();
 
-    while !data.scheduler.quit {
+    while !data.core.quit && !data.core.reload && !data.core.reset {
 
         // variable update
-
         let current_time = precise_time_ns();
-        data.scheduler.delta_time = current_time - last_cycle_time;
+        data.core.delta_time = current_time - last_cycle_time;
 
-        variable_update.exec(&mut data);
+        variable_update::execute(data);
 
         last_cycle_time = current_time;
 
         // fixed update
-
         if current_time - last_frame_time < target_frame_time {
             continue
         }
 
-        fixed_update.exec(&mut data);
+        fixed_update::execute(data);
 
         last_frame_time = current_time;
     }

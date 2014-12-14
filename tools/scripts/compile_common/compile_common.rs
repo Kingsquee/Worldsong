@@ -5,7 +5,7 @@ use std::io::fs;
 #[path = "./../compile_settings.rs"]
 mod compile_settings;
 
-/// Compiles the common lib, wot.
+/// Compiles the common lib, and everything else, wot.
 fn main() {
     let current_dir = os::self_exe_path().unwrap();
     let target_path = current_dir.join("target");
@@ -17,24 +17,10 @@ fn main() {
 
     println!("Compiling the Common library");
 
-    let output = io::Command::new(compile_settings::get_cargo_path().as_str().unwrap())
-        .arg("build")
-        .output();
+    let mut compile_common_command = io::Command::new(compile_settings::get_cargo_path().as_str().unwrap());
+    compile_common_command.arg("build");
 
-    // Try to run this thing
-    let result = match output {
-        Ok(r) => r,
-        Err(e) => panic!("Failed to run cargo: {}", e),
-    };
+    compile_settings::execute_command(compile_common_command);
 
-    // If it ran, how'd it do?
-    match result.status.success() {
-        true => {
-            println!("{}", String::from_utf8(result.output).unwrap());
-        }
-        false => {
-            println!("{}", String::from_utf8(result.error).unwrap());
-            os::set_exit_status(1)
-        }
-    };
+    //TODO: cwd = appropriate dir. compile processes, sequences, sequencer, kernel, in that order.
 }

@@ -1,27 +1,27 @@
 extern crate common;
 extern crate sdl2;
 
-use common::data::Data;
+use common::data::{CoreState, WinState};
 use sdl2::event;
 use sdl2::event::Event;
 use sdl2::keycode;
 
-pub fn execute(data: &mut Data) -> () {
+pub fn execute(core: &mut CoreState, window: &mut WinState) -> () {
     match event::poll_event() {
-        Event::Quit(_) => data.scheduler.quit = true,
+        Event::Quit(_) => core.quit = true,
         Event::KeyDown(_, _, key, _, _, _) => {
             if key == keycode::KeyCode::Escape {
-                data.scheduler.quit = true;
+                core.quit = true;
             }
         },
         Event::Window(_, _, id, _, _) => {
             if id as int == event::WindowEventId::FocusGained as int {
-                if data.window.first_focus {
-                    data.window.first_focus = false;
+                if window.first_focus {
+                    window.first_focus = false;
                     return;
                 }
-                if !data.scheduler.reload {
-                    data.scheduler.reload = true;
+                if !core.reload {
+                    core.reload = true;
                 }
             }
         }

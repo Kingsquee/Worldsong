@@ -13,3 +13,6 @@ compile
 # Ignore dirs that store binaries
 target/
 thirdparty/
+
+# Editor stuff
+*.kate*

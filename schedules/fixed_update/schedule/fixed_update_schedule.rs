@@ -1,3 +1,0 @@
-schedule! (
-    graphics(data)
-)

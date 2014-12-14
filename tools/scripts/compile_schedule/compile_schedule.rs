@@ -8,6 +8,9 @@ mod compile_settings;
 
 /// Compiles the schedule by auto-linking all processes
 fn main() {
+
+//     compile_settings::set_system_paths();
+
     let current_dir = os::self_exe_path().unwrap();
 
     let mut schedule_dir = current_dir.clone();
@@ -56,24 +59,8 @@ fn main() {
 
     command.arg("--out-dir").arg("./target");
     command.arg("--crate-type=".to_string() + compile_settings::get_schedules_lib_type());
+    command.arg("-C").arg("prefer-dynamic");
     command.arg(schedule_filename);
 
-    let output = command.output();
-
-    // Try to run this thing
-    let result = match output {
-        Ok(r) => r,
-        Err(e) => panic!("Failed to run rustc: {}", e),
-    };
-
-    // If it ran, how'd it do?
-    match result.status.success() {
-        true => {
-            println!("{}", String::from_utf8(result.output).unwrap());
-        }
-        false => {
-            println!("{}", String::from_utf8(result.error).unwrap());
-            os::set_exit_status(1)
-        }
-    };
+    compile_settings::execute_command(command);
 }
