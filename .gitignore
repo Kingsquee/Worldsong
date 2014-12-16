@@ -7,8 +7,9 @@
 # Executables
 *.exe
 
-# Builders
+# Tool binaries
 compile
+launch
 
 # Ignore dirs that store binaries
 target/

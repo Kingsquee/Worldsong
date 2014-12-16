@@ -10,9 +10,9 @@ pub fn execute(sim: &mut SimState, window: &mut WinState) -> () {
     // For example, while the kernel is running, try modifying these values,
     // compiling this process via the local ./compile, and
     // re-focusing the Worldsong window.
-    sim.color_r += 1;
-    sim.color_g -= 1;
-    sim.color_b *= 2;
+    sim.color_r += 3;
+    sim.color_g -= 0;
+    sim.color_b *= 0;
 
     // Your changes will be visible immediately. :)
 

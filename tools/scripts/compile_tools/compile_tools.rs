@@ -11,6 +11,9 @@ fn main() {
 
     let scripts_dir = compile_settings::get_compile_scripts_dir();
 
+    println!("Generating run script for Kernel.");
+    compile(get_src_path(&scripts_dir, "run_kernel"));
+
     println!("Generating compilation script for the Common library.");
     compile(get_src_path(&scripts_dir, "compile_common"));
 
@@ -36,6 +39,8 @@ fn main() {
     println!(" ");
     distribute_process_scripts();
     println!(" ");
+    distribute_run_script();
+    println!(" ");
 }
 
 fn get_src_path(path: &Path, script_name_str: &str) -> Path {
@@ -52,7 +57,7 @@ fn distribute_common_script() {
     println!("Distributing compilation script for the Common library.");
     let scripts_dir = compile_settings::get_compile_scripts_dir();
     let file_origin = get_bin_path(&scripts_dir, "compile_common");
-    let file_destination = compile_settings::get_common_dir().join("compile");
+    let file_destination = compile_settings::get_common_src_dir().join("compile");
     match fs::copy(&file_origin, &file_destination) {
         Ok(_) => println!("    Copied {} to {}", file_origin.filename_str().unwrap(), file_destination.as_str().unwrap()),
         Err(e) => println!("    {}", e),
@@ -63,7 +68,7 @@ fn distribute_kernel_script() {
     println!("Distributing compilation script for the Kernel.");
     let scripts_dir = compile_settings::get_compile_scripts_dir();
     let file_origin = get_bin_path(&scripts_dir, "compile_kernel");
-    let file_destination = compile_settings::get_kernel_dir().join("compile");
+    let file_destination = compile_settings::get_kernel_src_dir().join("compile");
     match fs::copy(&file_origin, &file_destination) {
         Ok(_) => println!("    Copied {} to {}", file_origin.filename_str().unwrap(), file_destination.as_str().unwrap()),
         Err(e) => println!("    {}", e),
@@ -74,7 +79,7 @@ fn distribute_scheduler_script() {
     println!("Distributing compilation script for the Scheduler.");
     let scripts_dir = compile_settings::get_compile_scripts_dir();
     let file_origin = get_bin_path(&scripts_dir, "compile_scheduler");
-    let file_destination = compile_settings::get_scheduler_dir().join("compile");
+    let file_destination = compile_settings::get_scheduler_src_dir().join("compile");
     match fs::copy(&file_origin, &file_destination) {
         Ok(_) => println!("    Copied {} to {}", file_origin.filename_str().unwrap(), file_destination.as_str().unwrap()),
         Err(e) => println!("    {}", e),
@@ -102,16 +107,26 @@ fn distribute_process_scripts() {
     let scripts_dir = compile_settings::get_compile_scripts_dir();
     let file_origin = get_bin_path(&scripts_dir, "compile_process");
 
-    let schedule_root_dirs = compile_settings::get_all_schedule_root_dirs();
-    for schedule_dir in schedule_root_dirs.iter() {
-        let process_dirs = compile_settings::get_all_process_dirs(schedule_dir.filename_str().unwrap());
-        for process_dir in process_dirs.iter() {
-            let file_destination = process_dir.clone().join("compile");
-            match fs::copy(&file_origin, &file_destination) {
-                Ok(_) => println!("    Copied {} to {}", file_origin.filename_str().unwrap(), file_destination.as_str().unwrap()),
-                Err(e) => println!("    {}", e),
-            }
+    let process_dirs = compile_settings::get_all_process_src_dirs();
+
+    for dir in process_dirs.iter() {
+        let file_destination = dir.clone().join("compile");
+        match fs::copy(&file_origin, &file_destination) {
+            Ok(_) => println!("    Copied {} to {}", file_origin.filename_str().unwrap(), file_destination.as_str().unwrap()),
+            Err(e) => println!("    {}", e),
         }
+    }
+}
+
+fn distribute_run_script() {
+    println!("Distributing run script for the Kernel.");
+    let scripts_dir = compile_settings::get_compile_scripts_dir();
+    let file_origin = get_bin_path(&scripts_dir, "run_kernel");
+
+    let file_destination = compile_settings::get_worldsong_root_dir().join("launch");
+    match fs::copy(&file_origin, &file_destination) {
+        Ok(_) => println!("    Copied {} to {}", file_origin.filename_str().unwrap(), file_destination.as_str().unwrap()),
+        Err(e) => println!("    {}", e),
     }
 }
 
@@ -121,18 +136,9 @@ fn compile(tool_filename: Path) {
     target_dir.pop();
     target_dir.push("target");
 
-    match fs::rmdir_recursive(&target_dir) {
-        Ok(_) => (),
-        Err(_) => (),
-    }
-
-    match fs::mkdir(&target_dir, io::USER_RWX) {
-        Ok(_) => (),
-        Err(_) => (),
-    }
+    compile_settings::create_fresh_dir(&target_dir);
 
     let mut command = io::Command::new(compile_settings::get_rustc_path().as_str().unwrap());
-    //command.arg("-C").arg("prefer-dynamic");
     command.arg("--out-dir").arg(target_dir.as_str().unwrap());
     command.arg(tool_filename);
 

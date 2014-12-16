@@ -1,13 +1,12 @@
 
 TODO:
-+ run_kernel
-    + sets ld_library_path to
-        all worldsong library
-        paths
 
-+ compile_common
-    + calls all the other
-        compile scripts
++ move project compilation helpers to common lib
+common::os
+common::compilation
+common::dirs
+(remove hardcoding of iscompiling in kernel.rs in the process)
 
-move project dir navigation to
-common
++ rename common::data to common::state
++ have compilation scripts run in threads. read the child process output in realtime.
++ rename compilation scripts to 'builders'

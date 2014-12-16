@@ -7,13 +7,14 @@ mod compile_settings;
 
 /// Compiles the common lib, and everything else, wot.
 fn main() {
+
+    // Lets compile!
+    compile_settings::set_is_compiling(true);
+
     let current_dir = os::self_exe_path().unwrap();
     let target_path = current_dir.join("target");
 
-    match fs::mkdir(&target_path, io::USER_RWX) {
-        Ok(_) => (),
-        Err(e) => println!("{}", e),
-    }
+    compile_settings::create_fresh_dir(&target_path);
 
     println!("Compiling the Common library");
 
@@ -22,5 +23,24 @@ fn main() {
 
     compile_settings::execute_command(compile_common_command);
 
-    //TODO: cwd = appropriate dir. compile processes, sequences, sequencer, kernel, in that order.
+    for path in compile_settings::get_all_process_src_dirs().iter_mut() {
+        compile_settings::run_external_application(&path.join("compile"), Some(vec!["-c"]));
+    }
+
+    for path in compile_settings::get_all_schedule_src_dirs().iter_mut() {
+        compile_settings::run_external_application(&path.join("compile"), Some(vec!["-c"]));
+    }
+
+    compile_settings::run_external_application(
+        &compile_settings::get_scheduler_src_dir().join("compile"),
+        Some(vec!["-c"])
+    );
+
+    compile_settings::run_external_application(
+        &compile_settings::get_kernel_src_dir().join("compile"),
+        Some(vec!["-c"])
+    );
+
+    compile_settings::set_is_compiling(false);
+
 }
