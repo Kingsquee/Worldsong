@@ -1,15 +1,20 @@
 use std::io;
-use std::io::fs;
 
-#[path = "./../compile_settings.rs"]
-mod compile_settings;
+#[path = "./../tool_settings.rs"]
+mod tool_settings;
+
+#[path = "./../tool_helpers.rs"]
+mod tool_helpers;
+
+#[path = "./../../../common/fs.rs"]
+mod fs;
 
 /// Compiles the kernel, duh.
 fn main() {
 
-    //compile_settings::set_system_paths();
+    //fs::set_system_paths();
 
-    let scripts_dir = compile_settings::get_compile_scripts_dir();
+    let scripts_dir = fs::get_compile_scripts_dir();
 
     println!("Generating run script for Kernel.");
     compile(get_src_path(&scripts_dir, "run_kernel"));
@@ -55,10 +60,10 @@ fn get_bin_path(path: &Path, script_name_str: &str) -> Path {
 
 fn distribute_common_script() {
     println!("Distributing compilation script for the Common library.");
-    let scripts_dir = compile_settings::get_compile_scripts_dir();
+    let scripts_dir = fs::get_compile_scripts_dir();
     let file_origin = get_bin_path(&scripts_dir, "compile_common");
-    let file_destination = compile_settings::get_common_src_dir().join("compile");
-    match fs::copy(&file_origin, &file_destination) {
+    let file_destination = fs::get_common_src_dir().join("compile");
+    match io::fs::copy(&file_origin, &file_destination) {
         Ok(_) => println!("    Copied {} to {}", file_origin.filename_str().unwrap(), file_destination.as_str().unwrap()),
         Err(e) => println!("    {}", e),
     }
@@ -66,10 +71,10 @@ fn distribute_common_script() {
 
 fn distribute_kernel_script() {
     println!("Distributing compilation script for the Kernel.");
-    let scripts_dir = compile_settings::get_compile_scripts_dir();
+    let scripts_dir = fs::get_compile_scripts_dir();
     let file_origin = get_bin_path(&scripts_dir, "compile_kernel");
-    let file_destination = compile_settings::get_kernel_src_dir().join("compile");
-    match fs::copy(&file_origin, &file_destination) {
+    let file_destination = fs::get_kernel_src_dir().join("compile");
+    match io::fs::copy(&file_origin, &file_destination) {
         Ok(_) => println!("    Copied {} to {}", file_origin.filename_str().unwrap(), file_destination.as_str().unwrap()),
         Err(e) => println!("    {}", e),
     }
@@ -77,10 +82,10 @@ fn distribute_kernel_script() {
 
 fn distribute_scheduler_script() {
     println!("Distributing compilation script for the Scheduler.");
-    let scripts_dir = compile_settings::get_compile_scripts_dir();
+    let scripts_dir = fs::get_compile_scripts_dir();
     let file_origin = get_bin_path(&scripts_dir, "compile_scheduler");
-    let file_destination = compile_settings::get_scheduler_src_dir().join("compile");
-    match fs::copy(&file_origin, &file_destination) {
+    let file_destination = fs::get_scheduler_src_dir().join("compile");
+    match io::fs::copy(&file_origin, &file_destination) {
         Ok(_) => println!("    Copied {} to {}", file_origin.filename_str().unwrap(), file_destination.as_str().unwrap()),
         Err(e) => println!("    {}", e),
     }
@@ -88,14 +93,14 @@ fn distribute_scheduler_script() {
 
 fn distribute_schedule_scripts() {
     println!("Distributing compilation scripts for the Schedules.");
-    let scripts_dir = compile_settings::get_compile_scripts_dir();
+    let scripts_dir = fs::get_compile_scripts_dir();
     let file_origin = get_bin_path(&scripts_dir, "compile_schedule");
 
-    let schedules_src_dirs = compile_settings::get_all_schedule_src_dirs();
+    let schedules_src_dirs = fs::get_all_schedule_src_dirs();
 
     for dir in schedules_src_dirs.iter() {
         let file_destination = dir.clone().join("compile");
-        match fs::copy(&file_origin, &file_destination) {
+        match io::fs::copy(&file_origin, &file_destination) {
             Ok(_) => println!("    Copied {} to {}", file_origin.filename_str().unwrap(), file_destination.as_str().unwrap()),
             Err(e) => println!("    {}", e),
         }
@@ -104,14 +109,14 @@ fn distribute_schedule_scripts() {
 
 fn distribute_process_scripts() {
     println!("Distributing compilation scripts for the Processes.");
-    let scripts_dir = compile_settings::get_compile_scripts_dir();
+    let scripts_dir = fs::get_compile_scripts_dir();
     let file_origin = get_bin_path(&scripts_dir, "compile_process");
 
-    let process_dirs = compile_settings::get_all_process_src_dirs();
+    let process_dirs = fs::get_all_process_src_dirs();
 
     for dir in process_dirs.iter() {
         let file_destination = dir.clone().join("compile");
-        match fs::copy(&file_origin, &file_destination) {
+        match io::fs::copy(&file_origin, &file_destination) {
             Ok(_) => println!("    Copied {} to {}", file_origin.filename_str().unwrap(), file_destination.as_str().unwrap()),
             Err(e) => println!("    {}", e),
         }
@@ -120,11 +125,11 @@ fn distribute_process_scripts() {
 
 fn distribute_run_script() {
     println!("Distributing run script for the Kernel.");
-    let scripts_dir = compile_settings::get_compile_scripts_dir();
+    let scripts_dir = fs::get_compile_scripts_dir();
     let file_origin = get_bin_path(&scripts_dir, "run_kernel");
 
-    let file_destination = compile_settings::get_worldsong_root_dir().join("launch");
-    match fs::copy(&file_origin, &file_destination) {
+    let file_destination = fs::get_worldsong_root_dir().join("launch");
+    match io::fs::copy(&file_origin, &file_destination) {
         Ok(_) => println!("    Copied {} to {}", file_origin.filename_str().unwrap(), file_destination.as_str().unwrap()),
         Err(e) => println!("    {}", e),
     }
@@ -136,11 +141,11 @@ fn compile(tool_filename: Path) {
     target_dir.pop();
     target_dir.push("target");
 
-    compile_settings::create_fresh_dir(&target_dir);
+    fs::create_fresh_dir(&target_dir);
 
-    let mut command = io::Command::new(compile_settings::get_rustc_path().as_str().unwrap());
+    let mut command = io::Command::new(fs::get_rustc_path().as_str().unwrap());
     command.arg("--out-dir").arg(target_dir.as_str().unwrap());
     command.arg(tool_filename);
 
-    compile_settings::execute_command(command);
+    tool_helpers::execute_command(command);
 }

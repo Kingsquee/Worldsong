@@ -2,9 +2,10 @@
 extern crate sdl2;
 
 pub mod macros;
-pub mod data;
+pub mod state;
+pub mod fs;
 
 #[no_mangle]
-pub fn new() -> data::Data {
-    data::Data::new()
+pub fn new() -> state::Data {
+    state::Data::new()
 }

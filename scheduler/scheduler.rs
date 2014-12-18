@@ -4,7 +4,7 @@ extern crate variable_update;
 
 extern crate time;
 
-use common::data::Data;
+use common::state::Data;
 use time::precise_time_ns;
 
 #[no_mangle]

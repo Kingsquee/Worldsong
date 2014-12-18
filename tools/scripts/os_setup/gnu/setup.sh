@@ -1,11 +1,6 @@
 # get current path
 path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" &&
 
-
-
-# Common
-
-# Kernel
 cd $path &&
 echo "Generating the generator generator..." &&
 cd ./../../compile_tools &&

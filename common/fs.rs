@@ -1,51 +1,10 @@
-#![allow(dead_code)]
-
 use std::os;
 use std::io;
 use std::io::fs;
 use std::io::fs::PathExtensions;
 use std::path::Path;
 
-/*
-[Sunday, November 30, 2014] [12:28:23 ▾] <Kingsqueee>   Is there a way I can tell rustup.sh to install to a local directory?
-[Sunday, November 30, 2014] [12:28:47 ▾] <Kingsqueee>   I'd like a 'portable' compiler
-[Sunday, November 30, 2014] [12:29:08 ▾] <geofft>   Kingsqueee: yeah, it takes --prefix
-[Sunday, November 30, 2014] [12:29:36 ▾] <geofft>   I run rustup with --prefix=/home/geofft/b because I don't like installing stuff globally
-[Sunday, November 30, 2014] [12:29:50 ▾] <geofft>   so I have to export PATH=$PATH:/home/geofft/b/bin and export LD_LIBRARY_PATH=/home/geofft/b/lib
-[Sunday, November 30, 2014] [12:29:53 ▾] <geofft>   and it works
-[Sunday, November 30, 2014] [12:31:00 ▾] <Kingsqueee>   geofft: awesome!
-*/
-
-pub fn run_external_application(app: &Path, args: Option<Vec<&str>>) {
-    println!("Running {}", app.display());
-    let mut command = io::Command::new(app.clone());
-    if args.is_some() {
-        for arg in args.unwrap().iter() {
-            command.arg(arg);
-        }
-    }
-    command.cwd(&app.dir_path());
-    execute_command(command);
-}
-
-pub fn execute_command(command: io::Command) {
-    // Try to run this thing
-    let result = match command.output() {
-        Ok(r) => r,
-        Err(e) => panic!("Failed to run: {}", e),
-    };
-
-    // If it ran, how'd it do?
-    match result.status.success() {
-        true => {
-            println!("{}", String::from_utf8(result.output).unwrap());
-        }
-        false => {
-            panic!("{}", String::from_utf8(result.error).unwrap());
-        }
-    };
-}
-
+// TODO: return IoResult<()>
 pub fn create_fresh_dir(path: &Path) {
 
     match fs::rmdir_recursive(path) {
@@ -59,6 +18,7 @@ pub fn create_fresh_dir(path: &Path) {
     }
 }
 
+// TODO: return IoResult<()>
 pub fn set_is_compiling(value: bool) {
     if value == true {
         match io::File::create(&get_is_compiling_file()) {
@@ -121,7 +81,11 @@ pub fn get_common_src_dir() -> Path {
     get_worldsong_root_dir().join("common")
 }
 
-pub fn get_common_target_dirs() -> Vec<Path> {
+pub fn get_common_target_dir() -> Path {
+    get_common_src_dir().join("target")
+}
+
+pub fn get_all_common_target_dirs() -> Vec<Path> {
     let mut dirs: Vec<Path> = Vec::new();
     dirs.push(get_common_src_dir().join("target"));
     dirs.push(get_common_src_dir().join("target/deps"));
@@ -202,23 +166,4 @@ pub fn get_compile_scripts_dir() -> Path {
 
 pub fn get_is_compiling_file() -> Path {
     get_worldsong_root_dir().join(".iscompiling")
-}
-
-
-// How should each library crate be compiled? Statically or dynamically?
-
-pub fn get_process_lib_type() -> &'static str {
-    "dylib"
-}
-
-pub fn get_schedules_lib_type() -> &'static str {
-    "dylib"
-}
-
-pub fn get_scheduler_lib_type() -> &'static str {
-    "dylib"
-}
-
-pub fn get_common_lib_type() -> &'static str {
-    "dylib"
 }

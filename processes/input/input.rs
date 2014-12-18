@@ -1,7 +1,7 @@
 extern crate common;
 extern crate sdl2;
 
-use common::data::{CoreState, WinState};
+use common::state::{CoreState, WinState};
 use sdl2::event;
 use sdl2::event::Event;
 use sdl2::keycode;

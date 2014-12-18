@@ -61,8 +61,8 @@ macro_rules! schedule {
             )+
         }
 
-        pub fn execute(data: &mut common::data::Data) {
-            use common::data::Data;
+        pub fn execute(data: &mut common::state::Data) {
+            use common::state::Data;
             $(
                 _hack::$process_name::execute(
                     $(&mut data.$param),+

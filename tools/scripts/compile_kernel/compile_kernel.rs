@@ -3,11 +3,16 @@ extern crate getopts;
 use getopts::{optopt,optflag,getopts,OptGroup};
 use std::os;
 use std::io;
-use std::io::fs;
 use std::io::fs::PathExtensions;
     
-#[path = "./../compile_settings.rs"]
-mod compile_settings;
+#[path = "./../tool_settings.rs"]
+mod tool_settings;
+
+#[path = "./../tool_helpers.rs"]
+mod tool_helpers;
+
+#[path = "./../../../common/fs.rs"]
+mod fs;
 
 /// Compiles the kernel, duh.
 fn main() {
@@ -30,7 +35,7 @@ fn main() {
 
     // Lets compile!
     if !is_child_script {
-        compile_settings::set_is_compiling(true);
+        fs::set_is_compiling(true);
     }
 
     let current_dir = os::self_exe_path().unwrap();
@@ -38,29 +43,29 @@ fn main() {
     let kernel_source_filename = current_dir_name.to_string() + ".rs";
     let target_path = current_dir.join("target");
 
-    compile_settings::create_fresh_dir(&target_path);
+    fs::create_fresh_dir(&target_path);
 
     println!("Compiling kernel");
 
-    let mut command = io::Command::new(compile_settings::get_rustc_path().as_str().unwrap());
+    let mut command = io::Command::new(fs::get_rustc_path().as_str().unwrap());
 
     // Link common target dirs
-    for common_target_dir in compile_settings::get_common_target_dirs().iter() {
+    for common_target_dir in fs::get_all_common_target_dirs().iter() {
         command.arg("-L");
         command.arg(common_target_dir.as_str().unwrap());
     }
 
     // Link scheduler target dir
-    command.arg("-L").arg(compile_settings::get_scheduler_target_dir().as_str().unwrap());
+    command.arg("-L").arg(fs::get_scheduler_target_dir().as_str().unwrap());
 
     // Link schedule target dirs
-    for schedule_target_dir in compile_settings::get_all_schedule_target_dirs().iter() {
+    for schedule_target_dir in fs::get_all_schedule_target_dirs().iter() {
         command.arg("-L");
         command.arg(schedule_target_dir.as_str().unwrap());
     }
 
     // Link process target dirs
-    for process_target_dir in compile_settings::get_all_process_target_dirs().iter() {
+    for process_target_dir in fs::get_all_process_target_dirs().iter() {
         command.arg("-L");
         command.arg(process_target_dir.as_str().unwrap());
     }
@@ -68,9 +73,9 @@ fn main() {
     command.arg("--out-dir").arg("./target");
     command.arg(kernel_source_filename);
 
-    compile_settings::execute_command(command);
+    tool_helpers::execute_command(command);
 
     if !is_child_script {
-        compile_settings::set_is_compiling(false);
+        fs::set_is_compiling(false);
     }
 }

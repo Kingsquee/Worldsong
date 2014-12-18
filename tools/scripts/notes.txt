@@ -1,12 +1,14 @@
 
-TODO:
+DONE:
 
-+ move project compilation helpers to common lib
-common::os
-common::compilation
-common::dirs
-(remove hardcoding of iscompiling in kernel.rs in the process)
+moved filesystem navigation helpers to common lib
+removed temporary hardcoding of library paths in kernel.rs
+renamed common::data -> common::state
+renamed compile_helpers -> tool_helpers
+renamed compile_settings -> tool_settings
 
-+ rename common::data to common::state
+(Make a commit here)
+
 + have compilation scripts run in threads. read the child process output in realtime.
-+ rename compilation scripts to 'builders'
+
+(Actually just like make the game)
