@@ -8,6 +8,7 @@ authors = ["Kingsley Tolmie <kingsley.tolmie@gmail.com>"]
 name = "common"
 crate-type = ["dylib"]
 path = "common.rs"
+plugin = true
 
 [profile.dev]
 opt-level=0

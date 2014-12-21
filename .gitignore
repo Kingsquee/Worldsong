@@ -11,6 +11,9 @@
 compile
 launch
 
+# Personal stuff
+notes.txt
+
 # Ignore dirs that store binaries
 target/
 thirdparty/

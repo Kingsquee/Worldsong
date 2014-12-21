@@ -54,8 +54,8 @@ pub fn get_rustc_path() -> Path {
 }
 
 pub fn get_cargo_path() -> Path {
-    //Path::new("cargo")
-    get_thirdparty_tools_dir().join("cargo").join("bin").join("cargo")
+    Path::new("cargo")
+    //get_thirdparty_tools_dir().join("cargo").join("bin").join("cargo")
 }
 
 // TODO: Only do this Once
