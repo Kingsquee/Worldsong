@@ -4,7 +4,7 @@ extern crate sdl2;
 use common::state::{SimState, WinState};
 use sdl2::pixels::Color;
 
-pub fn execute(sim: &mut SimState, window: &mut WinState) -> () {
+pub fn execute(sim: &mut SimState, window: &WinState) -> () {
     let renderer = &window.renderer;
 
     // While the kernel is running, try modifying these values,
