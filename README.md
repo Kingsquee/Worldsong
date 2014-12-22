@@ -9,6 +9,8 @@ This is the dream of Worldsong.
 What it's made of
 -----------------
 
+![It's something like this, anyway.](http://i.imgur.com/PZJEnhB.png)
+
 #####Common Library:
 Stores data and functionality common to other subsystems, including as state data and third-party libraries.
 
@@ -36,7 +38,7 @@ I wanted a framework that let me use one language, with state-preserving runtime
 An abstracted, hotloadable, state-preserving main loop!
 
 #####"This isn't parallelizable."
-Totally is. It was designed to be used with some form of [parallel job execution][https://github.com/mcpherrinm/parallel].
+Totally is. It was designed to be used with some form of [parallel job execution](https://github.com/mcpherrinm/parallel).
 
 #####"This isn't concurrent!"
 That's the idea, yeah.
@@ -52,9 +54,12 @@ TODO / What can be improved?
 ----------------------------
 
 #####Live reloading of state data.
-Restarting the program to reset the application is dumb. It'd be nice if state::Data was hotloadable at runtime.
-The problem with this is what subsystem owns the instance becomes questionable. How could it own and access functions of something it doesn't have type information for?
-Would be easier to just write an OS call to restart the application.
+Closing the program to reset the state is awkward. It'd be nice if state::Data was hotloadable at runtime.
+The problem is, what subsystem owns the state::Data instance? What ungodly unsafe block could access functions of something it doesn't have type information for?
+
+Assuming the below isn't implemented, the cleanest way to achieve this would be to write an OS-level call to restart the application.
 
 #####Live _editing_ of state data's layout.
-Built-in serialization. Conversion function hooks on load. We go full erlang. PR's are welcome.
+Ownership of unknown types. Built-in serialization. Conversion function hooks on load. We go full erlang.
+
+PRs are welcome.
