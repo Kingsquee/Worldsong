@@ -25,6 +25,7 @@ List which processes should be run, in order, when the schedule is called.
 Modify state data. These babies do the actual work.
 
 In practice, it works something like this:
+
 ![It's something like this, anyway.](http://i.imgur.com/PZJEnhB.png)
 
 
