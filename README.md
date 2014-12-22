@@ -9,8 +9,6 @@ This is the dream of Worldsong.
 What it's made of
 -----------------
 
-![It's something like this, anyway.](http://i.imgur.com/PZJEnhB.png)
-
 #####Common Library:
 Stores data and functionality common to other subsystems, including as state data and third-party libraries.
 
@@ -25,6 +23,9 @@ List which processes should be run, in order, when the schedule is called.
 
 #####Process(es):
 Modify state data. These babies do the actual work.
+
+In practice, it works something like this:
+![It's something like this, anyway.](http://i.imgur.com/PZJEnhB.png)
 
 
 Questions and Skepticism
