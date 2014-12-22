@@ -9,12 +9,12 @@ This is the dream of Worldsong.
 How to use
 ----------
 
-1) Navigate to tools/scripts/os_setup.
-2) Run the script for your OS. (Currently only gnu/linux)
-3) When it finishes, you can run _launch_ in the root directory.
-4) While it's running, edit processes/graphics/graphics.rs, and run _compile_ in the same directory.
-5) Refocus the window.
-6) Smile!
+1. Navigate to tools/scripts/os_setup.
+2. Run the script for your OS. (Currently only gnu/linux)
+3. When it finishes, you can run _launch_ in the root directory.
+4. While it's running, edit processes/graphics/graphics.rs, and run _compile_ in the same directory.
+5. Refocus the window.
+6. Smile!
 
 Each subsystem has its own custom _compile_. Have fun!
 
