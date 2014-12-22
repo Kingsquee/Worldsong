@@ -6,6 +6,19 @@ Write code. Hit compile. Tab into the running application. See your changes upda
 This is the dream of Worldsong.
 
 
+How to use
+----------
+
+1) Navigate to tools/scripts/os_setup.
+2) Run the script for your OS. (Currently only gnu/linux)
+3) When it finishes, you can run _launch_ in the root directory.
+4) While it's running, edit processes/graphics/graphics.rs, and run _compile_ in the same directory.
+5) Refocus the window.
+6) Smile!
+
+Each subsystem has its own custom _compile_. Have fun!
+
+
 What it's made of
 -----------------
 
@@ -45,9 +58,6 @@ An abstracted, hotloadable, state-preserving main loop!
 #####*"This isn't parallelizable."*
 Totally is. It was designed to be used with some form of [parallel job execution](https://github.com/mcpherrinm/parallel).
 
-#####*"This isn't concurrent!"*
-That's the idea, yeah.
-
 #####*"Isn't all data technically global?"*
 Schedules define what state a process can access, so unintended side effects would require exceptionally bad coding practices and probably copious amounts of alcohol.
 
@@ -60,6 +70,9 @@ Because I'm a nice guy. If you've got a license idea that's not MIT's anarchy or
 
 TODO / What can be improved?
 ----------------------------
+
+#####Port to Windows and OSX
+I GUESS.
 
 #####Live reloading of state data.
 Closing the program to reset the state is awkward. It'd be nice if state::Data was hotloadable at runtime.
