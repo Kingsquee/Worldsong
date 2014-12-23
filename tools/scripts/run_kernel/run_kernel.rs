@@ -56,5 +56,5 @@ fn main() {
 
     command.env(key, ld_library_paths);
 
-    tool_helpers::execute_command(command);
+    tool_helpers::execute_command(&mut command);
 }

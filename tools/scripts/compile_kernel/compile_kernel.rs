@@ -73,7 +73,7 @@ fn main() {
     command.arg("--out-dir").arg("./target");
     command.arg(kernel_source_filename);
 
-    tool_helpers::execute_command(command);
+    tool_helpers::execute_command(&mut command);
 
     if !is_child_script {
         fs::set_is_compiling(false);

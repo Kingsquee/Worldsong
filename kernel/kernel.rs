@@ -6,8 +6,6 @@ use std::mem;
 use std::io;
 use std::io::fs;
 use std::io::File;
-use std::io::BufferedReader;
-use std::io::fs::PathExtensions;
 
 use common::state::Data;
 use std::time::duration::Duration;
@@ -55,14 +53,17 @@ fn main() {
 
             data.core.reload = false;
         }
+        // TODO: Would be nice to have this load the latest state::Data from disk.
         else if data.core.reset {
-            println!("Would be reloading data about now...");
-            /*reset data*/
+            println!("Resetting state...");
+            data = Data::new();
+
             data.core.reset = false;
         }
     }
 }
 
+/*
 fn find_data_dylib() -> Option<Path> {
     // look in target dir
     let common_target_dir = common::fs::get_common_target_dir();
@@ -75,6 +76,7 @@ fn find_data_dylib() -> Option<Path> {
     }
     None
 }
+*/
 
 fn find_scheduler_dylib() -> Option<Path> {
     // look in target dir
@@ -111,6 +113,7 @@ fn load_scheduler_run_symbol(dylib: &DynamicLibrary) -> fn(&mut Data) -> () {
     }
 }
 
+/*
 fn load_data_new_symbol(dylib: &DynamicLibrary) -> fn() -> Data {
     println!("Loading data new symbol");
     unsafe {
@@ -120,3 +123,4 @@ fn load_data_new_symbol(dylib: &DynamicLibrary) -> fn() -> Data {
         }
     }
 }
+*/

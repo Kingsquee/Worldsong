@@ -147,5 +147,5 @@ fn compile(tool_filename: Path) {
     command.arg("--out-dir").arg(target_dir.as_str().unwrap());
     command.arg(tool_filename);
 
-    tool_helpers::execute_command(command);
+    tool_helpers::execute_command(&mut command);
 }

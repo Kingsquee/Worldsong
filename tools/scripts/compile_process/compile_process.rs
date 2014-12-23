@@ -59,7 +59,7 @@ fn main() {
     command.arg("-C").arg("prefer-dynamic");
     command.arg(current_process_filename);
 
-    tool_helpers::execute_command(command);
+    tool_helpers::execute_command(&mut command);
 
     if !is_child_script {
 

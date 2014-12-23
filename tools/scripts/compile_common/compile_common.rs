@@ -26,7 +26,7 @@ fn main() {
     let mut compile_common_command = io::Command::new(fs::get_cargo_path().as_str().unwrap());
     compile_common_command.arg("build");
 
-    tool_helpers::execute_command(compile_common_command);
+    tool_helpers::execute_command(&mut compile_common_command);
 
     for path in fs::get_all_process_src_dirs().iter_mut() {
         tool_helpers::run_external_application(&path.join("compile"), Some(vec!["-c"]));

@@ -1,5 +1,6 @@
 use std::io;
 use std::io::fs::PathExtensions;
+use std::io::process::StdioContainer;
 use std::path::Path;
 
 /*
@@ -21,23 +22,21 @@ pub fn run_external_application(app: &Path, args: Option<Vec<&str>>) {
         }
     }
     command.cwd(&app.dir_path());
-    execute_command(command);
+    execute_command(&mut command);
 }
 
-pub fn execute_command(command: io::Command) {
+pub fn execute_command(command: &mut io::Command) {
     // Try to run this thing
-    let result = match command.output() {
+    command.stdout(StdioContainer::InheritFd(1));
+    command.stderr(StdioContainer::InheritFd(2));
+    let mut result = match command.spawn() {
         Ok(r) => r,
         Err(e) => panic!("Failed to run: {}", e),
     };
 
     // If it ran, how'd it do?
-    match result.status.success() {
-        true => {
-            println!("{}", String::from_utf8(result.output).unwrap());
-        }
-        false => {
-            panic!("{}", String::from_utf8(result.error).unwrap());
-        }
+
+    if !result.wait().unwrap().success() {
+        panic!("Build failed");
     };
 }
