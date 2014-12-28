@@ -2,11 +2,11 @@
 name = "worldsong-common"
 version = "0.0.1"
 dependencies = [
- "sdl2 0.0.11 (git+https://github.com/AngryLawyer/rust-sdl2)",
+ "sdl2 0.0.13 (git+https://github.com/AngryLawyer/rust-sdl2)",
 ]
 
 [[package]]
 name = "sdl2"
-version = "0.0.11"
-source = "git+https://github.com/AngryLawyer/rust-sdl2#432bbeef202fe71f72848865d960bbc4e0793cbb"
+version = "0.0.13"
+source = "git+https://github.com/AngryLawyer/rust-sdl2#00f58349b9f7739faa48d1660a5eb01c070f386b"
 

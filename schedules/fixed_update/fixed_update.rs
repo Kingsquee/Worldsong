@@ -4,4 +4,4 @@ extern crate common;
 
 schedule!(
     graphics(sim, window)
-)
+);

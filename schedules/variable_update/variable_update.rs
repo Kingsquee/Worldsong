@@ -4,4 +4,4 @@ extern crate common;
 
 schedule!(
     input(core, window)
-)
+);

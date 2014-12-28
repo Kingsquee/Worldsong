@@ -32,7 +32,7 @@ data!(
         color_g:                u8              = 0
         color_b:                u8              = 255
     }
-)
+);
 
 pub fn init_renderer(title: &str, width: int, height: int) -> Renderer {
     let window = sdl2::video::Window::new(title, sdl2::video::WindowPos::PosCentered, sdl2::video::WindowPos::PosCentered, width, height, sdl2::video::OPENGL).unwrap();
