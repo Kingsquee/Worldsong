@@ -6,14 +6,14 @@ use sdl2::render::Renderer;
 
 // Note that by using this macro, struct fields with dependencies limit
 // your struct packing options due to order of initialiation.
-// See: window.renderer
 
 // This can be avoided by initializing values by loading config files,
-// rather than appropriating hard coded values such as here.
-data!( 
-    kernel: KernelState {
+// rather than appropriating hard coded field values such as here.
+data!(
+    core: CoreState {
         delta_time:             u64             = 0
-        load_processes:         bool            = true
+        reload:                 bool            = false
+        reset:                  bool            = false
         quit:                   bool            = false
     }
     window: WinState {
@@ -35,7 +35,7 @@ data!(
 )
 
 pub fn init_renderer(title: &str, width: int, height: int) -> Renderer {
-    let window = sdl2::video::Window::new(title, sdl2::video::PosCentered, sdl2::video::PosCentered, width, height, sdl2::video::OPENGL).unwrap();
-    let renderer = sdl2::render::Renderer::from_window(window, sdl2::render::DriverAuto, sdl2::render::ACCELERATED).unwrap();
+    let window = sdl2::video::Window::new(title, sdl2::video::WindowPos::PosCentered, sdl2::video::WindowPos::PosCentered, width, height, sdl2::video::OPENGL).unwrap();
+    let renderer = sdl2::render::Renderer::from_window(window, sdl2::render::RenderDriverIndex::Auto, sdl2::render::ACCELERATED).unwrap();
     renderer
 }

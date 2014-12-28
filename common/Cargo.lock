@@ -1,0 +1,12 @@
+[root]
+name = "worldsong-common"
+version = "0.0.1"
+dependencies = [
+ "sdl2 0.0.11 (git+https://github.com/AngryLawyer/rust-sdl2)",
+]
+
+[[package]]
+name = "sdl2"
+version = "0.0.11"
+source = "git+https://github.com/AngryLawyer/rust-sdl2#432bbeef202fe71f72848865d960bbc4e0793cbb"
+

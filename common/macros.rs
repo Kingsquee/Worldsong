@@ -50,3 +50,24 @@ macro_rules! data {
         }
     }
 }
+
+#[macro_export]
+macro_rules! schedule {
+    ($($process_name:ident($($param:ident),+))+) => {
+        mod _hack {
+            extern crate common;
+            $(
+                extern crate $process_name;
+            )+
+        }
+
+        pub fn execute(data: &mut common::state::Data) {
+            use common::state::Data;
+            $(
+                _hack::$process_name::execute(
+                    $(&mut data.$param),+
+                );
+            )+
+        }
+    }
+}
