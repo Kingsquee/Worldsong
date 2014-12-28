@@ -1,3 +1,7 @@
+extern crate getopts;
+
+use getopts::{optopt,optflag,getopts,OptGroup};
+use std::os;
 use std::io;
 
 #[path = "./../tool_settings.rs"]
@@ -12,7 +16,21 @@ mod fs;
 /// Compiles the kernel, duh.
 fn main() {
 
-    //fs::set_system_paths();
+    // Program args
+    let mut compile_everything: bool = false;
+
+    let args: Vec<String> = os::args();
+    let opts = &[
+        optflag("a", "all", "Runs all compile scripts after generating them.")
+    ];
+    let matches = match getopts(args.tail(), opts) {
+        Ok(m) => { m }
+        Err(f) => { panic!(f.to_string()) }
+    };
+
+    if matches.opt_present("a") {
+        compile_everything = true
+    };
 
     let scripts_dir = fs::get_compile_scripts_dir();
 
@@ -46,6 +64,9 @@ fn main() {
     println!(" ");
     distribute_run_script();
     println!(" ");
+    if compile_everything {
+        run_common_script();
+    }
 }
 
 fn get_src_path(path: &Path, script_name_str: &str) -> Path {
@@ -56,6 +77,15 @@ fn get_src_path(path: &Path, script_name_str: &str) -> Path {
 fn get_bin_path(path: &Path, script_name_str: &str) -> Path {
     let script_name = script_name_str.to_string();
     path.join(script_name.clone()).join("target").join(script_name.clone())
+}
+
+fn run_common_script() {
+    let common_compile_script = fs::get_common_src_dir().join("compile");
+
+    let mut command = io::Command::new(common_compile_script.as_str().unwrap());
+    command.cwd(&fs::get_common_src_dir());
+
+    tool_helpers::execute_command(&mut command);
 }
 
 fn distribute_common_script() {

@@ -8,4 +8,4 @@ mkdir -p ./target &&
 rustc compile_tools.rs --out-dir ./target &&
 echo "Running..." &&
 cd ./target &&
-./compile_tools
+./compile_tools --all
