@@ -85,6 +85,10 @@ pub fn get_common_target_dir() -> Path {
     get_common_src_dir().join("target")
 }
 
+pub fn get_state_dir() -> Path {
+    get_worldsong_root_dir().join("state")
+}
+
 pub fn get_all_common_target_dirs() -> Vec<Path> {
     let mut dirs: Vec<Path> = Vec::new();
     dirs.push(get_common_src_dir().join("target"));
@@ -163,6 +167,71 @@ pub fn get_tools_dir() -> Path {
 pub fn get_compile_scripts_dir() -> Path {
     get_tools_dir().join("scripts")
 }
+
+pub fn get_run_kernel_script_src_dir() -> Path {
+    get_compile_scripts_dir().join("run_kernel")
+}
+
+pub fn get_run_kernel_script_target_dir() -> Path {
+    get_run_kernel_script_src_dir().join("run_kernel")
+}
+
+pub fn get_new_state_struct_script_src_dir() -> Path {
+    get_compile_scripts_dir().join("new_state_struct")
+}
+
+pub fn get_new_state_struct_script_target_dir() -> Path {
+    get_new_state_struct_script_src_dir().join("target")
+}
+
+pub fn get_compile_state_struct_script_src_dir() -> Path {
+    get_compile_scripts_dir().join("compile_state_struct")
+}
+
+pub fn get_compile_state_struct_script_target_dir() -> Path {
+    get_compile_state_struct_script_src_dir().join("target")
+}
+
+pub fn get_compile_scheduler_script_src_dir() -> Path {
+    get_compile_scripts_dir().join("compile_scheduler")
+}
+
+pub fn get_compile_scheduler_script_target_dir() -> Path {
+    get_compile_scheduler_script_src_dir().join("target")
+}
+
+pub fn get_compile_schedule_script_src_dir() -> Path {
+    get_compile_scripts_dir().join("compile_schedule")
+}
+
+pub fn get_compile_schedule_script_target_dir() -> Path {
+    get_compile_schedule_script_src_dir().join("target")
+}
+
+pub fn get_compile_process_script_src_dir() -> Path {
+    get_compile_scripts_dir().join("compile_process")
+}
+
+pub fn get_compile_process_script_target_dir() -> Path {
+    get_compile_process_script_src_dir().join("target")
+}
+
+pub fn get_compile_kernel_script_src_dir() -> Path {
+    get_compile_scripts_dir().join("compile_kernel")
+}
+
+pub fn get_compile_kernel_script_target_dir() -> Path {
+    get_compile_kernel_script_src_dir().join("target")
+}
+
+pub fn get_compile_common_script_src_dir() -> Path {
+    get_compile_scripts_dir().join("compile_common")
+}
+
+pub fn get_compile_common_script_target_dir() -> Path {
+    get_compile_common_script_src_dir().join("target")
+}
+
 
 pub fn get_is_compiling_file() -> Path {
     get_worldsong_root_dir().join(".iscompiling")

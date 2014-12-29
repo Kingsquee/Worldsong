@@ -2,10 +2,33 @@
 
 #[macro_export]
 macro_rules! data {
-    ($($structname:ident: $structtype:ident {$($var:ident: $vartype:ty = $val:expr)+})+) => {
+    ($structname:ident $structtype:ident {$($var:ident: $vartype:ty = $val:expr)+}) => {
+        pub struct $structtype {
+            $(
+                pub $var: $vartype,
+            )+
+        }
+
+        impl $structtype {
+            pub fn new() -> $structtype {
+                $(
+                    let $var = $val;
+                )+
+                $structtype {
+                    $(
+                        $var: $var,
+                    )+
+                }
+            }
+        }
+    }
+}
+
+macro_rules! statedata {
+    ($($substructname:ident: $substructtype:ident {$($var:ident: $vartype:ty = $val:expr)+})+) => {
 
         $(
-            pub struct $structtype {
+            pub struct $substructtype {
                 $(
                     pub $var: $vartype,
                 )+
@@ -13,13 +36,13 @@ macro_rules! data {
         )+
 
         $(
-            impl $structtype {
-                pub fn new() -> $structtype{
+            impl $substructtype {
+                pub fn new() -> $substructtype{
                     $(
                         let $var = $val;
                     )+
 
-                    $structtype {
+                    $substructtype {
                         $(
                             $var: $var,
                         )+
@@ -28,21 +51,17 @@ macro_rules! data {
             }
         )+
 
-        #[no_mangle]
-        #[allow(dead_code)]
         pub struct Data {
             $(
-                pub $structname: $structtype,
+                pub $substructname: $substructtype,
             )+
         }
 
-        #[no_mangle]
-        #[allow(dead_code)]
         impl Data {
             pub fn new() -> Data {
              let data = Data {
                 $(
-                    $structname: $structtype::new(),
+                    $substructname: $substructtype::new(),
                 )+
              };
              data
