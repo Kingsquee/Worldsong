@@ -1,0 +1,15 @@
+[package]
+
+name = "add_state_struct"
+version = "0.0.1"
+authors = ["Kingsley Tolmie <kingsley.tolmie@gmail.com>"]
+
+[[bin]]
+name = "add_state_struct"
+path = "add_state_struct.rs"
+
+[dependencies.wraped]
+git = "https://github.com/Kingsquee/wraped"
+
+[dependencies.worldsong-common]
+path = "./../../../common"

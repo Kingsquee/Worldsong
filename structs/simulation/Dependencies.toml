@@ -1,0 +1,3 @@
+[dependencies.data_macro]
+#version = "1.0.0"
+git = "https://github.com/Kingsquee/data-macro-rs"

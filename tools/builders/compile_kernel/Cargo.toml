@@ -1,0 +1,12 @@
+[package]
+
+name = "compile_kernel"
+version = "0.0.1"
+authors = ["Kingsley Tolmie <kingsley.tolmie@gmail.com>"]
+
+[[bin]]
+name = "compile_kernel"
+path = "compile_kernel.rs"
+
+[dependencies.worldsong-common]
+path = "./../../../common"

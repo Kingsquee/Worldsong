@@ -1,0 +1,2 @@
+[dependencies.toml]
+git = "https://github.com/alexcrichton/toml-rs" 

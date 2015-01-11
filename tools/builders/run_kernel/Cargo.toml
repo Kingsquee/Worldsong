@@ -1,0 +1,12 @@
+[package]
+
+name = "run_kernel"
+version = "0.0.1"
+authors = ["Kingsley Tolmie <kingsley.tolmie@gmail.com>"]
+
+[[bin]]
+name = "run_kernel"
+path = "run_kernel.rs"
+
+[dependencies.worldsong-common]
+path = "./../../../common"
