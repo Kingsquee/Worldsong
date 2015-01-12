@@ -1,2 +1,4 @@
 [dependencies.data_macro]
 git = "https://github.com/Kingsquee/data-macro-rs"
+
+[dependencies.sdl2]

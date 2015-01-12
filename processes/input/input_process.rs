@@ -1,13 +1,13 @@
 extern crate state;
-//extern crate sdl2;
+extern crate sdl2;
 
 use state::{CoreState, GraphicsState};
-/*use sdl2::event;
+use sdl2::event;
 use sdl2::event::Event;
-use sdl2::keycode;*/
+use sdl2::keycode;
 
 pub fn execute(core: &mut CoreState, window: &mut GraphicsState) -> () {
-    /*match event::poll_event() {
+    match event::poll_event() {
         Event::Quit(_) => core.quit = true,
         Event::KeyDown(_, _, key, _, _, _) => {
             if key == keycode::KeyCode::Escape {
@@ -26,5 +26,5 @@ pub fn execute(core: &mut CoreState, window: &mut GraphicsState) -> () {
             }
         }
         _ => {}
-    }*/
+    }
 }

@@ -1,4 +1,3 @@
-
 data! (
     SimulationState {
         color_r: u8 = 0
