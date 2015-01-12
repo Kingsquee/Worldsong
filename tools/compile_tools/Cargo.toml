@@ -1,12 +1,12 @@
 [package]
 
-name = "compile_state_struct"
+name = "compile_tools"
 version = "0.0.1"
 authors = ["Kingsley Tolmie <kingsley.tolmie@gmail.com>"]
 
 [[bin]]
-name = "compile_state_struct"
-path = "compile_state_struct.rs"
+name = "compile_tools"
+path = "compile_tools.rs"
 
 [dependencies.worldsong-common]
-path = "./../../../common"
+path = "./../../common"

@@ -12,4 +12,4 @@ path = "add_state_struct.rs"
 git = "https://github.com/Kingsquee/wraped"
 
 [dependencies.worldsong-common]
-path = "./../../../common"
+path = "./../../common"

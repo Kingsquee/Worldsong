@@ -62,13 +62,13 @@ pub fn execute(/*...*/) -> () {
     process_src_file.write_str(process_src_text.as_slice()).unwrap();
     process_src_file.flush().unwrap();
 
-    // Copy the compile builder into the dir
-    let compile_builder_path = hierarchy::get_compile_process_builder_target_dir().join("compile_process");
-    match io::fs::copy(&compile_builder_path, &process_dir.join("compile")) {
+    // Copy the compile tool into the dir
+    let compile_tool_path = hierarchy::get_compile_process_tool_target_dir().join("compile_process");
+    match io::fs::copy(&compile_tool_path, &process_dir.join("compile")) {
         Ok(_) => (),
         Err(e) => {
             io::fs::rmdir_recursive(&process_dir).unwrap();
-            println!("Could not copy the compile builder to the directory, maybe try re-running your OS's setup builder?");
+            println!("Could not copy the compile tool to the directory, maybe try re-running your OS's setup tool?");
             panic!("{}", e)
         }
     }

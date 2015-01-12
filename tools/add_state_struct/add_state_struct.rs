@@ -79,13 +79,13 @@ data! (
     struct_src_file.write_str(struct_src_text.as_slice()).unwrap();
     struct_src_file.flush().unwrap();
 
-    // Copy the compile builder into the dir
-    let compile_builder_path = hierarchy::get_compile_state_struct_builder_target_dir().join("compile_state_struct");
-    match io::fs::copy(&compile_builder_path, &struct_dir.join("compile")) {
+    // Copy the compile tool into the dir
+    let compile_tool_path = hierarchy::get_compile_state_struct_tool_target_dir().join("compile_state_struct");
+    match io::fs::copy(&compile_tool_path, &struct_dir.join("compile")) {
         Ok(_) => (),
         Err(e) => {
             io::fs::rmdir_recursive(&struct_dir).unwrap();
-            println!("Could not copy the compile builder to the directory, maybe try re-running your OS's setup builder?");
+            println!("Could not copy the compile tool to the directory, maybe try re-running your OS's setup tool?");
             panic!("{}", e)
         }
     }

@@ -1,12 +1,12 @@
 [package]
 
-name = "compile_schedule"
+name = "compile_kernel"
 version = "0.0.1"
 authors = ["Kingsley Tolmie <kingsley.tolmie@gmail.com>"]
 
 [[bin]]
-name = "compile_schedule"
-path = "compile_schedule.rs"
+name = "compile_kernel"
+path = "compile_kernel.rs"
 
 [dependencies.worldsong-common]
-path = "./../../../common"
+path = "./../../common"

@@ -70,18 +70,6 @@ pub fn set_state_src_needs_regen(value: bool) {
 
 // What directories store the different Worldsong crates?
 
-pub fn get_thirdparty_tools_dir() -> Path {
-    get_tools_dir().join("thirdparty")
-}
-
-pub fn get_rustc_target_dir() -> Path {
-    get_thirdparty_tools_dir().join("rustc").join("bin")
-}
-
-pub fn get_rustc_lib_dir() -> Path {
-    get_thirdparty_tools_dir().join("rustc").join("lib")
-}
-
 pub fn get_rustc_path() -> Path {
     Path::new("rustc")
     //get_rustc_target_dir().join("rustc")
@@ -235,72 +223,68 @@ pub fn get_tools_dir() -> Path {
     get_worldsong_root_dir().join("tools")
 }
 
-pub fn get_compile_builders_dir() -> Path {
-    get_tools_dir().join("builders")
+pub fn get_run_kernel_tool_src_dir() -> Path {
+    get_tools_dir().join("run_kernel")
 }
 
-pub fn get_run_kernel_builder_src_dir() -> Path {
-    get_compile_builders_dir().join("run_kernel")
+pub fn get_run_kernel_tool_target_dir() -> Path {
+    get_run_kernel_tool_src_dir().join("run_kernel")
 }
 
-pub fn get_run_kernel_builder_target_dir() -> Path {
-    get_run_kernel_builder_src_dir().join("run_kernel")
+pub fn get_new_state_struct_tool_src_dir() -> Path {
+    get_tools_dir().join("new_state_struct")
 }
 
-pub fn get_new_state_struct_builder_src_dir() -> Path {
-    get_compile_builders_dir().join("new_state_struct")
+pub fn get_new_state_struct_tool_target_dir() -> Path {
+    get_new_state_struct_tool_src_dir().join("target")
 }
 
-pub fn get_new_state_struct_builder_target_dir() -> Path {
-    get_new_state_struct_builder_src_dir().join("target")
+pub fn get_compile_state_struct_tool_src_dir() -> Path {
+    get_tools_dir().join("compile_state_struct")
 }
 
-pub fn get_compile_state_struct_builder_src_dir() -> Path {
-    get_compile_builders_dir().join("compile_state_struct")
+pub fn get_compile_state_struct_tool_target_dir() -> Path {
+    get_compile_state_struct_tool_src_dir().join("target")
 }
 
-pub fn get_compile_state_struct_builder_target_dir() -> Path {
-    get_compile_state_struct_builder_src_dir().join("target")
+pub fn get_compile_scheduler_tool_src_dir() -> Path {
+    get_tools_dir().join("compile_scheduler")
 }
 
-pub fn get_compile_scheduler_builder_src_dir() -> Path {
-    get_compile_builders_dir().join("compile_scheduler")
+pub fn get_compile_scheduler_tool_target_dir() -> Path {
+    get_compile_scheduler_tool_src_dir().join("target")
 }
 
-pub fn get_compile_scheduler_builder_target_dir() -> Path {
-    get_compile_scheduler_builder_src_dir().join("target")
+pub fn get_compile_schedule_tool_src_dir() -> Path {
+    get_tools_dir().join("compile_schedule")
 }
 
-pub fn get_compile_schedule_builder_src_dir() -> Path {
-    get_compile_builders_dir().join("compile_schedule")
+pub fn get_compile_schedule_tool_target_dir() -> Path {
+    get_compile_schedule_tool_src_dir().join("target")
 }
 
-pub fn get_compile_schedule_builder_target_dir() -> Path {
-    get_compile_schedule_builder_src_dir().join("target")
+pub fn get_compile_process_tool_src_dir() -> Path {
+    get_tools_dir().join("compile_process")
 }
 
-pub fn get_compile_process_builder_src_dir() -> Path {
-    get_compile_builders_dir().join("compile_process")
+pub fn get_compile_process_tool_target_dir() -> Path {
+    get_compile_process_tool_src_dir().join("target")
 }
 
-pub fn get_compile_process_builder_target_dir() -> Path {
-    get_compile_process_builder_src_dir().join("target")
+pub fn get_compile_kernel_tool_src_dir() -> Path {
+    get_tools_dir().join("compile_kernel")
 }
 
-pub fn get_compile_kernel_builder_src_dir() -> Path {
-    get_compile_builders_dir().join("compile_kernel")
+pub fn get_compile_kernel_tool_target_dir() -> Path {
+    get_compile_kernel_tool_src_dir().join("target")
 }
 
-pub fn get_compile_kernel_builder_target_dir() -> Path {
-    get_compile_kernel_builder_src_dir().join("target")
+pub fn get_add_state_struct_tools_dir() -> Path {
+    get_tools_dir().join("add_state_struct")
 }
 
-pub fn get_add_state_struct_builders_dir() -> Path {
-    get_compile_builders_dir().join("add_state_struct")
-}
-
-pub fn get_add_state_struct_builders_target_dir() -> Path {
-    get_add_state_struct_builders_dir().join("target")
+pub fn get_add_state_struct_tools_target_dir() -> Path {
+    get_add_state_struct_tools_dir().join("target")
 }
 
 //TODO: .is_compiling

@@ -9,4 +9,4 @@ name = "run_kernel"
 path = "run_kernel.rs"
 
 [dependencies.worldsong-common]
-path = "./../../../common"
+path = "./../../common"
