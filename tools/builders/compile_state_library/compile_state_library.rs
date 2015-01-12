@@ -56,22 +56,22 @@ fn main() {
     
     // Recompile processes
     for path in hierarchy::get_all_process_src_dirs().iter_mut() {
-        system::run_external_application(&path.join("compile"), Some(vec!["-c"]));
+        system::run(&path.join("compile"), Some(vec!["-c"]));
     }
 
     // Recompile schedules
     for path in hierarchy::get_all_schedule_src_dirs().iter_mut() {
-        system::run_external_application(&path.join("compile"), Some(vec!["-c"]));
+        system::run(&path.join("compile"), Some(vec!["-c"]));
     }
 
     // Recompile the scheduler
-    system::run_external_application(
+    system::run(
         &hierarchy::get_scheduler_src_dir().join("compile"),
         Some(vec!["-c"])
     );
 
     // Recompile kernel
-    system::run_external_application(
+    system::run(
         &hierarchy::get_kernel_src_dir().join("compile"),
         Some(vec!["-c"])
     );

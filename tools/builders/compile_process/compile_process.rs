@@ -38,7 +38,10 @@ fn main() {
     let current_process_filename = current_dir_name.to_string() + "_process.rs";
     let target_path = current_dir.join("target");
 
-    hierarchy::create_fresh_dir(&target_path);
+    match hierarchy::create_fresh_dir(&target_path) {
+        Ok(_) => (),
+        Err(e) => println!("{}", e),
+    };
 
     println!("Compiling {} process", current_dir_name);
 
@@ -74,7 +77,7 @@ fn main() {
         //  If it's not run with --tag, compile all the schedules.
         
         for schedule_src_dir in hierarchy::get_all_schedule_src_dirs().iter() {
-            system::run_external_application(
+            system::run(
                 &schedule_src_dir.join("compile"), 
                 Some(vec!["-c"])
             );

@@ -13,7 +13,7 @@ use std::path::Path;
 [Sunday, November 30, 2014] [12:31:00 ▾] <Kingsqueee>   geofft: awesome!
 */
 
-pub fn run_external_application(app: &Path, args: Option<Vec<&str>>) {
+pub fn run(app: &Path, args: Option<Vec<&str>>) {
     println!("Running {}", app.display());
     let mut command = io::Command::new(app.clone());
     if args.is_some() {

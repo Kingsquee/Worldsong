@@ -73,7 +73,7 @@ fn main() {
 
     if !is_child_builder {
         // Compile the scheduler
-        system::run_external_application(&hierarchy::get_scheduler_src_dir().join(Path::new("compile")), Some(vec!["-c"]));
+        system::run(&hierarchy::get_scheduler_src_dir().join(Path::new("compile")), Some(vec!["-c"]));
         hierarchy::set_is_compiling(false);
     }
 }

@@ -7,10 +7,10 @@ use std::path::Path;
 
 pub fn create_fresh_dir(path: &Path) -> IoResult<()> {
     let mut result: IoResult<()> = Ok(());
-    
+/*    
     result = fs::rmdir_recursive(path);
     if result.is_err() { return result }
-
+*/
     result = fs::mkdir(path, io::USER_RWX);
     if result.is_err() { return result }
     

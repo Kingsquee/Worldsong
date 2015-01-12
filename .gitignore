@@ -8,6 +8,7 @@
 *.exe
 
 # Tool binaries
+add
 generate
 compile
 launch

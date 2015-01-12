@@ -60,25 +60,17 @@ fn main() {
     //println!("Generating add builder for Processes.");
 
     distribute_kernel_builder();
-    println!(" ");
     distribute_generate_state_library_builder();
-    println!(" ");
     distribute_compile_state_library_builder();
-    println!(" ");
     distribute_compile_state_struct_builder();
-    println!(" ");
     distribute_scheduler_builder();
-    println!(" ");
     distribute_schedule_builders();
-    println!(" ");
     distribute_process_builders();
-    println!(" ");
     distribute_run_builder();
-    println!(" ");
     distribute_add_state_struct_builder();
-    println!(" ");
+    
     if compile_everything {
-        //run_common_builder();
+        compile_project();
     }
 }
 
@@ -97,13 +89,12 @@ fn get_cargo_toml_path(path: &Path, builder_name_str: &str) -> Path {
     path.join(builder_name.clone()).join("Cargo.toml")
 }
 
-fn run_common_builder() {
-    let common_compile_builder = hierarchy::get_common_src_dir().join("compile");
+fn compile_project() {
+    println!("Compiling the Common library");
+    cargo_compile(hierarchy::get_common_src_dir().join("Cargo.toml"));
 
-    let mut command = io::Command::new(common_compile_builder.as_str().unwrap());
-    command.cwd(&hierarchy::get_common_src_dir());
-
-    system::execute_command(&mut command);
+    system::run(&hierarchy::get_state_src_dir().join("generate"), None);
+    system::run(&hierarchy::get_state_src_dir().join("compile"), None);
 }
 
 fn distribute_generate_state_library_builder() {
