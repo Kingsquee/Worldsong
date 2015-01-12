@@ -79,20 +79,6 @@ pub fn exec(struct_src_dirs: &Vec<Path>) {
         toml_manifests.insert(dir_name,toml_manifest);
     }
     
-    fn get_version(d: &TomlDependency) -> String {
-        match d {
-            &TomlDependency::Simple(ref version) => {
-                version.clone()
-            }
-            &TomlDependency::Detailed(ref details) => {
-                match details.version {
-                    Some(ref version) => version.clone(),
-                    None => "".to_string()
-                }
-            }
-        }
-    }
-    
     let mut conflicts = Vec::new();
     
     // Wow, this is ugly!
@@ -204,6 +190,20 @@ plugin = true
     // Append it to a default Cargo.toml file and we should be in business.
 
     hierarchy::set_state_cargo_toml_needs_regen(false);
+}
+
+fn get_version(d: &TomlDependency) -> String {
+    match d {
+        &TomlDependency::Simple(ref version) => {
+            version.clone()
+        }
+        &TomlDependency::Detailed(ref details) => {
+            match details.version {
+                Some(ref version) => version.clone(),
+                None => "".to_string()
+            }
+        }
+    }
 }
 
 pub fn parse(toml: &str, file: &Path) -> toml::Table {

@@ -44,6 +44,7 @@ fn main() {
     println!("Compiling scheduler");
 
     let mut command = io::Command::new(hierarchy::get_rustc_path().as_str().unwrap());
+    
     // Link dependencies dirs
     for path in hierarchy::get_dependencies_dirs().iter() {
         command.arg("-L").arg(path.as_str().unwrap());

@@ -15,8 +15,6 @@ use common::hierarchy;
 use common::system;
 use common::settings;
 
-//TODO: redesign for Dependencies.toml
-
 fn main() {
     // Program args
 
@@ -71,10 +69,7 @@ git = \"https://github.com/Kingsquee/data-macro-rs\"
     struct_type_name.push_str("State");
 
     let struct_src_text = format!(
-"#![feature(phase)]
-#[phase(plugin)]
-extern crate data_macro;
-
+"
 data! (
     {} {{
         
@@ -106,7 +101,7 @@ data! (
         None => panic!("Sorry, that editor isn't supported."),
     };
     
-    wraped_editor.cursor(7,8);
+    wraped_editor.cursor(4,8);
     wraped_editor.open(&struct_src_path);
     system::execute_command(&mut wraped_editor.get_command());
 }
