@@ -1,4 +1,6 @@
+# Note: local paths must be relative to /state/, not to this directory.
+
 [dependencies.data_macro]
-git = "https://github.com/Kingsquee/data-macro-rs"
+path = "./../macros/data"
 
 [dependencies.sdl2]

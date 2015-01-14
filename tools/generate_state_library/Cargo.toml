@@ -14,5 +14,5 @@ version = "0.2"
 [dependencies.toml]
 git = "https://github.com/alexcrichton/toml-rs"
 
-[dependencies.worldsong-common]
-path = "./../../common"
+[dependencies.worldsong-environment]
+path = "./../../environment"

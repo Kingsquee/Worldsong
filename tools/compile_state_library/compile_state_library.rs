@@ -1,14 +1,14 @@
 extern crate getopts;
-extern crate common;
+extern crate environment;
 
 use getopts::{optopt,optflag,getopts,OptGroup};
 
 use std::os;
 use std::io;
 
-use common::hierarchy;
-use common::system;
-use common::settings;
+use environment::hierarchy;
+use environment::system;
+use environment::settings;
 
 /// Compiles the state lib, and everything else, wot.
 fn main() {

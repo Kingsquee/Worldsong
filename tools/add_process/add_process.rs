@@ -1,7 +1,7 @@
 extern crate getopts;
 extern crate wraped;
 extern crate collections;
-extern crate common;
+extern crate environment;
 
 use getopts::{optopt,optflag,getopts,OptGroup};
 
@@ -11,9 +11,9 @@ use std::io::fs::File;
 use collections::str::StrExt;
 use wraped::{Editor, EditorTrait};
 
-use common::hierarchy;
-use common::system;
-use common::settings;
+use environment::hierarchy;
+use environment::system;
+use environment::settings;
 
 fn main() {
     // Program args

@@ -1,5 +1,5 @@
 #[macro_use]
-mod schedule_macro;
+extern crate schedule_macro;
 
 schedule!(
     input_process(core, graphics)

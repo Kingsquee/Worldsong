@@ -15,7 +15,7 @@ pub fn execute(core: &mut CoreState, window: &mut GraphicsState) -> () {
             }
         },
         Event::Window(_, _, id, _, _) => {
-            if id as int == event::WindowEventId::FocusGained as int {
+            if id as isize == event::WindowEventId::FocusGained as isize {
                 if window.first_focus {
                     window.first_focus = false;
                     return;

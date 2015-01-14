@@ -1,0 +1,10 @@
+[package]
+
+name = "data_macro"
+version = "0.0.1"
+authors = ["Kingsley Tolmie <kingsley.tolmie@gmail.com>"]
+
+[lib]
+name = "data_macro"
+path = "data_macro.rs"
+crate-type = ["dylib"]

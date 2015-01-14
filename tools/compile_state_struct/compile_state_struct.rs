@@ -1,7 +1,7 @@
-extern crate common;
+extern crate environment;
 
-use common::hierarchy;
-use common::system;
+use environment::hierarchy;
+use environment::system;
 
 // Compiles the struct in the current directory
 fn main() {

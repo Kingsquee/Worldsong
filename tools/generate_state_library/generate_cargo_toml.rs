@@ -4,9 +4,9 @@ use std::io::fs::PathExtensions;
 use std::collections::HashMap;  
 use toml;
 
-use common::hierarchy;
-use common::system;
-use common::settings;
+use environment::hierarchy;
+use environment::system;
+use environment::settings;
 
 #[derive(RustcDecodable, RustcEncodable, Show)]
 struct TomlManifest {
@@ -41,7 +41,7 @@ struct Conflict {
 }
 
 pub fn exec(struct_src_dirs: &Vec<Path>) {
-    println!("Generating the project's common Cargo.toml.");
+    println!("Generating the state's Cargo.toml.");
     
     let mut src_dirs = struct_src_dirs.clone();
     src_dirs.push(hierarchy::get_kernel_src_dir());
@@ -157,6 +157,9 @@ pub fn exec(struct_src_dirs: &Vec<Path>) {
     
     let mut final_manifest = TomlManifest { dependencies: Some(HashMap::new()) };
     for (manifest_name, manifest) in toml_manifests.iter() {
+        if manifest.dependencies.is_none() { 
+            continue 
+        }
         for (dep_name, dep) in manifest.dependencies.as_ref().unwrap().iter() {
             final_manifest.dependencies.as_mut().unwrap().insert(dep_name.clone(), dep.clone());
         }
@@ -188,8 +191,6 @@ plugin = true
     // Can I do this with an Encodable? :D
     // Yep! Create a top-level TomlManifest and convert it to a string
     // Append it to a default Cargo.toml file and we should be in business.
-
-    hierarchy::set_state_cargo_toml_needs_regen(false);
 }
 
 fn get_version(d: &TomlDependency) -> String {

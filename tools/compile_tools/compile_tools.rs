@@ -1,13 +1,13 @@
 extern crate getopts;
-extern crate common;
+extern crate environment;
 
 use getopts::{optopt,optflag,getopts,OptGroup};
 use std::os;
 use std::io;
 
-use common::hierarchy;
-use common::system;
-use common::settings;
+use environment::hierarchy;
+use environment::system;
+use environment::settings;
 
 /// Compiles the kernel, duh.
 fn main() {
@@ -25,40 +25,44 @@ fn main() {
     };
 
     if matches.opt_present("a") {
+        println!("FOUND A FLAG");
         compile_everything = true
     };
 
     let tools_dir = hierarchy::get_tools_dir();
 
     println!("Generating run tool for Kernel.");
-    cargo_compile(get_cargo_toml_path(&tools_dir, "run_kernel"));
+    cargo_compile(&get_cargo_toml_path(&tools_dir, "run_kernel"));
     
     println!("Generating Cargo.toml tool for the State library.");
-    cargo_compile(get_cargo_toml_path(&tools_dir, "generate_state_library"));
+    cargo_compile(&get_cargo_toml_path(&tools_dir, "generate_state_library"));
 
     println!("Generating compilation tool for the State library.");
-    cargo_compile(get_cargo_toml_path(&tools_dir, "compile_state_library"));
+    cargo_compile(&get_cargo_toml_path(&tools_dir, "compile_state_library"));
     
     println!("Generating compilation tool for the State Struct libraries");
-    cargo_compile(get_cargo_toml_path(&tools_dir, "compile_state_struct"));
+    cargo_compile(&get_cargo_toml_path(&tools_dir, "compile_state_struct"));
 
     println!("Generating compilation tool for the Kernel.");
-    cargo_compile(get_cargo_toml_path(&tools_dir, "compile_kernel"));
+    cargo_compile(&get_cargo_toml_path(&tools_dir, "compile_kernel"));
 
     println!("Generating compilation tool for the Scheduler.");
-    cargo_compile(get_cargo_toml_path(&tools_dir, "compile_scheduler"));
+    cargo_compile(&get_cargo_toml_path(&tools_dir, "compile_scheduler"));
 
     println!("Generating compilation tool for Schedules.");
-    cargo_compile(get_cargo_toml_path(&tools_dir, "compile_schedule"));
+    cargo_compile(&get_cargo_toml_path(&tools_dir, "compile_schedule"));
 
     println!("Generating compilation tool for Processes.");
-    cargo_compile(get_cargo_toml_path(&tools_dir, "compile_process"));
+    cargo_compile(&get_cargo_toml_path(&tools_dir, "compile_process"));
+    
+    println!("Generating compilation tool for Macros.");
+    cargo_compile(&get_cargo_toml_path(&tools_dir, "compile_macro"));
     
     println!("Generating add tool for State Structs.");
-    cargo_compile(get_cargo_toml_path(&tools_dir, "add_state_struct"));
+    cargo_compile(&get_cargo_toml_path(&tools_dir, "add_state_struct"));
     
     println!("Generating add tool for Processes.");
-    cargo_compile(get_cargo_toml_path(&tools_dir, "add_process"));
+    cargo_compile(&get_cargo_toml_path(&tools_dir, "add_process"));
     
     distribute_kernel_tool();
     distribute_generate_state_library_tool();
@@ -67,6 +71,7 @@ fn main() {
     distribute_scheduler_tool();
     distribute_schedule_tools();
     distribute_process_tools();
+    distribute_macro_tools();
     distribute_run_tool();
     distribute_add_state_struct_tool();
     distribute_add_process_tool();
@@ -77,9 +82,15 @@ fn main() {
 }
 
 fn compile_project() {
-    println!("Compiling the Common library");
-    cargo_compile(hierarchy::get_common_src_dir().join("Cargo.toml"));
-
+    println!("Compiling the environment library");
+    cargo_compile(&hierarchy::get_environment_src_dir().join("Cargo.toml"));
+    
+    println!("Compiling the macro libraries");
+    for path in hierarchy::get_all_macro_src_dirs().iter() {
+        let compile_path = path.clone().join("compile");
+        system::run(&compile_path, None);
+    }
+    
     system::run(&hierarchy::get_state_src_dir().join("generate"), None);
     system::run(&hierarchy::get_state_src_dir().join("compile"), None);
 }
@@ -191,6 +202,20 @@ fn distribute_process_tools() {
     }
 }
 
+fn distribute_macro_tools() {
+    println!("Distributing compilation tools for the Macros.");
+
+    let file_origin = get_bin_path(&hierarchy::get_tools_dir(), "compile_macro");
+    
+    for dir in hierarchy::get_all_macro_src_dirs().iter() {
+        let file_destination = dir.clone().join("compile");
+        match io::fs::copy(&file_origin, &file_destination) {
+            Ok(_) => println!("    Copied {} to {}", file_origin.filename_str().unwrap(), file_destination.as_str().unwrap()),
+            Err(e) => println!("    {}", e),
+        }
+    }
+}
+
 fn distribute_run_tool() {
     println!("Distributing run tool for the Kernel.");
 
@@ -227,7 +252,7 @@ fn distribute_add_process_tool() {
     }
 }
 
-fn compile(tool_filename: Path) {
+fn compile(tool_filename: &Path) {
 
     let mut target_dir: Path = tool_filename.clone();
     target_dir.pop();
@@ -237,17 +262,17 @@ fn compile(tool_filename: Path) {
 
     let mut command = io::Command::new(hierarchy::get_rustc_path().as_str().unwrap());
     command.arg("--out-dir").arg(target_dir.as_str().unwrap());
-    command.arg(tool_filename);
+    command.arg(tool_filename.as_str().unwrap());
 
     system::execute_command(&mut command);
 }
 
-fn cargo_compile(cargo_toml_path: Path) {
+fn cargo_compile(cargo_toml_path: &Path) {
 
     let mut command = io::Command::new(hierarchy::get_cargo_path().as_str().unwrap());
     command.arg("build");
     command.arg("--manifest-path");
-    command.arg(cargo_toml_path);
+    command.arg(cargo_toml_path.as_str().unwrap());
 
     system::execute_command(&mut command);
 }

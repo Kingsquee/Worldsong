@@ -1,5 +1,4 @@
-#![macro_use]
-
+#[macro_export]
 macro_rules! schedule {
     ($($process_name:ident($($param:ident),+))+) => {
         mod _hack {

@@ -1,7 +1,7 @@
 extern crate getopts;
 extern crate wraped;
 extern crate collections;
-extern crate common;
+extern crate environment;
 
 use getopts::{optopt,optflag,getopts,OptGroup};
 
@@ -11,9 +11,9 @@ use std::io::fs::File;
 use collections::str::StrExt;
 use wraped::{Editor, EditorTrait};
 
-use common::hierarchy;
-use common::system;
-use common::settings;
+use environment::hierarchy;
+use environment::system;
+use environment::settings;
 
 fn main() {
     // Program args
@@ -49,8 +49,10 @@ fn main() {
     let dependencies_toml_path = struct_dir.clone().join("Dependencies.toml");
     let mut dependencies_toml_file = File::create(&dependencies_toml_path).unwrap();
     let dependencies_toml_text = format!(
-"[dependencies.data_macro]
-git = \"https://github.com/Kingsquee/data-macro-rs\"
+"# Note: local paths must be relative to /state/, not to this directory.
+
+[dependencies.data_macro]
+path = \"./../macros/data\"
 ");
 
     dependencies_toml_file.write_str(dependencies_toml_text.as_slice()).unwrap();
@@ -89,10 +91,6 @@ data! (
             panic!("{}", e)
         }
     }
-    
-    // set the tags that state needs regen
-    hierarchy::set_state_src_needs_regen(true);
-    hierarchy::set_state_cargo_toml_needs_regen(true);
 
     // Open the text file in editor of choice
     if editor.is_none() { return }

@@ -1,13 +1,13 @@
 extern crate getopts;
-extern crate common;
+extern crate environment;
 
 use getopts::{optopt,optflag,getopts,OptGroup};
 use std::os;
 use std::io;
 
-use common::hierarchy;
-use common::system;
-use common::settings;
+use environment::hierarchy;
+use environment::system;
+use environment::settings;
 
 /// Compiles the process in the current directory
 fn main() {
@@ -17,7 +17,7 @@ fn main() {
 
     let args: Vec<String> = os::args();
     let opts = &[
-        optflag("c", "child", "Run as a child compilation tool: i.e. Don't recompile dependent modules and don't modify the .iscompiling file.")
+        optflag("c", "child", "Run as a child compilation tool: i.e. Don't recompile dependent modules and don't modify the .is_compiling file.")
     ];
     let matches = match getopts(args.tail(), opts) {
         Ok(m) => { m }
@@ -49,7 +49,7 @@ fn main() {
     command.cwd(&current_dir);
 
     // Link dependencies dirs
-    for path in hierarchy::get_dependencies_dirs().iter() {
+    for path in hierarchy::get_state_dependency_dirs().iter() {
         command.arg("-L").arg(path.as_str().unwrap());
     }
     

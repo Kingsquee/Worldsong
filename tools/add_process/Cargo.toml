@@ -11,5 +11,5 @@ path = "add_process.rs"
 [dependencies.wraped]
 git = "https://github.com/Kingsquee/wraped"
 
-[dependencies.worldsong-common]
-path = "./../../common"
+[dependencies.worldsong-environment]
+path = "./../../environment"

@@ -1,12 +1,12 @@
-extern crate common;
+extern crate environment;
 
 use std::os;
 use std::io;
 use std::io::fs::PathExtensions;
 
-use common::hierarchy;
-use common::system;
-use common::settings;
+use environment::hierarchy;
+use environment::system;
+use environment::settings;
 
 fn main() {
     let kernel_target_dir = hierarchy::get_kernel_target_dir();
@@ -30,12 +30,12 @@ fn main() {
         }
     };
 
-    // common target dir. JUST IN CASE.
-    ld_library_paths.push_str(hierarchy::get_common_target_dir().as_str().unwrap());
+    // environment target dir. JUST IN CASE.
+    ld_library_paths.push_str(hierarchy::get_environment_target_dir().as_str().unwrap());
     ld_library_paths.push_str(":");
     
     // shared dependencies 
-    for dir in hierarchy::get_dependencies_dirs().iter() {
+    for dir in hierarchy::get_state_dependency_dirs().iter() {
         ld_library_paths.push_str(dir.as_str().unwrap());
         ld_library_paths.push_str(":");
     }

@@ -8,5 +8,5 @@ authors = ["Kingsley Tolmie <kingsley.tolmie@gmail.com>"]
 name = "run_kernel"
 path = "run_kernel.rs"
 
-[dependencies.worldsong-common]
-path = "./../../common"
+[dependencies.worldsong-environment]
+path = "./../../environment"

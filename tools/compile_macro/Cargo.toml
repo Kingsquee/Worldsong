@@ -1,15 +1,12 @@
 [package]
 
-name = "add_state_struct"
+name = "compile_macro"
 version = "0.0.1"
 authors = ["Kingsley Tolmie <kingsley.tolmie@gmail.com>"]
 
 [[bin]]
-name = "add_state_struct"
-path = "add_state_struct.rs"
-
-[dependencies.wraped]
-git = "https://github.com/Kingsquee/wraped"
+name = "compile_macro"
+path = "compile_macro.rs"
 
 [dependencies.worldsong-environment]
 path = "./../../environment"

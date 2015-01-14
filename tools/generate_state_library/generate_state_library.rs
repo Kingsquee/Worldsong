@@ -1,10 +1,10 @@
 extern crate "rustc-serialize" as rustc_serialize;
 extern crate toml;
-extern crate common;
+extern crate environment;
 
-use common::hierarchy;
-use common::system;
-use common::settings;
+use environment::hierarchy;
+use environment::system;
+use environment::settings;
 
 mod generate_cargo_toml;
 mod generate_source;

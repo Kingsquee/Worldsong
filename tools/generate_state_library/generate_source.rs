@@ -1,6 +1,6 @@
 use std::io::File;
 
-use common::hierarchy;
+use environment::hierarchy;
 
 pub fn exec(struct_src_dirs: &Vec<Path>) {
     
@@ -69,6 +69,4 @@ extern crate data_macro;\n\n"
     let mut state_src_file = File::create(&hierarchy::get_state_src_dir().join("state.rs"));
     state_src_file.write_str(state_src_text.as_slice()).unwrap();
     state_src_file.flush().unwrap();
-    
-    hierarchy::set_state_src_needs_regen(false);
 }

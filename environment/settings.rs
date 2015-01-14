@@ -19,3 +19,7 @@ pub fn get_struct_lib_type() -> &'static str {
 pub fn get_state_lib_type() -> &'static str {
     "dylib"
 }
+
+pub fn get_macro_lib_type() -> &'static str {
+    "dylib"
+}

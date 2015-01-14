@@ -14,7 +14,7 @@ data! {
     }
 }
 
-pub fn init_renderer(title: &str, width: int, height: int) -> Renderer {
+pub fn init_renderer(title: &str, width: isize, height: isize) -> Renderer {
     let window = sdl2::video::Window::new(title, sdl2::video::WindowPos::PosCentered, sdl2::video::WindowPos::PosCentered, width, height, sdl2::video::OPENGL).unwrap();
     let renderer = sdl2::render::Renderer::from_window(window, sdl2::render::RenderDriverIndex::Auto, sdl2::render::ACCELERATED).unwrap();
     renderer

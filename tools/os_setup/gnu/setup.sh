@@ -7,5 +7,4 @@ cd ./../../compile_tools &&
 mkdir -p ./target &&
 cargo build &&
 echo "Running..." &&
-cd ./target &&
-./compile_tools --all
+cargo run -- --all

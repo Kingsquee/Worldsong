@@ -35,39 +35,6 @@ pub fn set_is_compiling(value: bool) {
     }
 }
 
-//TODO: Make this safe
-pub fn set_state_cargo_toml_needs_regen(value: bool) {
-    match value { 
-        true => { io::File::create(&get_state_cargo_toml_needs_regen_tag()).unwrap(); }
-        false => { 
-            match fs::unlink(&get_state_cargo_toml_needs_regen_tag()) {
-                Ok(_) => (),
-                Err(e) => match e.kind {
-                    IoErrorKind::FileNotFound => (),
-                    _ => panic!("{}", e),
-                }
-            }
-        }
-    }
-}
-
-//TODO: Make this safe
-pub fn set_state_src_needs_regen(value: bool) {
-    match value { 
-        true => { io::File::create(&get_state_src_needs_regen_tag()).unwrap(); }
-        false => { 
-            match fs::unlink(&get_state_src_needs_regen_tag()) {
-                Ok(_) => (),
-                Err(e) => match e.kind {
-                    IoErrorKind::FileNotFound => (),
-                    _ => panic!("{}", e),
-                }
-            }
-        }
-    }
-}
-
-
 // What directories store the different Worldsong crates?
 
 pub fn get_rustc_path() -> Path {
@@ -80,6 +47,8 @@ pub fn get_cargo_path() -> Path {
     //get_thirdparty_tools_dir().join("cargo").join("bin").join("cargo")
 }
 
+// Worldsong Modules
+
 // TODO: Only do this Once
 // http://doc.rust-lang.org/std/sync/struct.Once.html
 pub fn get_worldsong_root_dir() -> Path {
@@ -89,7 +58,6 @@ pub fn get_worldsong_root_dir() -> Path {
         let contents = fs::readdir(&current_dir).unwrap();
         for entry in contents.iter() {
             if entry.is_file() && entry.filename_str().unwrap() == ".wsroot" {
-                //println!("Worldsong root is {}", current_dir.display());
                 return current_dir
             }
         }
@@ -99,12 +67,12 @@ pub fn get_worldsong_root_dir() -> Path {
     }
 }
 
-pub fn get_common_src_dir() -> Path {
-    get_worldsong_root_dir().join("common")
+pub fn get_environment_src_dir() -> Path {
+    get_worldsong_root_dir().join("environment")
 }
 
-pub fn get_common_target_dir() -> Path {
-    get_common_src_dir().join("target")
+pub fn get_environment_target_dir() -> Path {
+    get_environment_src_dir().join("target")mm
 }
 
 pub fn get_state_src_dir() -> Path {
@@ -115,7 +83,7 @@ pub fn get_state_target_dir() -> Path {
     get_state_src_dir().join("target")
 }
 
-pub fn get_dependencies_dirs() -> Vec<Path> {
+pub fn get_state_dependency_dirs() -> Vec<Path> {
     let mut vec = Vec::new();
     vec.push(get_state_target_dir().join("deps"));
     vec.push(get_state_target_dir().join("native"));
@@ -219,6 +187,32 @@ pub fn get_all_process_target_dirs() -> Vec<Path> {
     dirs
 }
 
+pub fn get_macros_dir() -> Path {
+    get_worldsong_root_dir().join("macros")
+}
+
+pub fn get_all_macro_src_dirs() -> Vec<Path> {
+    let macros_dir = get_macros_dir();
+    let mut dirs: Vec<Path> = Vec::new();
+
+    for entry in fs::readdir(&macros_dir).unwrap().iter() {
+        if entry.is_dir() {
+            dirs.push(entry.clone());
+        }
+    }
+    dirs
+}
+
+pub fn get_all_macro_target_dirs() -> Vec<Path> {
+    let mut dirs = get_all_macro_src_dirs();
+    for entry in dirs.iter_mut() {
+        entry.push("target")
+    }
+    dirs
+}
+
+// Worldsong Tools
+
 pub fn get_tools_dir() -> Path {
     get_worldsong_root_dir().join("tools")
 }
@@ -287,15 +281,8 @@ pub fn get_add_state_struct_tools_target_dir() -> Path {
     get_add_state_struct_tools_dir().join("target")
 }
 
-//TODO: .is_compiling
+// Worldsong Flags
+
 pub fn get_is_compiling_tag() -> Path {
-    get_worldsong_root_dir().join(".iscompiling")
-}
-
-pub fn get_state_cargo_toml_needs_regen_tag() -> Path {
-    get_state_src_dir().join(".cargo_toml_needs_regen")
-}
-
-pub fn get_state_src_needs_regen_tag() -> Path {
-    get_state_src_dir().join(".src_needs_regen")
+    get_worldsong_root_dir().join(".is_compiling")
 }
