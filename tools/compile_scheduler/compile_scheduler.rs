@@ -39,7 +39,7 @@ fn main() {
     let scheduler_filename = current_dir_name.to_string() + ".rs";
     let target_path = current_dir.join("target");
 
-    hierarchy::create_fresh_dir(&target_path);
+    hierarchy::create_fresh_dir(&target_path).unwrap();
 
     println!("Compiling scheduler");
 

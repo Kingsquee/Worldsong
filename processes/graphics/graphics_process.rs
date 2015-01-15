@@ -12,7 +12,7 @@ pub fn execute(sim: &mut SimulationState, window: &GraphicsState) -> () {
     // re-focusing the Worldsong window.
     sim.color_r -= 1;
     sim.color_g -= 1;
-    sim.color_b -= 1;
+    sim.color_b -= 10;
     
     // Your changes will be visible immediately. :)
     let _ = renderer.set_draw_color(Color::RGB(sim.color_r, sim.color_g, sim.color_b));

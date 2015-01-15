@@ -39,7 +39,7 @@ fn main() {
     let src_filename = current_dir_name.to_string() + ".rs";
     let target_path = current_dir.join("target");
 
-    hierarchy::create_fresh_dir(&target_path);
+    hierarchy::create_fresh_dir(&target_path).unwrap();
 
     println!("Compiling kernel");
 
@@ -47,6 +47,11 @@ fn main() {
     
     // Link environment dir
     command.arg("-L").arg(hierarchy::get_environment_target_dir().as_str().unwrap());
+    
+    // Link macro dirs
+    for path in hierarchy::get_all_macro_target_dirs().iter() {
+        command.arg("-L").arg(path.as_str().unwrap());
+    }
 
     // Link dependencies dirs
     for path in hierarchy::get_state_dependency_dirs().iter() {

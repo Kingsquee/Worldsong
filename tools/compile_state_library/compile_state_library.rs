@@ -36,7 +36,7 @@ fn main() {
     let target_path = current_dir.join("target");
     let source_filename = current_dir_name.to_string() + ".rs";
 
-    hierarchy::create_fresh_dir(&target_path);
+    hierarchy::create_fresh_dir(&target_path).unwrap();
 
     println!("Compiling the State library");
 

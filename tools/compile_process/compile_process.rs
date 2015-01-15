@@ -38,10 +38,7 @@ fn main() {
     let current_process_filename = current_dir_name.to_string() + "_process.rs";
     let target_path = current_dir.join("target");
 
-    match hierarchy::create_fresh_dir(&target_path) {
-        Ok(_) => (),
-        Err(e) => println!("{}", e),
-    };
+    hierarchy::create_fresh_dir(&target_path).unwrap();
 
     println!("Compiling {} process", current_dir_name);
 
@@ -71,7 +68,7 @@ fn main() {
     if !is_child_tool {
         // Compile ALL the schedules. 
         
-        // TODO: Run these commands in parallel, not in sequence.
+        // TODO: Run these commands in parallel, not in sequence?
         
         // TODO: Processes should be optionally tagged with which schedules they're in.
         //  If it's not run with --tag, compile all the schedules.

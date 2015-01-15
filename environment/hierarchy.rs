@@ -6,29 +6,39 @@ use std::io::fs::PathExtensions;
 use std::path::Path;
 
 pub fn create_fresh_dir(path: &Path) -> IoResult<()> {
-    let mut result: IoResult<()> = Ok(());
-/*    
-    result = fs::rmdir_recursive(path);
-    if result.is_err() { return result }
-*/
-    result = fs::mkdir(path, io::USER_RWX);
-    if result.is_err() { return result }
+    match fs::rmdir_recursive(path) {
+        Ok(_) => (),
+        Err(e) => match e.kind {
+            IoErrorKind::FileNotFound => (),
+            _ => { 
+                return Err(e)
+            }
+        }
+    };
+
+    match fs::mkdir(path, io::USER_RWX) {
+        Ok(_) => (),
+        Err(e) => match e.kind {
+            IoErrorKind::PathAlreadyExists => (),
+            _ => return Err(e),
+        }
+    };
     
-    result
+    Ok(())
 }
 
-//TODO: Make this safe
-pub fn set_is_compiling(value: bool) {
+pub fn set_is_compiling(value: bool) -> IoResult<()> {
     match value {
         true => { 
             io::File::create(&get_is_compiling_tag()).unwrap();
+            Ok(())
         }
         false => { 
             match fs::unlink(&get_is_compiling_tag()) {
-                Ok(_) => (),
+                Ok(o) => Ok(o),
                 Err(e) => match e.kind {
-                    IoErrorKind::FileNotFound => (),
-                    _ => panic!("{}", e),
+                    IoErrorKind::FileNotFound => Ok(()),
+                    _ => return Err(e),
                 }
             }
         }
@@ -39,32 +49,44 @@ pub fn set_is_compiling(value: bool) {
 
 pub fn get_rustc_path() -> Path {
     Path::new("rustc")
-    //get_rustc_target_dir().join("rustc")
 }
 
 pub fn get_cargo_path() -> Path {
     Path::new("cargo")
-    //get_thirdparty_tools_dir().join("cargo").join("bin").join("cargo")
 }
 
 // Worldsong Modules
 
-// TODO: Only do this Once
-// http://doc.rust-lang.org/std/sync/struct.Once.html
-pub fn get_worldsong_root_dir() -> Path {
-    let mut current_dir = os::self_exe_path().unwrap();
+// TODO: When CTFE gets here, make these all statics.
 
-    loop {
-        let contents = fs::readdir(&current_dir).unwrap();
-        for entry in contents.iter() {
-            if entry.is_file() && entry.filename_str().unwrap() == ".wsroot" {
-                return current_dir
+lazy_static!{
+    static ref WSROOT: Path = {
+    
+        let mut current_dir = os::self_exe_path().unwrap();
+
+        let mut wsroot = None;
+        'l: loop {
+            let contents = fs::readdir(&current_dir).unwrap();
+            for entry in contents.iter() {
+                if entry.is_file() && entry.filename_str().unwrap() == ".wsroot" {
+                    wsroot = Some(current_dir);
+                    break 'l
+                }
+            }
+            if !current_dir.pop() {
+                break 'l
             }
         }
-        if !current_dir.pop() {
-            panic!("ERROR: Could not find worldsong root. Was the .wsroot file removed?");
+        
+        match wsroot {
+            Some(wsroot) => wsroot,
+            None => panic!("ERROR: Could not find worldsong root. Was the .wsroot file removed?"),
         }
-    }
+    };
+}
+
+pub fn get_worldsong_root_dir() -> Path {
+    WSROOT.clone()
 }
 
 pub fn get_environment_src_dir() -> Path {
@@ -72,7 +94,7 @@ pub fn get_environment_src_dir() -> Path {
 }
 
 pub fn get_environment_target_dir() -> Path {
-    get_environment_src_dir().join("target")mm
+    get_environment_src_dir().join("target")
 }
 
 pub fn get_state_src_dir() -> Path {

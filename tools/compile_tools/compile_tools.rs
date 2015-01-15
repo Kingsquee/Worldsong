@@ -25,7 +25,6 @@ fn main() {
     };
 
     if matches.opt_present("a") {
-        println!("FOUND A FLAG");
         compile_everything = true
     };
 
