@@ -57,6 +57,9 @@ fn main() {
     println!("Generating compilation tool for Macros.");
     cargo_compile(&get_cargo_toml_path(&tools_dir, "compile_macro"));
     
+    println!("Generating schedule tagging tool for Processes.");
+    cargo_compile(&get_cargo_toml_path(&tools_dir, "generate_schedule_tags"));
+    
     println!("Generating add tool for State Structs.");
     cargo_compile(&get_cargo_toml_path(&tools_dir, "add_state_struct"));
     
