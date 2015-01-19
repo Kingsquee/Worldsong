@@ -8,7 +8,7 @@ authors = ["Kingsley Tolmie <kingsley.tolmie@gmail.com>"]
 name = "generate_schedule_tags"
 path = "generate_schedule_tags.rs"
 
-[dependencies.worldsong-environment]
-path = "./../../environment"
+[dependencies.worldsong-common]
+path = "./../../common"
 
 [dependencies.regex]

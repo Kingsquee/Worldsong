@@ -1,6 +1,6 @@
 use std::io::File;
 
-use environment::hierarchy;
+use common::hierarchy;
 
 pub fn exec(struct_src_dirs: &Vec<Path>) {
     

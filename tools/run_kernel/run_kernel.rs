@@ -1,12 +1,12 @@
-extern crate environment;
+extern crate common;
 
 use std::os;
 use std::io;
 use std::io::fs::PathExtensions;
 
-use environment::hierarchy;
-use environment::system;
-use environment::settings;
+use common::hierarchy;
+use common::system;
+use common::settings;
 
 fn main() {
     let kernel_target_dir = hierarchy::get_kernel_target_dir();
@@ -26,12 +26,12 @@ fn main() {
             ld_library_paths.push_str(":");
         }
         None => {
-            println!("{} is not defined in the environment.", key)
+            println!("{} is not defined in the common.", key)
         }
     };
 
-    // environment target dir. JUST IN CASE.
-    ld_library_paths.push_str(hierarchy::get_environment_target_dir().as_str().unwrap());
+    // common target dir. JUST IN CASE.
+    ld_library_paths.push_str(hierarchy::get_common_target_dir().as_str().unwrap());
     ld_library_paths.push_str(":");
     
     // shared dependencies 

@@ -1,5 +1,5 @@
 extern crate state;
-extern crate environment;
+extern crate common;
 extern crate time;
 
 use std::dynamic_lib::DynamicLibrary;
@@ -10,7 +10,7 @@ use std::io::File;
 use state::Data;
 use std::time::duration::Duration;
 
-use environment::hierarchy;
+use common::hierarchy;
 
 fn main() {
     //let data_dylib_path = find_data_dylib().unwrap();
@@ -68,11 +68,11 @@ fn main() {
 /*
 fn find_data_dylib() -> Option<Path> {
     // look in target dir
-    let environment_target_dir = environment::fs::get_environment_target_dir();
+    let common_target_dir = common::fs::get_common_target_dir();
     // find the dylib
-    let contents = fs::readdir(&environment_target_dir).unwrap();
+    let contents = fs::readdir(&common_target_dir).unwrap();
     for entry in contents.iter() {
-        if entry.filename_str().unwrap().starts_with("libenvironment") {
+        if entry.filename_str().unwrap().starts_with("libcommon") {
             return Some(entry.clone())
         }
     }

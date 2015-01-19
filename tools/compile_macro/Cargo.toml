@@ -8,5 +8,5 @@ authors = ["Kingsley Tolmie <kingsley.tolmie@gmail.com>"]
 name = "compile_macro"
 path = "compile_macro.rs"
 
-[dependencies.worldsong-environment]
-path = "./../../environment"
+[dependencies.worldsong-common]
+path = "./../../common"

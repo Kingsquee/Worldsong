@@ -1,7 +1,7 @@
-extern crate environment;
+extern crate common;
 extern crate regex;
 
-use environment::hierarchy;
+use common::hierarchy;
 use std::collections::{HashSet, HashMap};
 use std::io::{File, Command};
 use std::str::StrExt;

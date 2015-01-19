@@ -4,9 +4,9 @@ use std::io::fs::PathExtensions;
 use std::collections::HashMap;  
 use toml;
 
-use environment::hierarchy;
-use environment::system;
-use environment::settings;
+use common::hierarchy;
+use common::system;
+use common::settings;
 
 #[derive(RustcDecodable, RustcEncodable, Show)]
 struct TomlManifest {

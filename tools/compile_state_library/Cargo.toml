@@ -8,5 +8,5 @@ authors = ["Kingsley Tolmie <kingsley.tolmie@gmail.com>"]
 name = "compile_state_library"
 path = "compile_state_library.rs"
 
-[dependencies.worldsong-environment]
-path = "./../../environment"
+[dependencies.worldsong-common]
+path = "./../../common"

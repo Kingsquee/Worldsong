@@ -1,13 +1,13 @@
 extern crate getopts;
-extern crate environment;
+extern crate common;
 
 use getopts::{optopt,optflag,getopts,OptGroup};
 use std::os;
 use std::io;
 
-use environment::hierarchy;
-use environment::system;
-use environment::settings;
+use common::hierarchy;
+use common::system;
+use common::settings;
 
 /// Compiles the kernel, duh.
 fn main() {
@@ -84,8 +84,8 @@ fn main() {
 }
 
 fn compile_project() {
-    println!("Compiling the environment library");
-    cargo_compile(&hierarchy::get_environment_src_dir().join("Cargo.toml"));
+    println!("Compiling the common library");
+    cargo_compile(&hierarchy::get_common_src_dir().join("Cargo.toml"));
     
     println!("Compiling the macro libraries");
     for path in hierarchy::get_all_macro_src_dirs().iter() {

@@ -59,22 +59,9 @@ pub fn set_is_compiling(value: bool) -> IoResult<()> {
     }
 }
 
-// What directories store the different Worldsong crates?
-
-pub fn get_rustc_path() -> Path {
-    Path::new("rustc")
-}
-
-pub fn get_cargo_path() -> Path {
-    Path::new("cargo")
-}
-
 // Worldsong Modules
-
-// TODO: When CTFE gets here, make these all statics.
-
 lazy_static!{
-    static ref WSROOT: Path = {
+    static ref WORLDSONG_ROOT_DIR: Path = {
     
         let mut current_dir = os::self_exe_path().unwrap();
 
@@ -100,23 +87,29 @@ lazy_static!{
 }
 
 pub fn get_worldsong_root_dir() -> Path {
-    WSROOT.clone()
+    WORLDSONG_ROOT_DIR.clone()
 }
 
-pub fn get_environment_src_dir() -> Path {
-    get_worldsong_root_dir().join("environment")
+// common
+define_str!(COMMON_SRC_DIR, "common");
+pub fn get_common_src_dir() -> Path {
+    WORLDSONG_ROOT_DIR.join(COMMON_SRC_DIR)
 }
 
-pub fn get_environment_target_dir() -> Path {
-    get_environment_src_dir().join("target")
+define_str!(COMMON_TARGET_DIR, COMMON_SRC_DIR!(), "/target");
+pub fn get_common_target_dir() -> Path {
+    WORLDSONG_ROOT_DIR.join(COMMON_TARGET_DIR)
 }
 
+// state
+define_str!(STATE_SRC_DIR, "state");
 pub fn get_state_src_dir() -> Path {
-    get_worldsong_root_dir().join("state")
+    WORLDSONG_ROOT_DIR.join(STATE_SRC_DIR)
 }
 
+define_str!(STATE_TARGET_DIR, STATE_SRC_DIR!(), "/target");
 pub fn get_state_target_dir() -> Path {
-    get_state_src_dir().join("target")
+    WORLDSONG_ROOT_DIR.join(STATE_TARGET_DIR)
 }
 
 pub fn get_state_dependency_dirs() -> Vec<Path> {
@@ -126,8 +119,11 @@ pub fn get_state_dependency_dirs() -> Vec<Path> {
     vec
 }
 
+
+// structs
+define_str!(STRUCTS_DIR, "structs");
 pub fn get_structs_dir() -> Path {
-    get_worldsong_root_dir().join("structs")
+    WORLDSONG_ROOT_DIR.join(STRUCTS_DIR)
 }
 
 pub fn get_all_struct_src_dirs() -> Vec<Path> {
@@ -160,24 +156,35 @@ pub fn get_all_struct_dep_dirs() -> Vec<Path> {
     dirs
 }
 
+
+// kernel
+define_str!(KERNEL_SRC_DIR, "kernel");
 pub fn get_kernel_src_dir() -> Path {
-    get_worldsong_root_dir().join("kernel")
+    WORLDSONG_ROOT_DIR.join(KERNEL_SRC_DIR)
 }
 
+define_str!(KERNEL_TARGET_DIR, KERNEL_SRC_DIR!(), "/target");
 pub fn get_kernel_target_dir() -> Path {
-    get_kernel_src_dir().join("target")
+    WORLDSONG_ROOT_DIR.join(KERNEL_TARGET_DIR)
 }
+
+// scheduler
+define_str!(SCHEDULER_SRC_DIR, "scheduler");
 
 pub fn get_scheduler_src_dir() -> Path {
-    get_worldsong_root_dir().join("scheduler")
+    WORLDSONG_ROOT_DIR.join(SCHEDULER_SRC_DIR)
 }
+
+define_str!(SCHEDULER_TARGET_DIR, SCHEDULER_SRC_DIR!(), "/target");
 
 pub fn get_scheduler_target_dir() -> Path {
-    get_scheduler_src_dir().join("target")
+    WORLDSONG_ROOT_DIR.join(SCHEDULER_TARGET_DIR)
 }
 
+// schedules
+define_str!(SCHEDULES_DIR, "schedules");
 pub fn get_schedules_dir() -> Path {
-    get_worldsong_root_dir().join("schedules")
+    WORLDSONG_ROOT_DIR.join(SCHEDULES_DIR)
 }
 
 pub fn get_all_schedule_src_dirs() -> Vec<Path> {
@@ -199,8 +206,10 @@ pub fn get_all_schedule_target_dirs() -> Vec<Path> {
     dirs
 }
 
+// processes
+define_str!(PROCESSES_DIR, "processes");
 pub fn get_processes_dir() -> Path {
-    get_worldsong_root_dir().join("processes")
+    WORLDSONG_ROOT_DIR.join(PROCESSES_DIR)
 }
 
 pub fn get_all_process_src_dirs() -> Vec<Path> {
@@ -223,8 +232,10 @@ pub fn get_all_process_target_dirs() -> Vec<Path> {
     dirs
 }
 
+// macros
+define_str!(MACROS_DIR, "macros");
 pub fn get_macros_dir() -> Path {
-    get_worldsong_root_dir().join("macros")
+    WORLDSONG_ROOT_DIR.join(MACROS_DIR)
 }
 
 pub fn get_all_macro_src_dirs() -> Vec<Path> {
@@ -249,80 +260,111 @@ pub fn get_all_macro_target_dirs() -> Vec<Path> {
 
 // Worldsong Tools
 
-pub fn get_tools_dir() -> Path {
-    get_worldsong_root_dir().join("tools")
+define_str!(RUSTC_PATH, "rustc");
+pub fn get_rustc_path() -> Path {
+    Path::new(RUSTC_PATH)
 }
 
+define_str!(CARGO_PATH, "cargo");
+pub fn get_cargo_path() -> Path {
+    Path::new(CARGO_PATH)
+}
+
+// Worldsong Tools
+define_str!(TOOLS_DIR, "tools");
+pub fn get_tools_dir() -> Path {
+    WORLDSONG_ROOT_DIR.join(TOOLS_DIR)
+}
+
+define_str!(RUN_KERNEL_TOOL_SRC_DIR, TOOLS_DIR!(), "/run_kernel");
+define_str!(RUN_KERNEL_TOOL_TARGET_DIR, RUN_KERNEL_TOOL_SRC_DIR!(), "/target");
+
 pub fn get_run_kernel_tool_src_dir() -> Path {
-    get_tools_dir().join("run_kernel")
+    WORLDSONG_ROOT_DIR.join(RUN_KERNEL_TOOL_SRC_DIR)
 }
 
 pub fn get_run_kernel_tool_target_dir() -> Path {
-    get_run_kernel_tool_src_dir().join("run_kernel")
+    WORLDSONG_ROOT_DIR.join(RUN_KERNEL_TOOL_TARGET_DIR)
 }
 
+define_str!(NEW_STATE_STRUCT_TOOL_SRC_DIR, TOOLS_DIR!(), "/new_state_struct");
 pub fn get_new_state_struct_tool_src_dir() -> Path {
-    get_tools_dir().join("new_state_struct")
+    WORLDSONG_ROOT_DIR.join(NEW_STATE_STRUCT_TOOL_SRC_DIR)
 }
 
+define_str!(NEW_STATE_STRUCT_TOOL_TARGET_DIR, NEW_STATE_STRUCT_TOOL_SRC_DIR!(), "/target");
 pub fn get_new_state_struct_tool_target_dir() -> Path {
-    get_new_state_struct_tool_src_dir().join("target")
+    WORLDSONG_ROOT_DIR.join(NEW_STATE_STRUCT_TOOL_TARGET_DIR)
 }
 
+define_str!(COMPILE_STATE_STRUCT_TOOL_SRC_DIR, TOOLS_DIR!(), "/compile_state_struct");
 pub fn get_compile_state_struct_tool_src_dir() -> Path {
-    get_tools_dir().join("compile_state_struct")
+    WORLDSONG_ROOT_DIR.join(COMPILE_STATE_STRUCT_TOOL_SRC_DIR)
 }
 
+define_str!(COMPILE_STATE_STRUCT_TOOL_TARGET_DIR, COMPILE_STATE_STRUCT_TOOL_SRC_DIR!(), "/target");
 pub fn get_compile_state_struct_tool_target_dir() -> Path {
-    get_compile_state_struct_tool_src_dir().join("target")
+    WORLDSONG_ROOT_DIR.join(COMPILE_STATE_STRUCT_TOOL_TARGET_DIR)
 }
 
+define_str!(COMPILE_SCHEDULER_TOOL_SRC_DIR, TOOLS_DIR!(), "/compile_scheduler");
 pub fn get_compile_scheduler_tool_src_dir() -> Path {
-    get_tools_dir().join("compile_scheduler")
+    WORLDSONG_ROOT_DIR.join(COMPILE_SCHEDULER_TOOL_SRC_DIR)
 }
 
+define_str!(COMPILE_SCHEDULER_TOOL_TARGET_DIR, COMPILE_SCHEDULER_TOOL_SRC_DIR!(), "/target");
 pub fn get_compile_scheduler_tool_target_dir() -> Path {
-    get_compile_scheduler_tool_src_dir().join("target")
+    WORLDSONG_ROOT_DIR.join(COMPILE_SCHEDULER_TOOL_TARGET_DIR)
 }
 
+define_str!(COMPILE_SCHEDULE_TOOL_SRC_DIR, TOOLS_DIR!(), "/compile_schedule");
 pub fn get_compile_schedule_tool_src_dir() -> Path {
-    get_tools_dir().join("compile_schedule")
+    WORLDSONG_ROOT_DIR.join(COMPILE_SCHEDULE_TOOL_SRC_DIR)
 }
 
+define_str!(COMPILE_SCHEDULE_TOOL_TARGET_DIR, COMPILE_SCHEDULE_TOOL_SRC_DIR!(), "/target");
 pub fn get_compile_schedule_tool_target_dir() -> Path {
-    get_compile_schedule_tool_src_dir().join("target")
+    WORLDSONG_ROOT_DIR.join(COMPILE_SCHEDULE_TOOL_TARGET_DIR)
 }
 
+define_str!(COMPILE_PROCESS_TOOL_SRC_DIR, TOOLS_DIR!(), "/compile_process");
 pub fn get_compile_process_tool_src_dir() -> Path {
-    get_tools_dir().join("compile_process")
+    WORLDSONG_ROOT_DIR.join(COMPILE_PROCESS_TOOL_SRC_DIR)
 }
 
+define_str!(COMPILE_PROCESS_TOOL_TARGET_DIR, COMPILE_PROCESS_TOOL_SRC_DIR!(), "/target");
 pub fn get_compile_process_tool_target_dir() -> Path {
-    get_compile_process_tool_src_dir().join("target")
+    WORLDSONG_ROOT_DIR.join(COMPILE_PROCESS_TOOL_TARGET_DIR)
 }
 
+define_str!(COMPILE_KERNEL_TOOL_SRC_DIR, TOOLS_DIR!(), "/compile_kernel");
 pub fn get_compile_kernel_tool_src_dir() -> Path {
-    get_tools_dir().join("compile_kernel")
+    WORLDSONG_ROOT_DIR.join(COMPILE_KERNEL_TOOL_SRC_DIR)
 }
 
+define_str!(COMPILE_KERNEL_TOOL_TARGET_DIR, COMPILE_KERNEL_TOOL_SRC_DIR!(), "/target");
 pub fn get_compile_kernel_tool_target_dir() -> Path {
-    get_compile_kernel_tool_src_dir().join("target")
+    WORLDSONG_ROOT_DIR.join(COMPILE_KERNEL_TOOL_TARGET_DIR)
 }
 
+define_str!(ADD_STATE_STRUCT_TOOL_SRC_DIR, TOOLS_DIR!(), "/add_state_struct");
 pub fn get_add_state_struct_tools_dir() -> Path {
-    get_tools_dir().join("add_state_struct")
+    WORLDSONG_ROOT_DIR.join(ADD_STATE_STRUCT_TOOL_SRC_DIR)
 }
 
+define_str!(ADD_STATE_STRUCT_TOOL_TARGET_DIR, ADD_STATE_STRUCT_TOOL_SRC_DIR!(), "/target");
 pub fn get_add_state_struct_tools_target_dir() -> Path {
-    get_add_state_struct_tools_dir().join("target")
+    WORLDSONG_ROOT_DIR.join(ADD_STATE_STRUCT_TOOL_TARGET_DIR)
 }
 
+define_str!(GENERATE_SCHEDULE_TAGS_SRC_DIR, TOOLS_DIR!(), "/generate_schedule_tags");
 pub fn get_generate_schedule_tags_src_dir() -> Path {
-    get_tools_dir().join("generate_schedule_tags")
+    WORLDSONG_ROOT_DIR.join(GENERATE_SCHEDULE_TAGS_SRC_DIR)
 }
 
+define_str!(GENERATE_SCHEDULE_TAGS_TARGET_DIR, GENERATE_SCHEDULE_TAGS_SRC_DIR!(), "/target");
 pub fn get_generate_schedule_tags_target_dir() -> Path {
-    get_generate_schedule_tags_src_dir().join("target")
+    WORLDSONG_ROOT_DIR.join(GENERATE_SCHEDULE_TAGS_TARGET_DIR)
 }
 
 // Worldsong Tags
@@ -336,5 +378,5 @@ pub fn get_generate_schedule_tags_binary() -> Path {
 }
 
 pub fn get_is_compiling_tag() -> Path {
-    get_worldsong_root_dir().join(".is_compiling")
+    WORLDSONG_ROOT_DIR.join(".is_compiling")
 }

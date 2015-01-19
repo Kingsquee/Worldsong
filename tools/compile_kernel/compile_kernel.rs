@@ -1,14 +1,14 @@
 extern crate getopts;
-extern crate environment;
+extern crate common;
 
 use getopts::{optopt,optflag,getopts,OptGroup};
 use std::os;
 use std::io;
 use std::io::fs::PathExtensions;
     
-use environment::hierarchy;
-use environment::system;
-use environment::settings;
+use common::hierarchy;
+use common::system;
+use common::settings;
 
 /// Compiles the kernel, duh.
 fn main() {
@@ -45,8 +45,8 @@ fn main() {
 
     let mut command = io::Command::new(hierarchy::get_rustc_path().as_str().unwrap());
     
-    // Link environment dir
-    command.arg("-L").arg(hierarchy::get_environment_target_dir().as_str().unwrap());
+    // Link common dir
+    command.arg("-L").arg(hierarchy::get_common_target_dir().as_str().unwrap());
     
     // Link macro dirs
     for path in hierarchy::get_all_macro_target_dirs().iter() {

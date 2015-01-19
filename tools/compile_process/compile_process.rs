@@ -1,14 +1,14 @@
 extern crate getopts;
-extern crate environment;
+extern crate common;
 
 use getopts::{optopt,optflag,getopts,OptGroup};
 use std::os;
 use std::io;
 use std::io::fs::PathExtensions;
 
-use environment::hierarchy;
-use environment::system;
-use environment::settings;
+use common::hierarchy;
+use common::system;
+use common::settings;
 
 /// Compiles the process in the current directory
 fn main() {

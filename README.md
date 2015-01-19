@@ -22,8 +22,8 @@ Each subsystem has its own custom _compile_. Have fun!
 What it's made of
 -----------------
 
-#####environment Library:
-Stores data and functionality environment to other subsystems, including as state data and third-party libraries.
+#####common Library:
+Stores data and functionality common to other subsystems, including as state data and third-party libraries.
 
 #####Kernel:
 Initializes the state data, hotloads the scheduler, and sends the state data to it.

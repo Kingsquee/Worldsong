@@ -11,5 +11,5 @@ path = "add_state_struct.rs"
 [dependencies.wraped]
 git = "https://github.com/Kingsquee/wraped"
 
-[dependencies.worldsong-environment]
-path = "./../../environment"
+[dependencies.worldsong-common]
+path = "./../../common"
