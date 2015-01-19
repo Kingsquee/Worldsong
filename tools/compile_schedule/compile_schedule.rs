@@ -36,12 +36,13 @@ fn main() {
 
     let current_dir = os::self_exe_path().unwrap();
 
-    let schedule_filename = current_dir.filename_str().unwrap().to_string() + ".rs";
+    let schedule_name = current_dir.filename_str().unwrap();
+    let schedule_filename = schedule_name.to_string() + ".rs";
     let target_path = current_dir.join("target");
 
     hierarchy::create_fresh_dir(&target_path).unwrap();
 
-    println!("Compiling schedule");
+    println!("Compiling {} schedule", schedule_name);
 
     let mut command = io::Command::new(hierarchy::get_rustc_path().as_str().unwrap());
     
@@ -77,6 +78,9 @@ fn main() {
     system::execute_command(&mut command);
 
     if !is_child_tool {
+        // Generate tags
+        system::run(&hierarchy::get_generate_schedule_tags_target_dir().join("generate_schedule_tags"), None);
+        
         // Compile the scheduler
         system::run(&hierarchy::get_scheduler_src_dir().join(Path::new("compile")), Some(vec!["-c"]));
         hierarchy::set_is_compiling(false);

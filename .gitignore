@@ -13,6 +13,9 @@ generate
 compile
 launch
 
+# Tag files
+.schedule_tags
+
 # Personal stuff
 notes.txt
 

@@ -4,6 +4,7 @@ extern crate environment;
 use getopts::{optopt,optflag,getopts,OptGroup};
 use std::os;
 use std::io;
+use std::io::fs::PathExtensions;
 
 use environment::hierarchy;
 use environment::system;
@@ -66,18 +67,51 @@ fn main() {
     system::execute_command(&mut command);
 
     if !is_child_tool {
-        // Compile ALL the schedules. 
+        // look for .schedule_tags
+        // if doesn't exist
+            // generate tags all schedules' tags
+            // look for .schedule_tags again
+            // if doesn't exist
+                // print "Warning: This process doesn't exist in any schedules."
+                // quit
         
-        // TODO: Run these commands in parallel, not in sequence?
+        let mut schedule_tags_file = match io::File::open(&hierarchy::get_schedule_tags(&current_dir)) {
+            Err(e) => {
+                println!("No tag file found, generating tags...");
+                system::run(&hierarchy::get_generate_schedule_tags_binary(), None);
+                match io::File::open(&hierarchy::get_schedule_tags(&current_dir)) {
+                    Err(e) => {
+                        hierarchy::set_is_compiling(false);
+                        panic!("{}", e);
+                    }
+                    Ok(file) => file,
+                }
+            }
+            Ok(file) => file,
+        };
+
+        // at this point, .schedule_tags should exist
+                
+        // parse schedule names into schedule_paths
+        let contents = schedule_tags_file.read_to_string().unwrap();
         
-        // TODO: Processes should be optionally tagged with which schedules they're in.
-        //  If it's not run with --tag, compile all the schedules.
+        if contents.len() == 0 {
+            println!("Warning: Process is not added to any schedules");
+            return
+        }
         
-        for schedule_src_dir in hierarchy::get_all_schedule_src_dirs().iter() {
-            system::run(
-                &schedule_src_dir.join("compile"), 
-                Some(vec!["-c"])
-            );
+        // for each src_dir in schedule_paths
+            // compile it
+            
+        // TODO: Run these commands in parallel, not in sequence? Would need to explicitly compile the scheduler from here, then.
+        for line in contents.split('\n') {
+            if line == "" { 
+                continue 
+            }
+            let schedule_src_dir = hierarchy::get_schedules_dir().join(line);
+            if schedule_src_dir.exists() {
+                system::run(&schedule_src_dir.join("compile"), Some(vec!["-c"]));
+            }
         }
         hierarchy::set_is_compiling(false);
     }

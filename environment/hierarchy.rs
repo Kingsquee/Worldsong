@@ -27,6 +27,20 @@ pub fn create_fresh_dir(path: &Path) -> IoResult<()> {
     Ok(())
 }
 
+pub fn create_fresh_file(path: &Path) -> IoResult<io::File> {
+    match fs::unlink(path) {
+        Ok(_) => /*println!("Removed file at {}", path.display())*/(),
+        Err(e) => match e.kind {
+            IoErrorKind::FileNotFound => (),
+            _ => { 
+                return Err(e)
+            }
+        }
+    };
+
+    io::File::create(path)
+}
+
 pub fn set_is_compiling(value: bool) -> IoResult<()> {
     match value {
         true => { 
@@ -303,7 +317,23 @@ pub fn get_add_state_struct_tools_target_dir() -> Path {
     get_add_state_struct_tools_dir().join("target")
 }
 
-// Worldsong Flags
+pub fn get_generate_schedule_tags_src_dir() -> Path {
+    get_tools_dir().join("generate_schedule_tags")
+}
+
+pub fn get_generate_schedule_tags_target_dir() -> Path {
+    get_generate_schedule_tags_src_dir().join("target")
+}
+
+// Worldsong Tags
+
+pub fn get_schedule_tags(process_dir: &Path) -> Path {
+    process_dir.join(".schedule_tags")
+}
+
+pub fn get_generate_schedule_tags_binary() -> Path {
+    get_generate_schedule_tags_target_dir().join("generate_schedule_tags")
+}
 
 pub fn get_is_compiling_tag() -> Path {
     get_worldsong_root_dir().join(".is_compiling")

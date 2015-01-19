@@ -1,0 +1,14 @@
+[package]
+
+name = "generate_schedule_tags"
+version = "0.0.1"
+authors = ["Kingsley Tolmie <kingsley.tolmie@gmail.com>"]
+
+[[bin]]
+name = "generate_schedule_tags"
+path = "generate_schedule_tags.rs"
+
+[dependencies.worldsong-environment]
+path = "./../../environment"
+
+[dependencies.regex]
