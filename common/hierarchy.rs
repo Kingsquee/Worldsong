@@ -232,32 +232,6 @@ pub fn get_all_process_target_dirs() -> Vec<Path> {
     dirs
 }
 
-// macros
-define_str!(MACROS_DIR, "macros");
-pub fn get_macros_dir() -> Path {
-    WORLDSONG_ROOT_DIR.join(MACROS_DIR)
-}
-
-pub fn get_all_macro_src_dirs() -> Vec<Path> {
-    let macros_dir = get_macros_dir();
-    let mut dirs: Vec<Path> = Vec::new();
-
-    for entry in fs::readdir(&macros_dir).unwrap().iter() {
-        if entry.is_dir() {
-            dirs.push(entry.clone());
-        }
-    }
-    dirs
-}
-
-pub fn get_all_macro_target_dirs() -> Vec<Path> {
-    let mut dirs = get_all_macro_src_dirs();
-    for entry in dirs.iter_mut() {
-        entry.push("target")
-    }
-    dirs
-}
-
 // Worldsong Tools
 
 define_str!(RUSTC_PATH, "rustc");
@@ -270,7 +244,6 @@ pub fn get_cargo_path() -> Path {
     Path::new(CARGO_PATH)
 }
 
-// Worldsong Tools
 define_str!(TOOLS_DIR, "tools");
 pub fn get_tools_dir() -> Path {
     WORLDSONG_ROOT_DIR.join(TOOLS_DIR)

@@ -7,3 +7,7 @@ authors = ["Kingsley Tolmie <kingsley.tolmie@gmail.com>"]
 [lib]
 name = "common"
 path = "common.rs"
+crate-type = ["dylib", "rlib"]
+plugin = true
+
+[dependencies.lazy_static]

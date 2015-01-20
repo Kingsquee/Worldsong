@@ -28,3 +28,4 @@ thirdparty/
 
 # Editor stuff
 *.kate*
+.kateproject

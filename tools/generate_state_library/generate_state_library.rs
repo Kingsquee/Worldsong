@@ -3,8 +3,6 @@ extern crate toml;
 extern crate common;
 
 use common::hierarchy;
-use common::system;
-use common::settings;
 
 mod generate_cargo_toml;
 mod generate_source;

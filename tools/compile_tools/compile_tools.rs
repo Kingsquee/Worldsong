@@ -54,9 +54,6 @@ fn main() {
     println!("Generating compilation tool for Processes.");
     cargo_compile(&get_cargo_toml_path(&tools_dir, "compile_process"));
     
-    println!("Generating compilation tool for Macros.");
-    cargo_compile(&get_cargo_toml_path(&tools_dir, "compile_macro"));
-    
     println!("Generating schedule tagging tool for Processes.");
     cargo_compile(&get_cargo_toml_path(&tools_dir, "generate_schedule_tags"));
     
@@ -73,7 +70,6 @@ fn main() {
     distribute_scheduler_tool();
     distribute_schedule_tools();
     distribute_process_tools();
-    distribute_macro_tools();
     distribute_run_tool();
     distribute_add_state_struct_tool();
     distribute_add_process_tool();
@@ -86,12 +82,6 @@ fn main() {
 fn compile_project() {
     println!("Compiling the common library");
     cargo_compile(&hierarchy::get_common_src_dir().join("Cargo.toml"));
-    
-    println!("Compiling the macro libraries");
-    for path in hierarchy::get_all_macro_src_dirs().iter() {
-        let compile_path = path.clone().join("compile");
-        system::run(&compile_path, None);
-    }
     
     system::run(&hierarchy::get_state_src_dir().join("generate"), None);
     system::run(&hierarchy::get_state_src_dir().join("compile"), None);
@@ -196,20 +186,6 @@ fn distribute_process_tools() {
     let file_origin = get_bin_path(&hierarchy::get_tools_dir(), "compile_process");
     
     for dir in hierarchy::get_all_process_src_dirs().iter() {
-        let file_destination = dir.clone().join("compile");
-        match io::fs::copy(&file_origin, &file_destination) {
-            Ok(_) => println!("    Copied {} to {}", file_origin.filename_str().unwrap(), file_destination.as_str().unwrap()),
-            Err(e) => println!("    {}", e),
-        }
-    }
-}
-
-fn distribute_macro_tools() {
-    println!("Distributing compilation tools for the Macros.");
-
-    let file_origin = get_bin_path(&hierarchy::get_tools_dir(), "compile_macro");
-    
-    for dir in hierarchy::get_all_macro_src_dirs().iter() {
         let file_destination = dir.clone().join("compile");
         match io::fs::copy(&file_origin, &file_destination) {
             Ok(_) => println!("    Copied {} to {}", file_origin.filename_str().unwrap(), file_destination.as_str().unwrap()),

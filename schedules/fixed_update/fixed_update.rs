@@ -1,5 +1,5 @@
 #[macro_use]
-extern crate schedule_macro;
+extern crate common;
 
 schedule!(
     graphics_process(simulation, graphics)

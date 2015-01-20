@@ -65,11 +65,6 @@ fn parse_schedule(schedule_path: &Path) -> Vec<String> {
     
     let mut command = Command::new("rustc");
     command.arg("--pretty").arg("expanded");
-    
-    // Link macro dirs
-    for path in hierarchy::get_all_macro_target_dirs().iter() {
-        command.arg("-L").arg(path.as_str().unwrap());
-    }
 
     // Link dependencies dirs
     for path in hierarchy::get_state_dependency_dirs().iter() {

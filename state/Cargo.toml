@@ -10,11 +10,13 @@ path = "state.rs"
 crate_type = ["dylib"]
 plugin = true
 
-[dependencies]
+[dependencies.worldsong-common]
+path = "/home/kingsley/Projects/rust/Worldsong/common"
 
-[dependencies.data_macro]
-path = "./../macros/data"
+
+[dependencies]
 
 [dependencies.sdl2]
 
 [dependencies.time]
+

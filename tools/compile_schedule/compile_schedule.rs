@@ -20,6 +20,7 @@ fn main() {
     let opts = &[
         optflag("c", "child", "Run as a child compilation tool: i.e. Don't recompile dependent modules and don't modify the .is_compiling file.")
     ];
+    
     let matches = match getopts(args.tail(), opts) {
         Ok(m) => { m }
         Err(f) => { panic!(f.to_string()) }
@@ -45,11 +46,6 @@ fn main() {
     println!("Compiling {} schedule", schedule_name);
 
     let mut command = io::Command::new(hierarchy::get_rustc_path().as_str().unwrap());
-    
-    // Link macro dirs
-    for path in hierarchy::get_all_macro_target_dirs().iter() {
-        command.arg("-L").arg(path.as_str().unwrap());
-    }
 
     // Link dependencies dirs
     for path in hierarchy::get_state_dependency_dirs().iter() {

@@ -51,8 +51,6 @@ fn main() {
     let dependencies_toml_text = format!(
 "# Note: local paths must be relative to /state/, not to this directory.
 
-[dependencies.data_macro]
-path = \"./../macros/data\"
 ");
 
     dependencies_toml_file.write_str(dependencies_toml_text.as_slice()).unwrap();

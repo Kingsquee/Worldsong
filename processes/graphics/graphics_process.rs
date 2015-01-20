@@ -11,10 +11,10 @@ pub fn execute(sim: &mut SimulationState, window: &GraphicsState) -> () {
     // compiling this process via the local ./compile, and
     // re-focusing the Worldsong window.
     sim.color_r -= 1;
-    sim.color_g -= 20;
-    sim.color_b -= 2;
+    sim.color_g -= 1;
+    sim.color_b -= 1;
     
-    // Your changes will be visible immediately. :)
+    // Your changes will be visible immediately. (:
     let _ = renderer.set_draw_color(Color::RGB(sim.color_r, sim.color_g, sim.color_b));
     let _ = renderer.clear();
     renderer.present();

@@ -47,11 +47,6 @@ fn main() {
     
     // Link common dir
     command.arg("-L").arg(hierarchy::get_common_target_dir().as_str().unwrap());
-    
-    // Link macro dirs
-    for path in hierarchy::get_all_macro_target_dirs().iter() {
-        command.arg("-L").arg(path.as_str().unwrap());
-    }
 
     // Link dependencies dirs
     for path in hierarchy::get_state_dependency_dirs().iter() {
