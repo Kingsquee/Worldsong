@@ -1,7 +1,6 @@
-#![feature(phase)]
-#[phase(link, plugin)]
+#[macro_use]
 extern crate common;
 
 schedule!(
-    input(core, window)
+    input_process(core, graphics)
 );

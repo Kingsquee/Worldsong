@@ -1,0 +1,3 @@
+# Note: local paths must be relative to /state/, not to this directory.
+
+[dependencies.sdl2]

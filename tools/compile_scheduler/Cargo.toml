@@ -1,0 +1,12 @@
+[package]
+
+name = "compile_scheduler"
+version = "0.0.1"
+authors = ["Kingsley Tolmie <kingsley.tolmie@gmail.com>"]
+
+[[bin]]
+name = "compile_scheduler"
+path = "compile_scheduler.rs"
+
+[dependencies.worldsong-common]
+path = "./../../common"

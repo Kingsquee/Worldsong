@@ -1,51 +1,25 @@
-#![macro_escape]
+#![macro_use]
 
 #[macro_export]
 macro_rules! data {
-    ($($structname:ident: $structtype:ident {$($var:ident: $vartype:ty = $val:expr)+})+) => {
-
-        $(
-            pub struct $structtype {
-                $(
-                    pub $var: $vartype,
-                )+
-            }
-        )+
-
-        $(
-            impl $structtype {
-                pub fn new() -> $structtype{
-                    $(
-                        let $var = $val;
-                    )+
-
-                    $structtype {
-                        $(
-                            $var: $var,
-                        )+
-                    }
-                }
-            }
-        )+
-
-        #[no_mangle]
-        #[allow(dead_code)]
-        pub struct Data {
+    ($structtype:ident {$($var:ident: $vartype:ty = $val:expr)+}) => {
+        #[allow(missing_copy_implementations)]
+        pub struct $structtype {
             $(
-                pub $structname: $structtype,
+                pub $var: $vartype,
             )+
         }
 
-        #[no_mangle]
-        #[allow(dead_code)]
-        impl Data {
-            pub fn new() -> Data {
-             let data = Data {
+        impl $structtype {
+            pub fn new() -> $structtype {
                 $(
-                    $structname: $structtype::new(),
+                    let $var = $val;
                 )+
-             };
-             data
+                $structtype {
+                    $(
+                        $var: $var,
+                    )+
+                }
             }
         }
     }
@@ -55,14 +29,13 @@ macro_rules! data {
 macro_rules! schedule {
     ($($process_name:ident($($param:ident),+))+) => {
         mod _hack {
-            extern crate common;
+            extern crate state;
             $(
                 extern crate $process_name;
             )+
         }
 
-        pub fn execute(data: &mut common::state::Data) {
-            use common::state::Data;
+        pub fn execute(data: &mut _hack::state::Data) {
             $(
                 _hack::$process_name::execute(
                     $(&mut data.$param),+

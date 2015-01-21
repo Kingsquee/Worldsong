@@ -1,10 +1,9 @@
-extern crate common;
+extern crate state;
 extern crate fixed_update;
 extern crate variable_update;
-
 extern crate time;
 
-use common::state::Data;
+use state::Data;
 use time::precise_time_ns;
 
 #[no_mangle]

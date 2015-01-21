@@ -1,0 +1,15 @@
+[package]
+
+name = "add_process"
+version = "0.0.1"
+authors = ["Kingsley Tolmie <kingsley.tolmie@gmail.com>"]
+
+[[bin]]
+name = "add_process"
+path = "add_process.rs"
+
+[dependencies.wraped]
+git = "https://github.com/Kingsquee/wraped"
+
+[dependencies.worldsong-common]
+path = "./../../common"

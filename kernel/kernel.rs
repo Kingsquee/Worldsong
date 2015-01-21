@@ -1,14 +1,16 @@
+extern crate state;
 extern crate common;
 extern crate time;
 
 use std::dynamic_lib::DynamicLibrary;
 use std::mem;
 use std::io;
-use std::io::fs;
 use std::io::File;
 
-use common::state::Data;
+use state::Data;
 use std::time::duration::Duration;
+
+use common::hierarchy;
 
 fn main() {
     //let data_dylib_path = find_data_dylib().unwrap();
@@ -42,7 +44,7 @@ fn main() {
 
             // Check that compilation is finished
             let mut timer = io::Timer::new().unwrap();
-            while File::open(&common::fs::get_worldsong_root_dir().join(".iscompiling")).is_ok() {
+            while File::open(&hierarchy::get_is_compiling_tag()).is_ok() {
                 println!("Compilation is still ongoing. Trying again in 1 second...");
                 timer.sleep(Duration::seconds(1));
             }
@@ -80,9 +82,9 @@ fn find_data_dylib() -> Option<Path> {
 
 fn find_scheduler_dylib() -> Option<Path> {
     // look in target dir
-    let scheduler_target_dir = common::fs::get_scheduler_target_dir();
+    let scheduler_target_dir = hierarchy::get_scheduler_target_dir();
     // find the dylib
-    let contents = fs::readdir(&scheduler_target_dir).unwrap();
+    let contents = io::fs::readdir(&scheduler_target_dir).unwrap();
     for entry in contents.iter() {
         if entry.filename_str().unwrap().starts_with("libscheduler") {
             return Some(entry.clone())

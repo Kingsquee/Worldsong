@@ -8,8 +8,13 @@
 *.exe
 
 # Tool binaries
+add
+generate
 compile
 launch
+
+# Tag files
+.schedule_tags
 
 # Personal stuff
 notes.txt
@@ -23,3 +28,4 @@ thirdparty/
 
 # Editor stuff
 *.kate*
+.kateproject

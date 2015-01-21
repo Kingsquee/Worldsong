@@ -1,7 +1,6 @@
-#![feature(phase)]
-#[phase(link, plugin)]
+#[macro_use]
 extern crate common;
 
 schedule!(
-    graphics(sim, window)
+    graphics_process(simulation, graphics)
 );

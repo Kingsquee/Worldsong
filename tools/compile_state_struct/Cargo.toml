@@ -1,0 +1,12 @@
+[package]
+
+name = "compile_state_struct"
+version = "0.0.1"
+authors = ["Kingsley Tolmie <kingsley.tolmie@gmail.com>"]
+
+[[bin]]
+name = "compile_state_struct"
+path = "compile_state_struct.rs"
+
+[dependencies.worldsong-common]
+path = "./../../common"

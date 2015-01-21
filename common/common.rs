@@ -1,11 +1,9 @@
-#![feature(macro_rules)] 
-extern crate sdl2;
+#[macro_use]
+extern crate lazy_static;
+#[macro_use]
+mod internal;
 
+pub mod hierarchy;
+pub mod system;
+pub mod settings;
 pub mod macros;
-pub mod state;
-pub mod fs;
-
-#[no_mangle]
-pub fn new() -> state::Data {
-    state::Data::new()
-}
