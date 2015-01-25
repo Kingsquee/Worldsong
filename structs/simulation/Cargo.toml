@@ -1,0 +1,14 @@
+[package]
+name = "simulation"
+version = "0.0.1"
+authors = [ "the ghost in the machine" ]
+
+[lib]
+name = "simulation"
+path = "simulation_state.rs"
+crate_type = ["dylib"]
+plugin = true
+
+# Required by all worldsong submodules
+[dependencies.worldsong-common]
+path = "/home/kingsley/Projects/rust/Worldsong/common"

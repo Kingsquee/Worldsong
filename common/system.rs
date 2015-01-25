@@ -14,7 +14,7 @@ use std::path::Path;
 */
 
 pub fn run(app: &Path, args: Option<Vec<&str>>) {
-    println!("Running {}", app.display());
+    //println!("Running {}", app.display());
     let mut command = io::Command::new(app.clone());
     if args.is_some() {
         for arg in args.unwrap().iter() {

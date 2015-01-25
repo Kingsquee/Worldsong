@@ -15,11 +15,11 @@ pub fn run(data: &mut Data) {
     let mut last_frame_time             : u64 = precise_time_ns();
     let mut last_cycle_time             : u64 = precise_time_ns();
 
-    while !data.core.quit && !data.core.reload && !data.core.reset {
+    while !data.kernel.quit && !data.kernel.reload && !data.kernel.reset {
 
         // variable update
         let current_time = precise_time_ns();
-        data.core.delta_time = current_time - last_cycle_time;
+        data.kernel.delta_time = current_time - last_cycle_time;
 
         variable_update::execute(data);
 

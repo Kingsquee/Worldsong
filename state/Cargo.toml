@@ -10,13 +10,19 @@ path = "state.rs"
 crate_type = ["dylib"]
 plugin = true
 
+# Required by the kernel and scheduler
+[dependencies.time]
+
+# Required by all worldsong submodules
 [dependencies.worldsong-common]
 path = "/home/kingsley/Projects/rust/Worldsong/common"
 
 
-[dependencies]
+[dependencies.simulation] 
+path = "/home/kingsley/Projects/rust/Worldsong/structs/simulation"
 
-[dependencies.sdl2]
+[dependencies.kernel] 
+path = "/home/kingsley/Projects/rust/Worldsong/structs/kernel"
 
-[dependencies.time]
-
+[dependencies.graphics] 
+path = "/home/kingsley/Projects/rust/Worldsong/structs/graphics"

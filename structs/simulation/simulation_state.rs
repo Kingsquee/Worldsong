@@ -1,3 +1,6 @@
+#[macro_use]
+extern crate common;
+
 data! (
     SimulationState {
         color_r: u8 = 0

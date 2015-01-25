@@ -31,11 +31,11 @@ fn main() {
         println!("Calling run");
         scheduler_run_symbol.unwrap()(&mut data);
 
-        if data.core.quit {
+        if data.kernel.quit {
             println!("Quitting.");
             break 'main
         }
-        else if data.core.reload {
+        else if data.kernel.reload {
             println!("Reloading scheduler...");
 
             // Drop all cached OS references
@@ -53,14 +53,14 @@ fn main() {
             scheduler_dylib         = Some(load_library(&scheduler_dylib_path));
             scheduler_run_symbol    = Some(load_scheduler_run_symbol(scheduler_dylib.as_ref().unwrap()));
 
-            data.core.reload = false;
+            data.kernel.reload = false;
         }
         // TODO: Would be nice to have this load the latest state::Data from disk.
-        else if data.core.reset {
+        else if data.kernel.reset {
             println!("Resetting state...");
             data = Data::new();
 
-            data.core.reset = false;
+            data.kernel.reset = false;
         }
     }
 }

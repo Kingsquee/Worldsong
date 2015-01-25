@@ -1,5 +1,8 @@
+#[macro_use]
+extern crate common;
+
 data! (
-    CoreState {
+    KernelState {
         delta_time: u64     = 0
         reload:     bool    = false
         reset:      bool    = false

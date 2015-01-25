@@ -1,3 +1,5 @@
+#[macro_use]
+extern crate common;
 extern crate sdl2;
 
 use self::sdl2::render::Renderer;

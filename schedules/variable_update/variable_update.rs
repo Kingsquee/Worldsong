@@ -2,5 +2,5 @@
 extern crate common;
 
 schedule!(
-    input_process(core, graphics)
+    input_process(kernel, graphics)
 );

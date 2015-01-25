@@ -45,16 +45,30 @@ fn main() {
     let filename = name.clone();
     hierarchy::create_fresh_dir(&struct_dir).unwrap();
 
-    // Create the Dependencies.toml
-    let dependencies_toml_path = struct_dir.clone().join("Dependencies.toml");
-    let mut dependencies_toml_file = File::create(&dependencies_toml_path).unwrap();
-    let dependencies_toml_text = format!(
-"# Note: local paths must be relative to /state/, not to this directory.
+    // Create the Cargo.toml
+    let cargo_toml_path = struct_dir.clone().join("Cargo.toml");
+    let mut cargo_toml_file = File::create(&cargo_toml_path).unwrap();
+    let cargo_toml_text = format!(
+"[package]
+name = \"{name}\"
+version = \"0.0.1\"
+authors = [ \"the ghost in the machine\" ]
 
-");
+[lib]
+name = \"{name}\"
+path = \"{name}_state.rs\"
+crate_type = [\"{crate_type}\"]
+plugin = true
 
-    dependencies_toml_file.write_str(dependencies_toml_text.as_slice()).unwrap();
-    dependencies_toml_file.flush().unwrap();
+# Required by all worldsong submodules
+[dependencies.worldsong-common]
+path = \"{common_dir}\"
+", 
+name = name, crate_type = settings::get_state_lib_type(),
+common_dir = hierarchy::get_common_src_dir().as_str().unwrap());
+
+    cargo_toml_file.write_str(cargo_toml_text.as_slice()).unwrap();
+    cargo_toml_file.flush().unwrap();
 
     // Create the struct's src file
     let struct_src_file_name = name.clone() + "_state.rs";
@@ -69,7 +83,9 @@ fn main() {
     struct_type_name.push_str("State");
 
     let struct_src_text = format!(
-"
+"#[macro_use]
+extern crate common;
+
 data! (
     {} {{
         

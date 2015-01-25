@@ -1,17 +1,17 @@
 extern crate state;
 extern crate sdl2;
 
-use state::{CoreState, GraphicsState};
+use state::{KernelState, GraphicsState};
 use sdl2::event;
 use sdl2::event::Event;
 use sdl2::keycode;
 
-pub fn execute(core: &mut CoreState, window: &mut GraphicsState) -> () {
+pub fn execute(kernel: &mut KernelState, window: &mut GraphicsState) -> () {
     match event::poll_event() {
-        Event::Quit(_) => core.quit = true,
+        Event::Quit(_) => kernel.quit = true,
         Event::KeyDown(_, _, key, _, _, _) => {
             if key == keycode::KeyCode::Escape {
-                core.quit = true;
+                kernel.quit = true;
             }
         },
         Event::Window(_, _, id, _, _) => {
@@ -20,8 +20,8 @@ pub fn execute(core: &mut CoreState, window: &mut GraphicsState) -> () {
                     window.first_focus = false;
                     return;
                 }
-                if !core.reload {
-                    core.reload = true;
+                if !kernel.reload {
+                    kernel.reload = true;
                 }
             }
         }
