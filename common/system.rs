@@ -1,7 +1,8 @@
-use std::io;
-use std::io::fs::PathExtensions;
-use std::io::process::StdioContainer;
-use std::path::Path;
+use std::old_io;
+use std::old_io::fs::PathExtensions;
+use std::old_io::process::StdioContainer;
+use std::old_path::Path;
+use std::old_path::GenericPath;
 
 /*
 [Sunday, November 30, 2014] [12:28:23 ▾] <Kingsqueee>   Is there a way I can tell rustup.sh to install to a local directory?
@@ -15,7 +16,7 @@ use std::path::Path;
 
 pub fn run(app: &Path, args: Option<Vec<&str>>) {
     println!("Running {}", app.display());
-    let mut command = io::Command::new(app.clone());
+    let mut command = old_io::Command::new(app.clone());
     if args.is_some() {
         for arg in args.unwrap().iter() {
             command.arg(arg);
@@ -25,7 +26,7 @@ pub fn run(app: &Path, args: Option<Vec<&str>>) {
     execute_command(&mut command);
 }
 
-pub fn execute_command(command: &mut io::Command) {
+pub fn execute_command(command: &mut old_io::Command) {
     // Try to run this thing
     command.stdout(StdioContainer::InheritFd(1));
     command.stderr(StdioContainer::InheritFd(2));

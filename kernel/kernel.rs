@@ -1,11 +1,17 @@
+#![feature(old_io)]
+#![feature(old_path)]
+#![feature(std_misc)]
+
 extern crate state;
 extern crate common;
 extern crate time;
 
 use std::dynamic_lib::DynamicLibrary;
 use std::mem;
-use std::io;
-use std::io::File;
+use std::old_io;
+use std::old_io::File;
+use std::old_path::Path;
+use std::old_path::GenericPath;
 
 use state::Data;
 use std::time::duration::Duration;
@@ -43,7 +49,7 @@ fn main() {
             scheduler_run_symbol    = None;
 
             // Check that compilation is finished
-            let mut timer = io::Timer::new().unwrap();
+            let mut timer = old_io::Timer::new().unwrap();
             while File::open(&hierarchy::get_is_compiling_tag()).is_ok() {
                 println!("Compilation is still ongoing. Trying again in 1 second...");
                 timer.sleep(Duration::seconds(1));
@@ -84,7 +90,7 @@ fn find_scheduler_dylib() -> Option<Path> {
     // look in target dir
     let scheduler_target_dir = hierarchy::get_scheduler_target_dir();
     // find the dylib
-    let contents = io::fs::readdir(&scheduler_target_dir).unwrap();
+    let contents = old_io::fs::readdir(&scheduler_target_dir).unwrap();
     for entry in contents.iter() {
         if entry.filename_str().unwrap().starts_with("libscheduler") {
             return Some(entry.clone())

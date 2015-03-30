@@ -1,11 +1,18 @@
+#![feature(os)]
+#![feature(old_io)]
+#![feature(old_path)]
+#![feature(old_fs)]
+
 extern crate getopts;
 extern crate common;
 
-use getopts::{optopt,optflag,getopts,OptGroup};
+use getopts::Options;
 use std::os;
-use std::io;
-use std::io::fs::PathExtensions;
-    
+use std::old_io;
+use std::old_io::fs::PathExtensions;
+use std::old_path::Path;
+use std::old_path::GenericPath;
+
 use common::hierarchy;
 use common::system;
 use common::settings;
@@ -17,10 +24,10 @@ fn main() {
     let mut is_child_tool: bool = false;
 
     let args: Vec<String> = os::args();
-    let opts = &[
-        optflag("c", "child", "Run as a child compilation tool: i.e. Don't recompile dependent modules and don't modify the .is_compiling file.")
-    ];
-    let matches = match getopts(args.tail(), opts) {
+    let mut opts = Options::new();
+
+    opts.optflag("c", "child", "Run as a child compilation tool: i.e. Don't recompile dependent modules and don't modify the .is_compiling file.");
+    let matches = match opts.parse(&args[1..]) {
         Ok(m) => { m }
         Err(f) => { panic!(f.to_string()) }
     };
@@ -43,8 +50,8 @@ fn main() {
 
     println!("Compiling kernel");
 
-    let mut command = io::Command::new(hierarchy::get_rustc_path().as_str().unwrap());
-    
+    let mut command = old_io::Command::new(hierarchy::get_rustc_path().as_str().unwrap());
+
     // Link common dir
     command.arg("-L").arg(hierarchy::get_common_target_dir().as_str().unwrap());
 
@@ -52,12 +59,12 @@ fn main() {
     for path in hierarchy::get_state_dependency_dirs().iter() {
         command.arg("-L").arg(path.as_str().unwrap());
     }
-    
+
     // Link data structs
     for path in hierarchy::get_all_struct_target_dirs().iter() {
         command.arg("-L").arg(path.as_str().unwrap());
     }
-    
+
     // Link state
     command.arg("-L").arg(&hierarchy::get_state_target_dir());
 

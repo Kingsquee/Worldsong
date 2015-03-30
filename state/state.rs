@@ -7,11 +7,11 @@ pub use simulation::SimulationState;
 pub use graphics::GraphicsState;
 pub use core::CoreState;
 
-#[path = "/home/kingsley/Projects/rust/Worldsong/structs/simulation/simulation_state.rs"]
+#[path = "/home/kingsley/Projects/Worldsong/structs/simulation/simulation_state.rs"]
 mod simulation;
-#[path = "/home/kingsley/Projects/rust/Worldsong/structs/graphics/graphics_state.rs"]
+#[path = "/home/kingsley/Projects/Worldsong/structs/graphics/graphics_state.rs"]
 mod graphics;
-#[path = "/home/kingsley/Projects/rust/Worldsong/structs/core/core_state.rs"]
+#[path = "/home/kingsley/Projects/Worldsong/structs/core/core_state.rs"]
 mod core;
 
 

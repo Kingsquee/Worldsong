@@ -1,14 +1,22 @@
+#![feature(os)]
+#![feature(old_io)]
+#![feature(old_path)]
+#![feature(collections)]
+#![feature(core)]
+
 extern crate getopts;
 extern crate wraped;
 extern crate collections;
 extern crate common;
 
-use getopts::{optopt,optflag,getopts,OptGroup};
+use getopts::Options;
 
-use std::io;
+use std::old_io;
+use std::old_io::Writer;
+use std::old_path::Path;
+use std::old_path::GenericPath;
 use std::os;
-use std::io::fs::File;
-use collections::str::StrExt;
+use std::old_io::fs::File;
 use wraped::{Editor, EditorTrait};
 
 use common::hierarchy;
@@ -19,11 +27,11 @@ fn main() {
     // Program args
 
     let args: Vec<String> = os::args();
-    let opts = &[
-        optopt("n", "name", "Set the name of the process.", "NAME"),
-        optopt("e", "editor", "Open the process in the editor of choice.", "EDITOR")
-    ];
-    let matches = match getopts(args.tail(), opts) {
+    let mut opts = Options::new();
+    opts.optopt("n", "name", "Set the name of the process.", "NAME");
+    opts.optopt("e", "editor", "Open the process in the editor of choice.", "EDITOR");
+
+    let matches = match opts.parse(&args[1..]) {
         Ok(m) => { m }
         Err(f) => { panic!(f.to_string()) }
     };
@@ -56,7 +64,7 @@ fn main() {
 use state::{/*...*/};
 
 pub fn execute(/*...*/) -> () {
-    
+
 }");
 
     process_src_file.write_str(process_src_text.as_slice()).unwrap();
@@ -64,10 +72,10 @@ pub fn execute(/*...*/) -> () {
 
     // Copy the compile tool into the dir
     let compile_tool_path = hierarchy::get_compile_process_tool_target_dir().join("compile_process");
-    match io::fs::copy(&compile_tool_path, &process_dir.join("compile")) {
+    match old_io::fs::copy(&compile_tool_path, &process_dir.join("compile")) {
         Ok(_) => (),
         Err(e) => {
-            io::fs::rmdir_recursive(&process_dir).unwrap();
+            old_io::fs::rmdir_recursive(&process_dir).unwrap();
             println!("Could not copy the compile tool to the directory, maybe try re-running your OS's setup tool?");
             panic!("{}", e)
         }
@@ -79,7 +87,7 @@ pub fn execute(/*...*/) -> () {
         Some(e) => e,
         None => panic!("Sorry, that editor isn't supported."),
     };
-    
+
     wraped_editor.cursor(5,4);
     wraped_editor.open(&process_src_path);
     system::execute_command(&mut wraped_editor.get_command());

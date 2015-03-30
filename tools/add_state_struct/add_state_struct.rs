@@ -1,14 +1,23 @@
+#![feature(os)]
+#![feature(old_io)]
+#![feature(old_path)]
+#![feature(collections)]
+#![feature(core)]
+#![feature(str_char)]
+
 extern crate getopts;
 extern crate wraped;
 extern crate collections;
 extern crate common;
 
-use getopts::{optopt,optflag,getopts,OptGroup};
+use getopts::Options;
 
-use std::io;
 use std::os;
-use std::io::fs::File;
-use collections::str::StrExt;
+use std::old_io;
+use std::old_io::Writer;
+use std::old_io::fs::File;
+use std::old_path::Path;
+use std::old_path::GenericPath;
 use wraped::{Editor, EditorTrait};
 
 use common::hierarchy;
@@ -19,11 +28,11 @@ fn main() {
     // Program args
 
     let args: Vec<String> = os::args();
-    let opts = &[
-        optopt("n", "name", "Set the name of the state struct.", "NAME"),
-        optopt("e", "editor", "Open the state struct in the editor of choice.", "EDITOR")
-    ];
-    let matches = match getopts(args.tail(), opts) {
+    let mut opts = Options::new();
+    opts.optopt("n", "name", "Set the name of the state struct.", "NAME");
+    opts.optopt("e", "editor", "Open the state struct in the editor of choice.", "EDITOR");
+
+    let matches = match opts.parse(&args[1..]) {
         Ok(m) => { m }
         Err(f) => { panic!(f.to_string()) }
     };
@@ -63,7 +72,7 @@ fn main() {
     let mut struct_src_file = File::create(&struct_src_path).unwrap();
 
     let mut struct_type_name = name.clone();
-    let capital_first_letter = struct_type_name.char_at(0).to_uppercase();
+    let capital_first_letter = struct_type_name.char_at(0).to_uppercase().next().unwrap();
     struct_type_name.remove(0);
     struct_type_name.insert(0, capital_first_letter);
     struct_type_name.push_str("State");
@@ -72,7 +81,7 @@ fn main() {
 "
 data! (
     {} {{
-        
+
     }}
 );", struct_type_name.clone());
 
@@ -81,10 +90,10 @@ data! (
 
     // Copy the compile tool into the dir
     let compile_tool_path = hierarchy::get_compile_state_struct_tool_target_dir().join("compile_state_struct");
-    match io::fs::copy(&compile_tool_path, &struct_dir.join("compile")) {
+    match old_io::fs::copy(&compile_tool_path, &struct_dir.join("compile")) {
         Ok(_) => (),
         Err(e) => {
-            io::fs::rmdir_recursive(&struct_dir).unwrap();
+            old_io::fs::rmdir_recursive(&struct_dir).unwrap();
             println!("Could not copy the compile tool to the directory, maybe try re-running your OS's setup tool?");
             panic!("{}", e)
         }
@@ -96,7 +105,7 @@ data! (
         Some(e) => e,
         None => panic!("Sorry, that editor isn't supported."),
     };
-    
+
     wraped_editor.cursor(4,8);
     wraped_editor.open(&struct_src_path);
     system::execute_command(&mut wraped_editor.get_command());

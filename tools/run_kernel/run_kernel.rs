@@ -1,8 +1,16 @@
+#![feature(os)]
+#![feature(old_io)]
+#![feature(old_path)]
+#![feature(old_fs)]
+#![feature(core)]
+
 extern crate common;
 
 use std::os;
-use std::io;
-use std::io::fs::PathExtensions;
+use std::old_io;
+use std::old_io::fs::PathExtensions;
+use std::old_path::Path;
+use std::old_path::GenericPath;
 
 use common::hierarchy;
 use common::system;
@@ -12,7 +20,7 @@ fn main() {
     let kernel_target_dir = hierarchy::get_kernel_target_dir();
     let kernel_bin = kernel_target_dir.clone().join("kernel");
 
-    let mut command = io::Command::new(kernel_bin);
+    let mut command = old_io::Command::new(kernel_bin);
     command.cwd(&kernel_target_dir);
 
     let mut ld_library_paths = String::new();
@@ -31,33 +39,40 @@ fn main() {
     };
 
     // common target dir. JUST IN CASE.
-    ld_library_paths.push_str(hierarchy::get_common_target_dir().as_str().unwrap());
+    let common_target_dir = hierarchy::get_common_target_dir();
+    if !common_target_dir.exists() { panic!("{} doesn't exist. Exiting.") }
+    ld_library_paths.push_str(common_target_dir.as_str().unwrap());
     ld_library_paths.push_str(":");
-    
-    // shared dependencies 
+
+    // shared dependencies
     for dir in hierarchy::get_state_dependency_dirs().iter() {
+        if !dir.exists() { panic!("{} doesn't exist. Exiting.") }
         ld_library_paths.push_str(dir.as_str().unwrap());
         ld_library_paths.push_str(":");
     }
-    
+
     // state library
-    ld_library_paths.push_str(hierarchy::get_state_target_dir().as_str().unwrap());
+    let state_target_dir = hierarchy::get_state_target_dir();
+    ld_library_paths.push_str(state_target_dir.as_str().unwrap());
     ld_library_paths.push_str(":");
-    
+
     // all process target dirs
     for dir in hierarchy::get_all_process_target_dirs().iter() {
+        if !dir.exists() { panic!("{} doesn't exist. Exiting.") }
         ld_library_paths.push_str(dir.as_str().unwrap());
         ld_library_paths.push_str(":");
     }
-    
+
     // all schedule target dirs
     for dir in hierarchy::get_all_schedule_target_dirs().iter() {
+        if !dir.exists() { panic!("{} doesn't exist. Exiting.") }
         ld_library_paths.push_str(dir.as_str().unwrap());
         ld_library_paths.push_str(":");
     }
-    
+
     // scheduler dir
-    ld_library_paths.push_str(hierarchy::get_scheduler_target_dir().as_str().unwrap());
+    let scheduler_target_dir = hierarchy::get_scheduler_target_dir();
+    ld_library_paths.push_str(scheduler_target_dir.as_str().unwrap());
 
     println!("{}{}", key, ld_library_paths);
 

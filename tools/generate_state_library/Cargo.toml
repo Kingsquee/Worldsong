@@ -9,7 +9,7 @@ name = "generate_state_library"
 path = "generate_state_library.rs"
 
 [dependencies.rustc-serialize]
-version = "0.2"
+version = "*"
 
 [dependencies.toml]
 git = "https://github.com/alexcrichton/toml-rs"

@@ -10,3 +10,6 @@ path = "compile_tools.rs"
 
 [dependencies.worldsong-common]
 path = "./../../common"
+
+[dependencies]
+getopts = "*"

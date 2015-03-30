@@ -11,7 +11,7 @@ crate_type = ["dylib"]
 plugin = true
 
 [dependencies.worldsong-common]
-path = "/home/kingsley/Projects/rust/Worldsong/common"
+path = "/home/kingsley/Projects/Worldsong/common"
 
 
 [dependencies]

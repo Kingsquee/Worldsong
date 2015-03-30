@@ -1,53 +1,54 @@
 use std::os;
-use std::io;
-use std::io::{IoResult, IoErrorKind};
-use std::io::fs;
-use std::io::fs::PathExtensions;
-use std::path::Path;
+use std::old_io;
+use std::old_io::{IoResult, IoErrorKind};
+use std::old_io::fs;
+use std::old_io::fs::PathExtensions;
+use std::old_path::Path;
+use std::old_path::GenericPath;
 
 pub fn create_fresh_dir(path: &Path) -> IoResult<()> {
     match fs::rmdir_recursive(path) {
         Ok(_) => (),
         Err(e) => match e.kind {
             IoErrorKind::FileNotFound => (),
-            _ => { 
+            _ => {
                 return Err(e)
             }
         }
     };
 
-    match fs::mkdir(path, io::USER_RWX) {
+    match fs::mkdir(path, old_io::USER_RWX) {
         Ok(_) => (),
         Err(e) => match e.kind {
             IoErrorKind::PathAlreadyExists => (),
             _ => return Err(e),
         }
     };
-    
+
     Ok(())
 }
 
-pub fn create_fresh_file(path: &Path) -> IoResult<io::File> {
+pub fn create_fresh_file(path: &Path) -> IoResult<old_io::File> {
     match fs::unlink(path) {
         Ok(_) => /*println!("Removed file at {}", path.display())*/(),
         Err(e) => match e.kind {
             IoErrorKind::FileNotFound => (),
-            _ => { 
+            _ => {
                 return Err(e)
             }
         }
     };
 
-    io::File::create(path)
+    old_io::File::create(path)
 }
 
 pub fn set_is_compiling(value: bool) -> IoResult<()> {
     match value {
-        true => { 
-            io::File::create(&get_is_compiling_tag()).unwrap();
+        true => {
+            old_io::File::create(&get_is_compiling_tag()).unwrap();
             Ok(())
         }
-        false => { 
+        false => {
             match fs::unlink(&get_is_compiling_tag()) {
                 Ok(o) => Ok(o),
                 Err(e) => match e.kind {
@@ -62,7 +63,7 @@ pub fn set_is_compiling(value: bool) -> IoResult<()> {
 // Worldsong Modules
 lazy_static!{
     static ref WORLDSONG_ROOT_DIR: Path = {
-    
+
         let mut current_dir = os::self_exe_path().unwrap();
 
         let mut wsroot = None;
@@ -78,7 +79,7 @@ lazy_static!{
                 break 'l
             }
         }
-        
+
         match wsroot {
             Some(wsroot) => wsroot,
             None => panic!("ERROR: Could not find worldsong root. Was the .wsroot file removed?"),
@@ -90,13 +91,25 @@ pub fn get_worldsong_root_dir() -> Path {
     WORLDSONG_ROOT_DIR.clone()
 }
 
+define_str!(TARGET_DIR, "/target");
+
+#[cfg(debug_assertions)]
+define_str!(CARGO_TARGET_DIR, "/target/debug");
+
+#[cfg(not(debug_assertions))]
+define_str!(CARGO_TARGET_DIR, "/target/release");
+
+pub fn append_target_dir(path: &Path) -> Path {
+    path.join(TARGET_DIR)
+}
+
 // common
 define_str!(COMMON_SRC_DIR, "common");
 pub fn get_common_src_dir() -> Path {
     WORLDSONG_ROOT_DIR.join(COMMON_SRC_DIR)
 }
 
-define_str!(COMMON_TARGET_DIR, COMMON_SRC_DIR!(), "/target");
+define_str!(COMMON_TARGET_DIR, COMMON_SRC_DIR!(), CARGO_TARGET_DIR!());
 pub fn get_common_target_dir() -> Path {
     WORLDSONG_ROOT_DIR.join(COMMON_TARGET_DIR)
 }
@@ -107,7 +120,7 @@ pub fn get_state_src_dir() -> Path {
     WORLDSONG_ROOT_DIR.join(STATE_SRC_DIR)
 }
 
-define_str!(STATE_TARGET_DIR, STATE_SRC_DIR!(), "/target");
+define_str!(STATE_TARGET_DIR, STATE_SRC_DIR!(), CARGO_TARGET_DIR!());
 pub fn get_state_target_dir() -> Path {
     WORLDSONG_ROOT_DIR.join(STATE_TARGET_DIR)
 }
@@ -138,6 +151,7 @@ pub fn get_all_struct_src_dirs() -> Vec<Path> {
     dirs
 }
 
+// TODO: Remove this, it's useless now.
 pub fn get_all_struct_target_dirs() -> Vec<Path> {
     let mut dirs = get_all_struct_src_dirs();
     for entry in dirs.iter_mut() {
@@ -163,7 +177,7 @@ pub fn get_kernel_src_dir() -> Path {
     WORLDSONG_ROOT_DIR.join(KERNEL_SRC_DIR)
 }
 
-define_str!(KERNEL_TARGET_DIR, KERNEL_SRC_DIR!(), "/target");
+define_str!(KERNEL_TARGET_DIR, KERNEL_SRC_DIR!(), TARGET_DIR!());
 pub fn get_kernel_target_dir() -> Path {
     WORLDSONG_ROOT_DIR.join(KERNEL_TARGET_DIR)
 }
@@ -175,7 +189,7 @@ pub fn get_scheduler_src_dir() -> Path {
     WORLDSONG_ROOT_DIR.join(SCHEDULER_SRC_DIR)
 }
 
-define_str!(SCHEDULER_TARGET_DIR, SCHEDULER_SRC_DIR!(), "/target");
+define_str!(SCHEDULER_TARGET_DIR, SCHEDULER_SRC_DIR!(), TARGET_DIR!());
 
 pub fn get_scheduler_target_dir() -> Path {
     WORLDSONG_ROOT_DIR.join(SCHEDULER_TARGET_DIR)
@@ -201,6 +215,7 @@ pub fn get_all_schedule_src_dirs() -> Vec<Path> {
 pub fn get_all_schedule_target_dirs() -> Vec<Path> {
     let mut dirs = get_all_schedule_src_dirs();
     for schedule_path in dirs.iter_mut() {
+        //TODO: Replace this with a constant
         schedule_path.push("target")
     }
     dirs
@@ -227,6 +242,7 @@ pub fn get_all_process_src_dirs() -> Vec<Path> {
 pub fn get_all_process_target_dirs() -> Vec<Path> {
     let mut dirs = get_all_process_src_dirs();
     for entry in dirs.iter_mut() {
+        //TODO: Replace this with a constant
         entry.push("target")
     }
     dirs
@@ -250,7 +266,7 @@ pub fn get_tools_dir() -> Path {
 }
 
 define_str!(RUN_KERNEL_TOOL_SRC_DIR, TOOLS_DIR!(), "/run_kernel");
-define_str!(RUN_KERNEL_TOOL_TARGET_DIR, RUN_KERNEL_TOOL_SRC_DIR!(), "/target");
+define_str!(RUN_KERNEL_TOOL_TARGET_DIR, RUN_KERNEL_TOOL_SRC_DIR!(), CARGO_TARGET_DIR!());
 
 pub fn get_run_kernel_tool_src_dir() -> Path {
     WORLDSONG_ROOT_DIR.join(RUN_KERNEL_TOOL_SRC_DIR)
@@ -265,7 +281,7 @@ pub fn get_new_state_struct_tool_src_dir() -> Path {
     WORLDSONG_ROOT_DIR.join(NEW_STATE_STRUCT_TOOL_SRC_DIR)
 }
 
-define_str!(NEW_STATE_STRUCT_TOOL_TARGET_DIR, NEW_STATE_STRUCT_TOOL_SRC_DIR!(), "/target");
+define_str!(NEW_STATE_STRUCT_TOOL_TARGET_DIR, NEW_STATE_STRUCT_TOOL_SRC_DIR!(), CARGO_TARGET_DIR!());
 pub fn get_new_state_struct_tool_target_dir() -> Path {
     WORLDSONG_ROOT_DIR.join(NEW_STATE_STRUCT_TOOL_TARGET_DIR)
 }
@@ -275,7 +291,7 @@ pub fn get_compile_state_struct_tool_src_dir() -> Path {
     WORLDSONG_ROOT_DIR.join(COMPILE_STATE_STRUCT_TOOL_SRC_DIR)
 }
 
-define_str!(COMPILE_STATE_STRUCT_TOOL_TARGET_DIR, COMPILE_STATE_STRUCT_TOOL_SRC_DIR!(), "/target");
+define_str!(COMPILE_STATE_STRUCT_TOOL_TARGET_DIR, COMPILE_STATE_STRUCT_TOOL_SRC_DIR!(), CARGO_TARGET_DIR!());
 pub fn get_compile_state_struct_tool_target_dir() -> Path {
     WORLDSONG_ROOT_DIR.join(COMPILE_STATE_STRUCT_TOOL_TARGET_DIR)
 }
@@ -285,7 +301,7 @@ pub fn get_compile_scheduler_tool_src_dir() -> Path {
     WORLDSONG_ROOT_DIR.join(COMPILE_SCHEDULER_TOOL_SRC_DIR)
 }
 
-define_str!(COMPILE_SCHEDULER_TOOL_TARGET_DIR, COMPILE_SCHEDULER_TOOL_SRC_DIR!(), "/target");
+define_str!(COMPILE_SCHEDULER_TOOL_TARGET_DIR, COMPILE_SCHEDULER_TOOL_SRC_DIR!(), CARGO_TARGET_DIR!());
 pub fn get_compile_scheduler_tool_target_dir() -> Path {
     WORLDSONG_ROOT_DIR.join(COMPILE_SCHEDULER_TOOL_TARGET_DIR)
 }
@@ -295,7 +311,7 @@ pub fn get_compile_schedule_tool_src_dir() -> Path {
     WORLDSONG_ROOT_DIR.join(COMPILE_SCHEDULE_TOOL_SRC_DIR)
 }
 
-define_str!(COMPILE_SCHEDULE_TOOL_TARGET_DIR, COMPILE_SCHEDULE_TOOL_SRC_DIR!(), "/target");
+define_str!(COMPILE_SCHEDULE_TOOL_TARGET_DIR, COMPILE_SCHEDULE_TOOL_SRC_DIR!(), CARGO_TARGET_DIR!());
 pub fn get_compile_schedule_tool_target_dir() -> Path {
     WORLDSONG_ROOT_DIR.join(COMPILE_SCHEDULE_TOOL_TARGET_DIR)
 }
@@ -305,7 +321,7 @@ pub fn get_compile_process_tool_src_dir() -> Path {
     WORLDSONG_ROOT_DIR.join(COMPILE_PROCESS_TOOL_SRC_DIR)
 }
 
-define_str!(COMPILE_PROCESS_TOOL_TARGET_DIR, COMPILE_PROCESS_TOOL_SRC_DIR!(), "/target");
+define_str!(COMPILE_PROCESS_TOOL_TARGET_DIR, COMPILE_PROCESS_TOOL_SRC_DIR!(), CARGO_TARGET_DIR!());
 pub fn get_compile_process_tool_target_dir() -> Path {
     WORLDSONG_ROOT_DIR.join(COMPILE_PROCESS_TOOL_TARGET_DIR)
 }
@@ -315,19 +331,49 @@ pub fn get_compile_kernel_tool_src_dir() -> Path {
     WORLDSONG_ROOT_DIR.join(COMPILE_KERNEL_TOOL_SRC_DIR)
 }
 
-define_str!(COMPILE_KERNEL_TOOL_TARGET_DIR, COMPILE_KERNEL_TOOL_SRC_DIR!(), "/target");
+define_str!(COMPILE_KERNEL_TOOL_TARGET_DIR, COMPILE_KERNEL_TOOL_SRC_DIR!(), CARGO_TARGET_DIR!());
 pub fn get_compile_kernel_tool_target_dir() -> Path {
     WORLDSONG_ROOT_DIR.join(COMPILE_KERNEL_TOOL_TARGET_DIR)
 }
 
+define_str!(ADD_PROCESS_TOOL_SRC_DIR, TOOLS_DIR!(), "/add_process");
+pub fn get_add_process_tool_src_dir() -> Path {
+    WORLDSONG_ROOT_DIR.join(ADD_PROCESS_TOOL_SRC_DIR)
+}
+
+define_str!(ADD_PROCESS_TOOL_TARGET_DIR, ADD_PROCESS_TOOL_SRC_DIR!(), CARGO_TARGET_DIR!());
+pub fn get_add_process_tool_target_dir() -> Path {
+    WORLDSONG_ROOT_DIR.join(ADD_PROCESS_TOOL_TARGET_DIR)
+}
+
 define_str!(ADD_STATE_STRUCT_TOOL_SRC_DIR, TOOLS_DIR!(), "/add_state_struct");
-pub fn get_add_state_struct_tools_dir() -> Path {
+pub fn get_add_state_struct_tool_dir() -> Path {
     WORLDSONG_ROOT_DIR.join(ADD_STATE_STRUCT_TOOL_SRC_DIR)
 }
 
-define_str!(ADD_STATE_STRUCT_TOOL_TARGET_DIR, ADD_STATE_STRUCT_TOOL_SRC_DIR!(), "/target");
-pub fn get_add_state_struct_tools_target_dir() -> Path {
+define_str!(ADD_STATE_STRUCT_TOOL_TARGET_DIR, ADD_STATE_STRUCT_TOOL_SRC_DIR!(), CARGO_TARGET_DIR!());
+pub fn get_add_state_struct_tool_target_dir() -> Path {
     WORLDSONG_ROOT_DIR.join(ADD_STATE_STRUCT_TOOL_TARGET_DIR)
+}
+
+define_str!(GENERATE_STATE_LIBRARY_TOOL_SRC_DIR, TOOLS_DIR!(), "/generate_state_library");
+pub fn get_generate_state_library_tool_src_dir() -> Path {
+    WORLDSONG_ROOT_DIR.join(GENERATE_STATE_LIBRARY_TOOL_SRC_DIR)
+}
+
+define_str!(GENERATE_STATE_LIBRARY_TOOL_TARGET_DIR, GENERATE_STATE_LIBRARY_TOOL_SRC_DIR!(), CARGO_TARGET_DIR!());
+pub fn get_generate_state_library_tool_target_dir() -> Path {
+    WORLDSONG_ROOT_DIR.join(GENERATE_STATE_LIBRARY_TOOL_TARGET_DIR)
+}
+
+define_str!(COMPILE_STATE_LIBRARY_TOOL_SRC_DIR, TOOLS_DIR!(), "/compile_state_library");
+pub fn get_compile_state_library_tool_src_dir() -> Path {
+    WORLDSONG_ROOT_DIR.join(COMPILE_STATE_LIBRARY_TOOL_SRC_DIR)
+}
+
+define_str!(COMPILE_STATE_LIBRARY_TOOL_TARGET_DIR, COMPILE_STATE_LIBRARY_TOOL_SRC_DIR!(), CARGO_TARGET_DIR!());
+pub fn get_compile_state_library_tool_target_dir() -> Path {
+    WORLDSONG_ROOT_DIR.join(COMPILE_STATE_LIBRARY_TOOL_TARGET_DIR)
 }
 
 define_str!(GENERATE_SCHEDULE_TAGS_SRC_DIR, TOOLS_DIR!(), "/generate_schedule_tags");
@@ -335,10 +381,11 @@ pub fn get_generate_schedule_tags_src_dir() -> Path {
     WORLDSONG_ROOT_DIR.join(GENERATE_SCHEDULE_TAGS_SRC_DIR)
 }
 
-define_str!(GENERATE_SCHEDULE_TAGS_TARGET_DIR, GENERATE_SCHEDULE_TAGS_SRC_DIR!(), "/target");
+define_str!(GENERATE_SCHEDULE_TAGS_TARGET_DIR, GENERATE_SCHEDULE_TAGS_SRC_DIR!(), CARGO_TARGET_DIR!());
 pub fn get_generate_schedule_tags_target_dir() -> Path {
     WORLDSONG_ROOT_DIR.join(GENERATE_SCHEDULE_TAGS_TARGET_DIR)
 }
+
 
 // Worldsong Tags
 
