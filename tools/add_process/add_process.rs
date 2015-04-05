@@ -1,32 +1,23 @@
-#![feature(os)]
-#![feature(old_io)]
-#![feature(old_path)]
-#![feature(collections)]
-#![feature(core)]
-
 extern crate getopts;
 extern crate wraped;
-extern crate collections;
 extern crate common;
 
 use getopts::Options;
 
-use std::old_io;
-use std::old_io::Writer;
-use std::old_path::Path;
-use std::old_path::GenericPath;
-use std::os;
-use std::old_io::fs::File;
+use std::fs;
+use std::io::Write;
+
+use std::env;
+use std::fs::File;
 use wraped::{Editor, EditorTrait};
 
 use common::hierarchy;
 use common::system;
-use common::settings;
 
 fn main() {
     // Program args
 
-    let args: Vec<String> = os::args();
+    let args: Vec<String> = env::args().collect();
     let mut opts = Options::new();
     opts.optopt("n", "name", "Set the name of the process.", "NAME");
     opts.optopt("e", "editor", "Open the process in the editor of choice.", "EDITOR");
@@ -49,8 +40,9 @@ fn main() {
     // Lets generate!
 
     // Create new dir
-    let process_dir = os::self_exe_path().unwrap().join(name.clone());
-    let filename = name.clone();
+    let mut process_dir = hierarchy::get_processes_dir();
+    process_dir.push(name.clone());
+
     hierarchy::create_fresh_dir(&process_dir).unwrap();
 
     // Create the process's src file
@@ -59,7 +51,7 @@ fn main() {
     let process_src_path = process_dir.clone().join(process_src_file_name);
     let mut process_src_file = File::create(&process_src_path).unwrap();
 
-    let process_src_text = String::from_str(
+    let process_src_text = String::from(
 "extern crate state;
 use state::{/*...*/};
 
@@ -67,15 +59,15 @@ pub fn execute(/*...*/) -> () {
 
 }");
 
-    process_src_file.write_str(process_src_text.as_slice()).unwrap();
+    process_src_file.write_all(process_src_text.as_bytes()).unwrap();
     process_src_file.flush().unwrap();
 
     // Copy the compile tool into the dir
     let compile_tool_path = hierarchy::get_compile_process_tool_target_dir().join("compile_process");
-    match old_io::fs::copy(&compile_tool_path, &process_dir.join("compile")) {
+    match fs::copy(&compile_tool_path, &process_dir.join("compile")) {
         Ok(_) => (),
         Err(e) => {
-            old_io::fs::rmdir_recursive(&process_dir).unwrap();
+            fs::remove_dir_all(&process_dir).unwrap();
             println!("Could not copy the compile tool to the directory, maybe try re-running your OS's setup tool?");
             panic!("{}", e)
         }
@@ -83,7 +75,7 @@ pub fn execute(/*...*/) -> () {
 
     // Open the text file in editor of choice
     if editor.is_none() { return }
-    let mut wraped_editor = match Editor::new(editor.unwrap().as_slice()) {
+    let mut wraped_editor = match Editor::new(&editor.unwrap()) {
         Some(e) => e,
         None => panic!("Sorry, that editor isn't supported."),
     };

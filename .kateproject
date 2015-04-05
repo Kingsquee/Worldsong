@@ -1,0 +1,9 @@
+{
+  "name": "Worldsong"
+, "files": [ { "git": 1, "recursive": 1  } ]
+, "build": {
+    "directory": ""
+  , "build": "[ -f \"./compile\" ] && ./compile || [ -f \"./Cargo.toml\" ] && cargo build || echo \"No build scripts in current directory\""
+  , "clean": "konsole -e $(while [[ $PWD != / ]] ; do find \"$PWD\"/ -maxdepth 1 -name 'launch'; cd ..; done)"
+  }
+}

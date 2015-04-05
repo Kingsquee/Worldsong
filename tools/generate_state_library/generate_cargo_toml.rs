@@ -1,7 +1,7 @@
-use rustc_serialize::{Decodable, Decoder};
-use std::old_path::{Path, GenericPath};
-use std::old_io::{File, Reader, Writer};
-use std::old_io::fs::PathExtensions;
+//use rustc_serialize::{Decodable, Decoder};
+use std::path::{PathBuf, Path};
+use std::fs::{File, PathExt};
+use std::io::{Read, Write};
 use std::collections::HashMap;
 use toml;
 
@@ -39,7 +39,7 @@ struct Conflict {
     version_b: String,
 }
 
-pub fn exec(struct_src_dirs: &Vec<Path>) {
+pub fn exec(struct_src_dirs: &Vec<PathBuf>) {
     println!("Generating the state's Cargo.toml.");
 
     let mut src_dirs = struct_src_dirs.clone();
@@ -47,7 +47,7 @@ pub fn exec(struct_src_dirs: &Vec<Path>) {
     src_dirs.push(hierarchy::get_scheduler_src_dir());
 
     // Get the Dependency.tomls
-    let mut dependency_tomls: Vec<Path> = Vec::with_capacity(src_dirs.len());
+    let mut dependency_tomls: Vec<PathBuf> = Vec::with_capacity(src_dirs.len());
 
     for dir in src_dirs.iter() {
         let dependencies_toml = dir.clone().join("Dependencies.toml");
@@ -63,20 +63,21 @@ pub fn exec(struct_src_dirs: &Vec<Path>) {
     for toml_path in dependency_tomls.iter() {
         let mut toml_file = File::open(toml_path).unwrap();
 
-        let toml_text = toml_file.read_to_string().unwrap();
-        let root = parse(toml_text.as_slice(), toml_path);
+        let mut toml_text = String::new();
+        toml_file.read_to_string(&mut toml_text).unwrap();
+
+        let root = parse(&toml_text, toml_path);
         let toml_manifest: TomlManifest = toml::decode(toml::Value::Table(root)).unwrap();
         /*let mut decoder = toml::Decoder::new(toml::Value::Table(root));
         let toml_manifest: TomlManifest = match Decodable::decode(&mut decoder) {
             Ok(t) => t,
             Err(e) => panic!(
                 format!("{} is not a valid manifest\n\n{}",
-                    toml_path.filename_str().unwrap(), e)
+                    toml_path.file_name().unwrap(), e)
             ),
         };*/
 
-        let dir_name = String::from_str(toml_path.dir_path().filename_str().unwrap());
-
+        let dir_name = toml_path.parent().unwrap().file_name().unwrap().to_str().unwrap().to_string();
         toml_manifests.insert(dir_name,toml_manifest);
     }
 
@@ -186,15 +187,15 @@ path = \"{common_dir}\"
 
 {generated_text}
 ",
-common_dir = hierarchy::get_common_src_dir().as_str().unwrap(),
+common_dir = hierarchy::get_common_src_dir().as_os_str().to_str().unwrap(),
 generated_text = toml::encode_str(&final_manifest));
 
 
     let cargo_toml_path = hierarchy::get_state_src_dir().join("Cargo.toml");
 
     println!("Creating new Cargo.toml");
-    let mut cargo_toml_file = File::create(&cargo_toml_path);
-    cargo_toml_file.write_str(cargo_toml_text.as_slice()).unwrap();
+    let mut cargo_toml_file = File::create(&cargo_toml_path).unwrap();
+    cargo_toml_file.write_all(cargo_toml_text.as_bytes()).unwrap();
     cargo_toml_file.flush().unwrap();
 }
 
@@ -213,7 +214,7 @@ fn get_version(d: &TomlDependency) -> String {
 }
 
 pub fn parse(toml: &str, file: &Path) -> toml::Table {
-    let mut parser = toml::Parser::new(toml.as_slice());
+    let mut parser = toml::Parser::new(&toml);
     match parser.parse() {
         Some(toml) => return toml,
         None => {}
@@ -223,7 +224,7 @@ pub fn parse(toml: &str, file: &Path) -> toml::Table {
         let (loline, locol) = parser.to_linecol(error.lo);
         let (hiline, hicol) = parser.to_linecol(error.hi);
         error_str.push_str(
-            format!("{}:{}:{}{} {}\n",
+            &format!("{}:{}:{}{} {}\n",
                 file.display(),
                 loline + 1,
                 locol + 1,
@@ -233,7 +234,7 @@ pub fn parse(toml: &str, file: &Path) -> toml::Table {
                     "".to_string()
                 },
                 error.desc
-            ).as_slice()
+            )
         );
     }
     println!("{}", error_str);

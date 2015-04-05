@@ -1,7 +1,4 @@
-#![feature(os)]
-#![feature(old_io)]
-#![feature(old_path)]
-#![feature(old_fs)]
+#![feature(path_ext)]
 
 #[macro_use]
 extern crate lazy_static;

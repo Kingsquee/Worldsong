@@ -1,28 +1,20 @@
-#![feature(os)]
-#![feature(old_io)]
-#![feature(old_path)]
-#![feature(old_fs)]
-
 extern crate getopts;
 extern crate common;
 
 use getopts::Options;
 
-use std::os;
-use std::old_io;
-use std::old_path::Path;
-use std::old_path::GenericPath;
+use std::env;
+use std::process::{Command};
 
 use common::hierarchy;
 use common::system;
-use common::settings;
 
 /// Compiles the state lib, and everything else, wot.
 fn main() {
     // Program args
     let mut should_update: bool = false;
 
-    let args: Vec<String> = os::args();
+    let args: Vec<String> = env::args().collect();
     let mut opts = Options::new();
     opts.optflag("u", "update", "Update all state structs' dependencies before compiling.");
 
@@ -36,24 +28,22 @@ fn main() {
     };
 
     // Lets compile!
-    hierarchy::set_is_compiling(true);
+    hierarchy::set_is_compiling(true).unwrap();
 
-    let current_dir = os::self_exe_path().unwrap();
-    let current_dir_name = current_dir.filename_str().unwrap();
-    let target_path = current_dir.join("target");
-    let source_filename = current_dir_name.to_string() + ".rs";
+    let mut current_dir = env::current_exe().unwrap();
+    current_dir.pop();
 
     println!("Compiling the State library");
 
     if should_update {
-        let mut cargo_update_command = old_io::Command::new(hierarchy::get_cargo_path().as_str().unwrap());
-        cargo_update_command.cwd(&hierarchy::get_state_src_dir());
+        let mut cargo_update_command = Command::new(hierarchy::get_cargo_path().as_os_str().to_str().unwrap());
+        cargo_update_command.current_dir(&hierarchy::get_state_src_dir());
         cargo_update_command.arg("update");
         system::execute_command(&mut cargo_update_command);
     }
 
-    let mut cargo_build_command = old_io::Command::new(hierarchy::get_cargo_path().as_str().unwrap());
-    cargo_build_command.cwd(&hierarchy::get_state_src_dir());
+    let mut cargo_build_command = Command::new(hierarchy::get_cargo_path().as_os_str().to_str().unwrap());
+    cargo_build_command.current_dir(&hierarchy::get_state_src_dir());
     cargo_build_command.arg("build");
     system::execute_command(&mut cargo_build_command);
 
@@ -81,5 +71,5 @@ fn main() {
         Some(vec!["-c"])
     );
 
-    hierarchy::set_is_compiling(false);
+    hierarchy::set_is_compiling(false).unwrap();
 }

@@ -1,20 +1,18 @@
-#![feature(old_io)]
-#![feature(old_path)]
 #![feature(std_misc)]
-
+#![allow(unused_assignments)]
 extern crate state;
 extern crate common;
 extern crate time;
 
 use std::dynamic_lib::DynamicLibrary;
 use std::mem;
-use std::old_io;
-use std::old_io::File;
-use std::old_path::Path;
-use std::old_path::GenericPath;
+use std::fs;
+use std::thread;
+use std::fs::File;
+use std::path::{PathBuf, Path};
+
 
 use state::Data;
-use std::time::duration::Duration;
 
 use common::hierarchy;
 
@@ -49,10 +47,9 @@ fn main() {
             scheduler_run_symbol    = None;
 
             // Check that compilation is finished
-            let mut timer = old_io::Timer::new().unwrap();
             while File::open(&hierarchy::get_is_compiling_tag()).is_ok() {
                 println!("Compilation is still ongoing. Trying again in 1 second...");
-                timer.sleep(Duration::seconds(1));
+                thread::sleep_ms(1000);
             }
 
             // Load new library from disk
@@ -76,9 +73,9 @@ fn find_data_dylib() -> Option<Path> {
     // look in target dir
     let common_target_dir = common::fs::get_common_target_dir();
     // find the dylib
-    let contents = fs::readdir(&common_target_dir).unwrap();
+    let contents = fs::read_dir(&common_target_dir).unwrap();
     for entry in contents.iter() {
-        if entry.filename_str().unwrap().starts_with("libcommon") {
+        if entry.file_name().unwrap().starts_with("libcommon") {
             return Some(entry.clone())
         }
     }
@@ -86,13 +83,14 @@ fn find_data_dylib() -> Option<Path> {
 }
 */
 
-fn find_scheduler_dylib() -> Option<Path> {
+fn find_scheduler_dylib() -> Option<PathBuf> {
     // look in target dir
     let scheduler_target_dir = hierarchy::get_scheduler_target_dir();
     // find the dylib
-    let contents = old_io::fs::readdir(&scheduler_target_dir).unwrap();
-    for entry in contents.iter() {
-        if entry.filename_str().unwrap().starts_with("libscheduler") {
+    let contents = fs::read_dir(&scheduler_target_dir).unwrap();
+    for entry in contents {
+        let entry = entry.unwrap().path();
+        if entry.file_name().unwrap().to_str().unwrap().starts_with("libscheduler") {
             return Some(entry.clone())
         }
     }
@@ -100,7 +98,7 @@ fn find_scheduler_dylib() -> Option<Path> {
 }
 
 fn load_library(path: &Path) -> DynamicLibrary {
-    println!("Loading library: {}", path.as_str().unwrap());
+    println!("Loading library: {}", path.as_os_str().to_str().unwrap());
     match DynamicLibrary::open(Some(path)) {
         Err(why) => {
             panic!("Library loading error: {}", why);

@@ -1,18 +1,13 @@
-#![feature(os)]
-#![feature(old_io)]
-#![feature(old_path)]
-#![feature(old_fs)]
+#![feature(path_ext)]
 
 extern crate getopts;
 extern crate common;
 
 use getopts::Options;
-use std::os;
-use std::old_io;
-use std::old_io::fs::PathExtensions;
-use std::old_io::Reader;
-use std::old_path::Path;
-use std::old_path::GenericPath;
+use std::env;
+use std::fs::{File, PathExt};
+use std::io::Read;
+use std::process::Command;
 
 use common::hierarchy;
 use common::system;
@@ -24,7 +19,7 @@ fn main() {
     // Program args
     let mut is_child_tool: bool = false;
 
-    let args: Vec<String> = os::args();
+    let args: Vec<String> = env::args().collect();
     let mut opts = Options::new();
     opts.optflag("c", "child", "Run as a child compilation tool: i.e. Don't recompile dependent modules and don't modify the .is_compiling file.");
 
@@ -39,35 +34,35 @@ fn main() {
 
     // Lets compile!
     if !is_child_tool {
-        hierarchy::set_is_compiling(true);
+        hierarchy::set_is_compiling(true).unwrap();
     }
 
-    let current_dir = os::self_exe_path().unwrap();
-    let current_dir_name = current_dir.filename_str().unwrap();
-    let current_process_filename = current_dir_name.to_string() + "_process.rs";
+    let mut current_dir = env::current_exe().unwrap(); current_dir.pop();
+    let current_dir_name = current_dir.file_name().unwrap();
+    let current_process_filename = current_dir_name.to_os_string().into_string().unwrap() + "_process.rs";
     let target_path = current_dir.join("target");
 
     hierarchy::create_fresh_dir(&target_path).unwrap();
 
-    println!("Compiling {} process", current_dir_name);
+    println!("Compiling {} process", current_dir_name.to_os_string().into_string().unwrap());
 
-    let mut command = old_io::Command::new(hierarchy::get_rustc_path().as_str().unwrap());
-    command.cwd(&current_dir);
+    let mut command = Command::new(hierarchy::get_rustc_path().as_os_str().to_str().unwrap());
+    command.current_dir(&current_dir);
 
     // Link dependencies dirs
     for path in hierarchy::get_state_dependency_dirs().iter() {
-        command.arg("-L").arg(path.as_str().unwrap());
+        command.arg("-L").arg(path.as_os_str().to_str().unwrap());
     }
 
     // Link data structs
     for path in hierarchy::get_all_struct_target_dirs().iter() {
-        command.arg("-L").arg(path.as_str().unwrap());
+        command.arg("-L").arg(path.as_os_str().to_str().unwrap());
     }
 
     // Link state
     command.arg("-L").arg(&hierarchy::get_state_target_dir());
 
-    command.arg("--out-dir").arg(target_path.as_str().unwrap());
+    command.arg("--out-dir").arg(target_path.as_os_str().to_str().unwrap());
     command.arg("--crate-type=".to_string() + settings::get_process_lib_type());
     command.arg("-C").arg("prefer-dynamic");
     command.arg(current_process_filename);
@@ -83,13 +78,13 @@ fn main() {
                 // print "Warning: This process doesn't exist in any schedules."
                 // quit
 
-        let mut schedule_tags_file = match old_io::File::open(&hierarchy::get_schedule_tags(&current_dir)) {
-            Err(e) => {
+        let mut schedule_tags_file = match File::open(&hierarchy::get_schedule_tags(&current_dir)) {
+            Err(_) => {
                 println!("No tag file found, generating tags...");
                 system::run(&hierarchy::get_generate_schedule_tags_binary(), None);
-                match old_io::File::open(&hierarchy::get_schedule_tags(&current_dir)) {
+                match File::open(&hierarchy::get_schedule_tags(&current_dir)) {
                     Err(e) => {
-                        hierarchy::set_is_compiling(false);
+                        hierarchy::set_is_compiling(false).unwrap();
                         panic!("{}", e);
                     }
                     Ok(file) => file,
@@ -101,7 +96,8 @@ fn main() {
         // at this point, .schedule_tags should exist
 
         // parse schedule names into schedule_paths
-        let contents = schedule_tags_file.read_to_string().unwrap();
+        let mut contents = String::new();
+        schedule_tags_file.read_to_string(&mut contents).unwrap();
 
         if contents.len() == 0 {
             println!("Warning: Process is not added to any schedules");
@@ -121,6 +117,6 @@ fn main() {
                 system::run(&schedule_src_dir.join("compile"), Some(vec!["-c"]));
             }
         }
-        hierarchy::set_is_compiling(false);
+        hierarchy::set_is_compiling(false).unwrap();
     }
 }

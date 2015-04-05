@@ -1,6 +1,6 @@
 extern crate sdl2;
 use self::sdl2::Sdl;
-use self::sdl2::render::{Renderer, RenderDrawer};
+use self::sdl2::render::Renderer;
 
 data! {
     GraphicsState {

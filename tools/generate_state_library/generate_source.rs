@@ -1,9 +1,10 @@
-use std::old_io::{File, Reader, Writer};
-use std::old_path::{Path, GenericPath};
+use std::io::{Read, Write};
+use std::fs::{File};
+use std::path::{PathBuf};
 
 use common::hierarchy;
 
-pub fn exec(struct_src_dirs: &Vec<Path>) {
+pub fn exec(struct_src_dirs: &Vec<PathBuf>) {
 
     // Don't set is_compilng, since it's just generating the code to compile, not actually compiling it yet.
 
@@ -14,13 +15,13 @@ pub fn exec(struct_src_dirs: &Vec<Path>) {
     // Get the struct folder names!
     let mut names: Vec<String> = Vec::new();
     for dir in struct_src_dirs.iter() {
-        names.push(dir.filename_str().unwrap().to_string());
+        names.push(dir.file_name().unwrap().to_os_string().into_string().unwrap());
     }
 
     let mut type_names: Vec<String> = Vec::new();
     for name in names.iter() {
         let mut struct_type_name = name.clone();
-        let capital_first_letter: char = struct_type_name.char_at(0).to_uppercase().next().unwrap(); //wat
+        let capital_first_letter: char = struct_type_name.chars().next().unwrap().to_uppercase().next().unwrap(); //wat.
         struct_type_name.remove(0);
         struct_type_name.insert(0, capital_first_letter);
         struct_type_name.push_str("State");
@@ -37,14 +38,14 @@ extern crate common;\n\n"
     state_src_text.push_str("// Now, lets get these imports out of the way...\n");
 
     for i in 0 .. names.len() {
-        state_src_text.push_str(format!("pub use {}::{};\n", names[i].as_slice(), type_names[i].as_slice()).as_slice());
+        state_src_text.push_str(&format!("pub use {}::{};\n", &names[i], type_names[i]));
     }
     state_src_text.push_str("\n");
 
-    let structs_dir_str = String::from_str(hierarchy::get_structs_dir().as_str().unwrap());
+    let structs_dir_str = hierarchy::get_structs_dir().into_os_string().into_string().unwrap();
     for name in names.iter() {
-        state_src_text.push_str(format!("#[path = \"{structs_dir}/{struct_name}/{struct_name}_state.rs\"]\n", structs_dir = structs_dir_str, struct_name = name.as_slice()).as_slice());
-        state_src_text.push_str(format!("mod {};\n", name.as_slice()).as_slice());
+        state_src_text.push_str(&format!("#[path = \"{structs_dir}/{struct_name}/{struct_name}_state.rs\"]\n", structs_dir = structs_dir_str, struct_name = name));
+        state_src_text.push_str(&format!("mod {};\n", name));
     }
     state_src_text.push_str("\n\n");
 
@@ -56,10 +57,10 @@ extern crate common;\n\n"
     // for fewer cache misses
     for i in 0 .. names.len() {
         state_src_text.push_str(
-            format!("       {name}: {type_name} = {type_name}::new()\n",
-            name = names[i].as_slice(),
-            type_name = type_names[i].as_slice(),
-            ).as_slice()
+            &format!("       {name}: {type_name} = {type_name}::new()\n",
+            name = names[i],
+            type_name = type_names[i],
+            )
         );
     }
 
@@ -70,7 +71,7 @@ extern crate common;\n\n"
 
     // save as state.rs
     println!("Creating new state.rs");
-    let mut state_src_file = File::create(&state_src_path);
-    state_src_file.write_str(state_src_text.as_slice()).unwrap();
+    let mut state_src_file = File::create(&state_src_path).unwrap();
+    state_src_file.write_all(state_src_text.as_bytes()).unwrap();
     state_src_file.flush().unwrap();
 }

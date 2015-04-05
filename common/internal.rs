@@ -5,6 +5,7 @@ macro_rules! define_str (
         macro_rules! $name (
             () => (concat!($($arg), +))
         );
+        #[allow(dead_code)]
         const $name: &'static str = $name!();
     );
 );

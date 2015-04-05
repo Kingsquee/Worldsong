@@ -1,4 +1,3 @@
-#![feature(core)]
 extern crate state;
 extern crate sdl2;
 
@@ -16,7 +15,7 @@ pub fn execute(sim: &mut SimulationState, window: &GraphicsState) -> () {
     sim.color_g = sim.color_g.wrapping_add(1);
     sim.color_b = sim.color_b.wrapping_add(1);
 
-    println!("{}{}{}", sim.color_r, sim.color_g, sim.color_b);
+//     println!("{}{}{}", sim.color_r, sim.color_g, sim.color_b);
 
     // Your changes will be visible immediately. (:
     drawer.set_draw_color(Color::RGB(sim.color_r, sim.color_g, sim.color_b));
