@@ -402,3 +402,7 @@ pub fn get_generate_schedule_tags_binary() -> PathBuf {
 pub fn get_is_compiling_tag() -> PathBuf {
     WORLDSONG_ROOT_DIR.join(".is_compiling")
 }
+
+pub fn get_compile_config(dir: &Path) -> PathBuf {
+    dir.join("compile.config")
+}

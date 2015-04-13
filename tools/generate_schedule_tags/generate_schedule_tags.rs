@@ -1,12 +1,14 @@
 extern crate common;
 extern crate regex;
 
-use common::hierarchy;
+
 use std::collections::{HashSet, HashMap};
 use std::io::Write;
 use std::process::Command;
 use std::path::Path;
 
+use common::hierarchy;
+use common::system;
 //use std::str::StrExt;
 
 use regex::Regex;
@@ -75,21 +77,20 @@ fn parse_schedule(schedule_path: &Path) -> Vec<String> {
 
     // Link dependencies dirs
     for path in hierarchy::get_state_dependency_dirs().iter() {
-        command.arg("-L").arg(path.as_os_str());
-    }
-
-    // Link data structs
-    for path in hierarchy::get_all_struct_target_dirs().iter() {
-        command.arg("-L").arg(path.as_os_str());
+        system::link_libraries(&mut command, path);
     }
 
     // Link state
-    command.arg("-L").arg(&hierarchy::get_state_target_dir());
+    system::link_libraries(&mut command, &hierarchy::get_state_target_dir());
 
     // Link process target dirs
     for process_target_dir in hierarchy::get_all_process_target_dirs().iter() {
-        command.arg("-L");
-        command.arg(process_target_dir.as_os_str());
+        system::link_libraries(&mut command, process_target_dir);
+    }
+
+    // Link dependencies dirs
+    for path in hierarchy::get_state_dependency_dirs().iter() {
+        system::link_libraries(&mut command, path);
     }
 
     command.arg(schedule_path.as_os_str());

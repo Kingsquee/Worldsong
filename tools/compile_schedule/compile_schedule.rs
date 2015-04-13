@@ -39,43 +39,39 @@ fn main() {
 
     let schedule_name = current_dir.file_name().unwrap();
     let schedule_filename = schedule_name.to_os_string().into_string().unwrap() + ".rs";
-    let target_path = current_dir.join("target");
+    let target_dir = current_dir.join("target");
 
-    hierarchy::create_fresh_dir(&target_path).unwrap();
+    hierarchy::create_fresh_dir(&target_dir).unwrap();
 
-    println!("Compiling {} schedule", schedule_name.to_os_string().into_string().unwrap());
 
     let mut command = Command::new(hierarchy::get_rustc_path().as_os_str().to_str().unwrap());
 
     // Link dependencies dirs
     for path in hierarchy::get_state_dependency_dirs().iter() {
-        command.arg("-L").arg(path.as_os_str().to_str().unwrap());
-    }
-
-    // Link data structs
-    for path in hierarchy::get_all_struct_target_dirs().iter() {
-        command.arg("-L").arg(path.as_os_str().to_str().unwrap());
+        system::link_libraries(&mut command, path);
     }
 
     // Link state
-    command.arg("-L").arg(&hierarchy::get_state_target_dir());
+    system::link_libraries(&mut command, &hierarchy::get_state_target_dir());
 
     // Link process target dirs
     for process_target_dir in hierarchy::get_all_process_target_dirs().iter() {
-        command.arg("-L");
-        command.arg(process_target_dir.as_os_str().to_str().unwrap());
+        system::link_libraries(&mut command, process_target_dir);
     }
 
-    command.arg("--out-dir").arg("./target");
-    command.arg("--crate-type=".to_string() + settings::get_schedules_lib_type());
-    command.arg("-C").arg("prefer-dynamic");
-    command.arg(schedule_filename);
+
+    let config_display = system::get_compile_config(&mut command, &current_dir, &schedule_filename, &target_dir);
+    command.arg("--crate-type=".to_string() + settings::get_process_lib_type());
+
+    println!("Compiling {} schedule {}", schedule_name.to_os_string().into_string().unwrap(), config_display);
 
     system::execute_command(&mut command);
 
     if !is_child_tool {
         // Generate tags
         system::run(&hierarchy::get_generate_schedule_tags_target_dir().join("generate_schedule_tags"), None);
+
+        // Generate parameters
 
         // Compile the scheduler
         system::run(&hierarchy::get_scheduler_src_dir().join(Path::new("compile")), Some(vec!["-c"]));

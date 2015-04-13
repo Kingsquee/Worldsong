@@ -1,5 +1,7 @@
 #![feature(std_misc)]
 #![allow(unused_assignments)]
+
+//When state is present, I get a cc linking error!
 extern crate state;
 extern crate common;
 extern crate time;
@@ -11,12 +13,12 @@ use std::thread;
 use std::fs::File;
 use std::path::{PathBuf, Path};
 
-
 use state::Data;
 
 use common::hierarchy;
 
 fn main() {
+
     //let data_dylib_path = find_data_dylib().unwrap();
     let scheduler_dylib_path = find_scheduler_dylib().unwrap();
 

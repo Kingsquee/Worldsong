@@ -40,32 +40,26 @@ fn main() {
     let mut current_dir = env::current_exe().unwrap(); current_dir.pop();
     let current_dir_name = current_dir.file_name().unwrap();
     let current_process_filename = current_dir_name.to_os_string().into_string().unwrap() + "_process.rs";
-    let target_path = current_dir.join("target");
+    let target_dir = current_dir.join("target");
 
-    hierarchy::create_fresh_dir(&target_path).unwrap();
+    hierarchy::create_fresh_dir(&target_dir).unwrap();
 
-    println!("Compiling {} process", current_dir_name.to_os_string().into_string().unwrap());
 
     let mut command = Command::new(hierarchy::get_rustc_path().as_os_str().to_str().unwrap());
     command.current_dir(&current_dir);
 
     // Link dependencies dirs
     for path in hierarchy::get_state_dependency_dirs().iter() {
-        command.arg("-L").arg(path.as_os_str().to_str().unwrap());
-    }
-
-    // Link data structs
-    for path in hierarchy::get_all_struct_target_dirs().iter() {
-        command.arg("-L").arg(path.as_os_str().to_str().unwrap());
+        system::link_libraries(&mut command, path)
     }
 
     // Link state
-    command.arg("-L").arg(&hierarchy::get_state_target_dir());
+    system::link_libraries(&mut command, &hierarchy::get_state_target_dir());
 
-    command.arg("--out-dir").arg(target_path.as_os_str().to_str().unwrap());
+    let config_display = system::get_compile_config(&mut command, &current_dir, &current_process_filename, &target_dir);
     command.arg("--crate-type=".to_string() + settings::get_process_lib_type());
-    command.arg("-C").arg("prefer-dynamic");
-    command.arg(current_process_filename);
+
+    println!("Compiling {} process {}", current_dir_name.to_os_string().into_string().unwrap(), config_display);
 
     system::execute_command(&mut command);
 

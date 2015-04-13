@@ -11,3 +11,6 @@ crate-type = ["dylib", "rlib"]
 plugin = true
 
 [dependencies.lazy_static]
+
+[dependencies]
+regex = "0.1.8"
