@@ -4,7 +4,7 @@ extern crate sdl2;
 use state::{SimulationState, GraphicsState};
 use sdl2::pixels::Color;
 
-pub fn execute(sim: &mut SimulationState, window: &GraphicsState) -> () {
+pub fn execute(sim: &mut SimulationState, window: &mut GraphicsState) -> () {
     let mut drawer = window.renderer.drawer();
 
     // While the kernel is running, try modifying these values,

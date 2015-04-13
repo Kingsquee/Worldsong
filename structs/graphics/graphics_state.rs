@@ -4,19 +4,20 @@ use self::sdl2::render::Renderer;
 
 data! {
     GraphicsState {
-        title:                  String          = "Worldsong".to_string()
-        width:                  i32             = 640i32
-        height:                 i32             = 480i32
-        sdl:                    Sdl             = sdl2::init(sdl2::INIT_EVERYTHING).unwrap()
-        renderer:               Renderer        = init_renderer(&title, width, height)
-        first_focus:            bool            = true
-        opengl_major_version:   u32             = 3
-        opengl_minor_version:   u32             = 0
+        title:                  String                  = "Worldsong".to_string()
+        width:                  i32                     = 640i32
+        height:                 i32                     = 480i32
+        sdl:                    Sdl                     = sdl2::init(sdl2::INIT_EVERYTHING).unwrap()
+        renderer:               Renderer<'static>       = init_renderer(&title, &sdl, width, height)
+        first_focus:            bool                    = true
+        opengl_major_version:   u32                     = 3
+        opengl_minor_version:   u32                     = 0
     }
 }
 
-pub fn init_renderer(title: &str, width: i32, height: i32) -> Renderer {
+pub fn init_renderer(title: &str, sdl: &Sdl, width: i32, height: i32) -> Renderer<'static> {
     let window = sdl2::video::Window::new(
+                    sdl,
                     title,
                     sdl2::video::WindowPos::PosCentered,
                     sdl2::video::WindowPos::PosCentered,
