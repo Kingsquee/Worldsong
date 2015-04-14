@@ -9,12 +9,12 @@ Quickstart
 
 1. Navigate to tools/scripts/os_setup.
 2. Run the script for your OS. (Currently only gnu/linux)
-3. When it finishes, you can run _launch_ in the worldsong root directory.
-4. While it's running, try editing processes/graphics/graphics.rs, and run _compile_ in the same directory.
+3. When it finishes, you can run _./launch_ in the worldsong root directory.
+4. While it's running, try editing processes/graphics/graphics.rs, and run _./compile_ in the same directory.
 5. Refocus the Worldsong window.
 6. Smile!
 
-Each subsystem has its own custom _compile_. 
+Each subsystem has its own custom _compile_.
 
 To add your own functionality:
 
