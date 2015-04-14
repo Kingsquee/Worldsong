@@ -24,7 +24,7 @@ To add your own functionality:
 4. Write some code that modifies yourstructname
 5. Add your process to the appropriate schedule, passing it yourstructname.
 
-To use third-party libraries, list the dependencies yourstructname requires in its Dependencies.toml, using the format Cargo.toml expects.
+To use third-party libraries, list the dependencies yourstructname requires in its Dependencies.toml, using the format Cargo.toml [expects](http://doc.crates.io/manifest.html#the-[dependencies.*]-sections).
 
 Have fun!
 
