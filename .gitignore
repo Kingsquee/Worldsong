@@ -1,0 +1,30 @@
+# Compiled files
+*.o
+*.so
+*.rlib
+*.dll
+
+# Executables
+*.exe
+
+# Tool binaries
+add
+generate
+compile
+launch
+
+# Tag files
+.schedule_tags
+
+# Personal stuff
+notes.txt
+
+# Cargo stuff
+Cargo.lock
+
+# Ignore dirs that store binaries
+target/
+thirdparty/
+
+# Editor stuff
+*.kate*

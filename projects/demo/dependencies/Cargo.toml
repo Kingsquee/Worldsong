@@ -1,0 +1,26 @@
+# Demo Cargo.toml
+
+[package]
+name = "dependencies"
+version = "0.1.0"
+authors = ["Kingsquee <Kingsquee@users.noreply.github.com>"]
+
+[lib]
+name = "dependencies"
+plugin = true
+
+[dependencies.worldsong_hierarchy]
+path = "./../../../shared/worldsong_hierarchy"
+
+[dependencies.worldsong_config]
+path = "./../../../shared/worldsong_config"
+
+[dependencies.schedule_macro]
+path = "./../../../shared/schedule_macro"
+
+[dependencies.data_macro]
+git = "https://github.com/Kingsquee/data-macro-rs.git"
+
+[dependencies]
+sdl2 = "*"
+time = "0.1.25"

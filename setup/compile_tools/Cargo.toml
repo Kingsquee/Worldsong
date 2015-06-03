@@ -1,0 +1,22 @@
+[package]
+
+name = "compile_tools"
+version = "0.0.1"
+authors = ["Kingsley Tolmie <kingsley.tolmie@gmail.com>"]
+
+[[bin]]
+name = "compile_tools"
+path = "src/compile_tools.rs"
+#plugin = true
+
+[dependencies.worldsong_hierarchy]
+path = "./../../shared/worldsong_hierarchy"
+
+[dependencies.worldsong_config]
+path = "./../../shared/worldsong_config"
+
+[dependencies.system]
+path = "./../../utensils/dependencies/libraries/system"
+
+[dependencies]
+getopts = "*"

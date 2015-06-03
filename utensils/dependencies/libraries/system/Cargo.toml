@@ -1,0 +1,14 @@
+[package]
+name = "system"
+version = "0.0.1"
+authors = ["Kingsquee <Kingsquee@users.noreply.github.com>"]
+
+[lib]
+name = "system"
+path = "src/system.rs"
+
+[dependencies.worldsong_hierarchy]
+path = "./../../../../shared/worldsong_hierarchy"
+
+[dependencies.worldsong_config]
+path = "./../../../../shared/worldsong_config"

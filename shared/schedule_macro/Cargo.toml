@@ -1,0 +1,9 @@
+[package]
+name = "schedule_macro"
+version = "0.1.0"
+authors = ["Kingsquee <Kingsquee@users.noreply.github.com>"]
+
+[lib]
+name = "schedule_macro"
+path = "src/schedule_macro.rs"
+plugin = true

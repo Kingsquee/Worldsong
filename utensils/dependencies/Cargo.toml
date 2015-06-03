@@ -1,0 +1,24 @@
+[package]
+name = "utensils_dependencies"
+version = "0.1.0"
+authors = ["Kingsquee <Kingsquee@users.noreply.github.com>"]
+
+[lib]
+name = "utensils_dependencies"
+
+[dependencies.worldsong_hierarchy]
+path = "./../../shared/worldsong_hierarchy"
+
+[dependencies.worldsong_config]
+path = "./../../shared/worldsong_config"
+
+[dependencies.system]
+path = "./libraries/system"
+
+[dependencies.wraped]
+git = "https://github.com/Kingsquee/wraped.git"
+
+[dependencies]
+getopts = "0.2"
+regex = "*"
+toml = "*"

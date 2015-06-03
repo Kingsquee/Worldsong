@@ -1,0 +1,13 @@
+[package]
+name = "worldsong_hierarchy"
+version = "0.1.0"
+authors = ["Kingsquee <Kingsquee@users.noreply.github.com>"]
+
+[lib]
+name = "worldsong_hierarchy"
+path = "src/worldsong_hierarchy.rs"
+crate-type = ["dylib", "rlib"]
+plugin = true
+
+[dependencies]
+lazy_static = "*"
