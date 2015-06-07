@@ -8,7 +8,6 @@
 
 use toml;
 use worldsong_hierarchy;
-use worldsong_config;
 use system;
 
 use std::io::{Read, Write};
@@ -18,16 +17,15 @@ use std::path::{PathBuf, Path};
 pub fn exec(app_dir: &Path) {
     let src_file_path = /*worldsong_hierarchy::get_temp_dir(&app_dir, "state").join("state.rs");*/generate_source(app_dir);
 
-    //let config_display = system::get_compile_config(&mut command, &current_dir, &src_file_path, &target_dir);
-    //println!("Compiling state"/*, config_display*/);
-
-    let mut dep_dirs = Vec::new();
     // Link dependencies
+    let mut dep_dirs = Vec::new();
     for path in worldsong_hierarchy::get_dependencies_all_target_dirs(app_dir).iter() {
         dep_dirs.push(path.clone())
     }
 
-    system::rustc_compile_lib(app_dir, &dep_dirs, &src_file_path, worldsong_config::get_state_lib_type(), true);
+    let module_dir = worldsong_hierarchy::get_module_src_dir(app_dir, "state");
+    let config_file_path = worldsong_hierarchy::get_module_compile_config_path(&module_dir);
+    system::rustc_compile_lib(app_dir, &dep_dirs, &src_file_path, &config_file_path);
 }
 
 fn generate_source(app_dir: &Path) -> PathBuf {

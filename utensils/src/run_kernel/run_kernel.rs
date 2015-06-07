@@ -7,8 +7,6 @@ use std::process;
 use std::dynamic_lib::DynamicLibrary;
 
 
-// TODO: Make this work differently if statically compiled?
-//extern crate worldsong_config;
 // TODO: enable reloading when error code are returned.
 
 fn main() {

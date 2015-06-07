@@ -6,7 +6,6 @@
 #[macro_use]extern crate schedule_macro;
 #[macro_use]extern crate sdl2;
 #[macro_use]extern crate time;
-#[macro_use]extern crate worldsong_config;
 #[macro_use]extern crate worldsong_hierarchy;
 // State structs
 pub use graphics_state::GraphicsState;

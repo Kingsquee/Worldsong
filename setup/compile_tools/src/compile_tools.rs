@@ -78,7 +78,11 @@ fn rustc_compile_bin(utensils_dir: &Path, deps_dirs: &Vec<PathBuf>, module_name:
     let module_dir = worldsong_hierarchy::get_module_src_dir(&utensils_dir, module_name);
     let src_path = module_dir.join(&format!("{}.rs", module_name));
     worldsong_hierarchy::create_fresh_dir(&worldsong_hierarchy::get_module_target_dir(&utensils_dir, module_name)).unwrap();
-    system::rustc_compile_bin(utensils_dir, deps_dirs, &src_path, false);
+
+
+    let config_file_path = worldsong_hierarchy::get_module_compile_config_path(&module_dir);
+    system::rustc_compile_bin(utensils_dir, deps_dirs, &src_path, &config_file_path);
+
 }
 
 fn distribute_tool_to_project_dir(utensils_dir: &Path, app_dir: &Path, tool_name: &str, tool_shortcut_name: &str) {

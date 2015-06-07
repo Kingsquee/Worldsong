@@ -12,9 +12,6 @@ plugin = true
 [dependencies.worldsong_hierarchy]
 path = "./../../../shared/worldsong_hierarchy"
 
-[dependencies.worldsong_config]
-path = "./../../../shared/worldsong_config"
-
 [dependencies.schedule_macro]
 path = "./../../../shared/schedule_macro"
 

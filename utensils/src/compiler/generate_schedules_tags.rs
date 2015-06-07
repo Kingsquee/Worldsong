@@ -43,7 +43,8 @@ pub fn exec(app_dir: &Path) {
             // write a tag file containing the schedule names the process belongs to
     for process_path in processes_paths.iter() {
         let process_name = process_path.file_stem().unwrap().to_str().unwrap();
-        let mut tag_file = worldsong_hierarchy::create_fresh_file(&worldsong_hierarchy::get_file_tag_path(&app_dir, "schedules_tag", process_name)).unwrap();
+
+        let mut tag_file = worldsong_hierarchy::create_file_all(&worldsong_hierarchy::get_file_tag_path(&app_dir, "schedules_tag", process_name)).unwrap();
         let schedule_tags_maybe = tags.get(process_path.file_stem().unwrap().to_str().unwrap());
 
         if schedule_tags_maybe.is_some() {
@@ -74,7 +75,7 @@ fn parse_schedule(schedule_path: &Path) -> Vec<String> {
     for cap in re.captures_iter(&schedule_src) {
         match cap.at(1) {
             Some(name) => {
-                println!("Found: {}", name);
+                //println!("Found: {}", name);
                 process_names.push(name.to_string() + "_process")
             }
             None => {

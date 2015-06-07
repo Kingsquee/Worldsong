@@ -4,7 +4,7 @@ extern crate scheduler;
 
 use self::state::Data;
 
-pub fn exec() {
+fn main() {
     let mut data = Data::new();
 
     loop {

@@ -296,11 +296,20 @@ pub fn get_boolean_tag(tag_path: &Path) -> Result<bool, io::Error> {
 ////////////////////////////
 // Compiler Configuration //
 ////////////////////////////
-/*
-pub fn get_compile_config(dir: &Path) -> PathBuf {
-    dir.join("compile.config")
+
+const_str!(CONFIG_EXT, ".config");
+
+pub fn get_module_compile_config_path(module_dir: &Path) -> PathBuf {
+    let config_name = format!("{}{}", module_dir.file_stem().unwrap().to_str().unwrap(), CONFIG_EXT);
+    module_dir.join(config_name)
 }
-*/
+
+pub fn get_file_compile_config_path(src_file_path: &Path) -> PathBuf {
+    let module_dir = src_file_path.parent().unwrap();
+    let config_name = format!("{}{}", src_file_path.file_stem().unwrap().to_str().unwrap(), CONFIG_EXT);
+    module_dir.join(config_name)
+}
+
 
 //////////
 // Misc //
@@ -328,27 +337,18 @@ pub fn create_fresh_dir(path: &Path) -> io::Result<()> {
     Ok(())
 }
 
-pub fn create_fresh_file(path: &Path) -> io::Result<File> {
-    match fs::remove_file(path) {
-        Ok(_) => /*println!("Removed file at {}", path.display())*/(),
-        Err(e) => match e.kind() {
-            io::ErrorKind::NotFound => (),
-            _ => {
-                return Err(e)
-            }
-        }
-    };
-
-    create_file_all(path)
-}
-
 pub fn create_file_all(path: &Path) -> io::Result<File> {
     match fs::File::create(path) {
         Ok(f) => Ok(f),
         Err(e) => match e.kind() {
             io::ErrorKind::NotFound => {
-                match fs::create_dir_all(path.parent().unwrap_or(return Err(e))) {
-                    Ok(_) => fs::File::create(path),
+                let mut parent_dir = PathBuf::from(path);
+                parent_dir.pop();
+
+                match fs::create_dir_all(parent_dir) {
+                    Ok(_) => {
+                        fs::File::create(path)
+                    }
                     Err(e) => Err(e)
                 }
             }

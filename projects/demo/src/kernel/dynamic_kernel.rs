@@ -1,3 +1,4 @@
+#![feature(std_misc)]
 extern crate worldsong_hierarchy;
 extern crate state;
 extern crate time;
@@ -12,7 +13,7 @@ use std::env::consts;
 
 use self::state::Data;
 
-pub fn exec() {
+fn main() {
     let app_dir = worldsong_hierarchy::get_current_project_dir();
     let mut scheduler_dylib_path = find_scheduler_dylib(&app_dir).unwrap();
 

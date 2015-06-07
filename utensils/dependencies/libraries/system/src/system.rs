@@ -1,18 +1,14 @@
 //#![feature(unicode)]
 //extern crate rustc_unicode;
 extern crate worldsong_hierarchy;
-extern crate worldsong_config;
 
 //use rustc_unicode::str::UnicodeStr;
-// use std::io::Read;
 use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
 use std::env::consts;
 use std::fs;
-//use std::fs::PathExt;
-//use regex::Regex;
-
-// use std::fs::File;
+use std::fs::File;
+use std::io::Read;
 
 
 /*
@@ -55,48 +51,37 @@ pub fn execute_command(command: &mut Command) {
     };
 }
 
-//TODO: Remove support for compiler config files, add back as worldsong_compiler flags.
-/*
-pub fn get_compile_config(command: &mut Command, current_dir: &Path, source_filename: &str, target_dir: &Path) -> String {
+pub fn get_default_rustc_flags() -> Vec<&'static str> {
+    vec!["-C", "opt-level=3", "-C", "debuginfo=2"]
+}
 
-    let mut config_display = String::new();
-    match File::open(&Path::new(&worldsong_hierarchy::get_compile_config(&current_dir))) {
+pub fn get_compile_config(compiler_config_path: &Path, command: &mut Command) {
+    match File::open(compiler_config_path) {
         Err(_) => {
-            command.args(&worldsong_config::get_default_rustc_flags());
+            command.args(&get_default_rustc_flags());
         }
         Ok(ref mut file) => {
             let mut file_contents = String::new();
             match file.read_to_string(&mut file_contents) {
                 Err(_) => {
-                    command.args(&worldsong_config::get_default_rustc_flags());
+                    command.args(&get_default_rustc_flags());
                 }
                 Ok(_) => {
                     if file_contents.is_empty() /*|| file_contents.is_whitespace()*/ {
-                        command.args(&worldsong_config::get_default_rustc_flags());
+                        command.args(&get_default_rustc_flags());
                     } else {
-                        config_display.push_str("with \"");
                         for line in file_contents.lines_any() {
-                            config_display.push_str(line);
-                            config_display.push_str(" ");
-
-                            for cmd in line.split(' ') {
-                                command.arg(cmd);
+                            for arg in line.split(' ') {
+                                command.arg(arg);
                             }
                         }
-                        config_display.push_str("\"");
                     }
                 }
             }
         }
     }
-
-    command.arg("--out-dir").arg(target_dir.as_os_str().to_str().unwrap());
-    command.arg("-C").arg("prefer-dynamic");
-    command.arg(source_filename);
-
-    config_display
 }
-*/
+
 
 pub fn extract_library_name_from_file_name(lib_path: &Path) -> String {
     lib_path.file_stem().unwrap().to_str().unwrap().split("-").next().unwrap().trim_left_matches(consts::DLL_PREFIX).to_string() // oh lordy
@@ -111,11 +96,11 @@ pub fn link_libraries(command: &mut Command, lib_dir: &Path) {
     }
 }
 
-pub fn rustc_compile_bin(project_dir: &Path, dep_dirs: &Vec<PathBuf>, src_file_path: &Path, prefer_dynamic_linking: bool) {
+pub fn rustc_compile_bin(project_dir: &Path, dep_dirs: &Vec<PathBuf>, src_file_path: &Path, compiler_config_path: &Path) {
 
     let module_name = src_file_path.parent().unwrap().file_name().unwrap().to_str().unwrap().to_string();
 
-    println!("Building a binary for {}", module_name);
+    println!("Compiling {}.", src_file_path.file_stem().unwrap().to_str().unwrap());
     let target_dir = &worldsong_hierarchy::get_module_target_dir(&project_dir, &module_name);
     fs::create_dir_all(target_dir).unwrap();
 
@@ -125,9 +110,7 @@ pub fn rustc_compile_bin(project_dir: &Path, dep_dirs: &Vec<PathBuf>, src_file_p
         link_libraries(&mut command, dir)
     }
 
-    if prefer_dynamic_linking {
-        command.arg("-C").arg("prefer-dynamic");
-    }
+    get_compile_config(compiler_config_path, &mut command);
 
     command.arg("--out-dir").arg(target_dir);
     conditional_rustc_release_flags(&mut command);
@@ -137,11 +120,11 @@ pub fn rustc_compile_bin(project_dir: &Path, dep_dirs: &Vec<PathBuf>, src_file_p
     execute_command(&mut command);
 }
 
-pub fn rustc_compile_lib(project_dir: &Path, dep_dirs: &Vec<PathBuf>, src_file_path: &Path, lib_type: &str, prefer_dynamic_linking: bool) {
+pub fn rustc_compile_lib(project_dir: &Path, dep_dirs: &Vec<PathBuf>, src_file_path: &Path, compiler_config_path: &Path) {
 
     let module_name = src_file_path.parent().unwrap().file_name().unwrap().to_str().unwrap().to_string();
 
-    println!("Building a library for {}", module_name);
+    println!("Compiling {}.", src_file_path.file_stem().unwrap().to_str().unwrap());
     let target_dir = &worldsong_hierarchy::get_module_target_dir(&project_dir, &module_name);
     fs::create_dir_all(target_dir).unwrap();
 
@@ -151,10 +134,7 @@ pub fn rustc_compile_lib(project_dir: &Path, dep_dirs: &Vec<PathBuf>, src_file_p
         link_libraries(&mut command, dir)
     }
 
-    command.arg(format!("--crate-type={}", lib_type));
-    if prefer_dynamic_linking {
-        command.arg("-C").arg("prefer-dynamic");
-    }
+    get_compile_config(compiler_config_path, &mut command);
 
     command.arg("--out-dir").arg(target_dir);
     conditional_rustc_release_flags(&mut command);
@@ -176,6 +156,8 @@ fn conditional_rustc_release_flags(command: &mut Command) {
 }
 
 pub fn cargo_compile(cargo_project_path: &Path) {
+
+    println!("Compiling {}", cargo_project_path.file_stem().unwrap().to_str().unwrap());
 
     let mut command = Command::new(worldsong_hierarchy::get_cargo_binary_path());
     command.arg("build");
