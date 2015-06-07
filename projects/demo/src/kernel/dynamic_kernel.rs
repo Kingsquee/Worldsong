@@ -1,4 +1,5 @@
 #![feature(std_misc)]
+#![feature(start)]
 extern crate worldsong_hierarchy;
 extern crate state;
 extern crate time;
@@ -13,7 +14,10 @@ use std::env::consts;
 
 use self::state::Data;
 
-fn main() {
+const RESET_STATE_STATUS_CODE: isize = 3;
+
+#[start]
+fn start(_: isize, _: *const *const u8) -> isize {
     let app_dir = worldsong_hierarchy::get_current_project_dir();
     let mut scheduler_dylib_path = find_scheduler_dylib(&app_dir).unwrap();
 
@@ -54,27 +58,12 @@ fn main() {
         // TODO: Would be nice to have this load the latest state::Data from disk.
         else if data.core_state.reset {
             println!("Resetting state...");
-            data = Data::new();
-
-            data.core_state.reset = false;
+            return RESET_STATE_STATUS_CODE
         }
     }
-}
 
-/*
-fn find_data_dylib() -> Option<Path> {
-    // look in target dir
-    let worldsong_common_target_dir = worldsong_common::fs::get_worldsong_common_target_dir();
-    // find the dylib
-    let contents = fs::read_dir(&worldsong_common_target_dir).unwrap();
-    for entry in contents.iter() {
-        if entry.file_name().unwrap().starts_with("libworldsong_common") {
-            return Some(entry.clone())
-        }
-    }
-    None
+    return 0
 }
-*/
 
 fn find_scheduler_dylib(app_dir: &Path) -> Option<PathBuf> {
     // look in target dir
@@ -111,16 +100,3 @@ fn load_scheduler_run_symbol(dylib: &DynamicLibrary) -> fn(&mut Data) -> () {
         }
     }
 }
-
-/*
-fn load_data_new_symbol(dylib: &DynamicLibrary) -> fn() -> Data {
-    println!("Loading data new symbol");
-    unsafe {
-        match dylib.symbol::<fn() -> Data>("new") {
-            Err (why)   => { panic! ("Data loading error: {}", why); }
-            Ok  (func)  => { mem::transmute(func) }
-        }
-    }
-}
-*/
-

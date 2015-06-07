@@ -14,6 +14,9 @@ pub fn execute(core: &mut CoreState, window: &mut GraphicsState) -> () {
             Event::KeyDown{ keycode: KeyCode::Escape, ..} => {
                 core.quit = true;
             },
+            Event::KeyDown{ keycode: KeyCode::F5, ..} => {
+                core.reset = true;
+            },
             Event::Window{ win_event_id, ..} => {
                 if win_event_id as isize == event::WindowEventId::FocusGained as isize {
                     if window.first_focus {

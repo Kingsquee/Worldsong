@@ -12,7 +12,7 @@ pub fn execute(sim: &mut SimulationState, window: &mut GraphicsState) -> () {
     // re-focusing the Worldsong window.
 
     //sim.color_r = sim.color_r.wrapping_add(1);
-    //sim.color_g = sim.color_g.wrapping_add(1);
+    sim.color_g = sim.color_g.wrapping_add(1);
     //sim.color_b = sim.color_b.wrapping_add(1);
 
 //     println!("{}{}{}", sim.color_r, sim.color_g, sim.color_b);

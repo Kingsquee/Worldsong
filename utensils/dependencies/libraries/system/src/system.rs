@@ -10,7 +10,6 @@ use std::fs;
 use std::fs::File;
 use std::io::Read;
 
-
 /*
 [Sunday, November 30, 2014] [12:28:23 ▾] <Kingsqueee>   Is there a way I can tell rustup.sh to install to a local directory?
 [Sunday, November 30, 2014] [12:28:47 ▾] <Kingsqueee>   I'd like a 'portable' compiler
