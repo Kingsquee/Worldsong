@@ -22,7 +22,7 @@ fn main() {
     let program = args[0].clone();
     let mut opts = Options::new();
     opts.optopt("e", "editor", "Open the process in the editor of choice.", "EDITOR");
-    opts.optmulti("s", "state", "Adds a state parameter to the process", "PARAM");
+    opts.optmulti("s", "state", "Adds a state parameter to the process", "STATE");
 
     let matches = match opts.parse(&args[1..]) {
         Ok(m) => { m }
@@ -141,8 +141,9 @@ format!("extern crate state;
 use state::{{{formatted_imports}}};
 
 pub fn execute({formatted_params}) -> () {{
-
-}}", formatted_imports = formatted_imports, formatted_params = formatted_params);
+{indentation}
+}}",    formatted_imports = formatted_imports, formatted_params = formatted_params,
+        indentation = "    ");
 
     process_src_file.write_all(process_src_text.as_bytes()).unwrap();
     process_src_file.flush().unwrap();

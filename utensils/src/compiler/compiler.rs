@@ -12,6 +12,7 @@ mod compile_schedule;
 mod compile_scheduler;
 mod generate_schedules_tags;
 
+mod maybe_add_process;
 
 use std::env;
 use std::fs;
@@ -109,7 +110,7 @@ fn main() {
             absolute_src_path.push(&src_path);
             src_path = absolute_src_path;
         }
-        
+
         let parent_dir_name = src_path.parent().unwrap().file_name().unwrap().to_str().unwrap();
 
         match parent_dir_name {
@@ -145,6 +146,9 @@ fn main() {
                 worldsong_hierarchy::set_boolean_tag(&is_compiling, false).unwrap();
             }
             "schedules" => {
+                if maybe_add_process::exec(&app_dir, &src_path) {
+                    return
+                }
                 worldsong_hierarchy::set_boolean_tag(&is_compiling, true).unwrap();
                 compile_schedule::exec(&app_dir, &src_path);
                 generate_schedules_tags::exec(&app_dir);
