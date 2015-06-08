@@ -26,5 +26,9 @@ Cargo.lock
 target/
 thirdparty/
 
+# ignore tmp and tags directories
+.tmp
+.tags
+
 # Editor stuff
 *.kate*
