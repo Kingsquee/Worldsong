@@ -101,7 +101,15 @@ fn main() {
             }
         }
     } else {
-        let src_path = PathBuf::from(&matches.free[0]);
+        let mut src_path = PathBuf::from(&matches.free[0]);
+
+        // ensure the src_path is absolute
+        if src_path.is_relative() {
+            let mut absolute_src_path = env::current_dir().unwrap();
+            absolute_src_path.push(&src_path);
+            src_path = absolute_src_path;
+        }
+        
         let parent_dir_name = src_path.parent().unwrap().file_name().unwrap().to_str().unwrap();
 
         match parent_dir_name {
