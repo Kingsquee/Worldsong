@@ -19,6 +19,7 @@ pub fn init_renderer(title: &str, sdl: &Sdl, width: u32, height: u32) -> Rendere
     let window = sdl.window(title, width, height,)
                 .position_centered()
                 .opengl()
+                .resizable()
                 .build()
                 .unwrap();
     let renderer = window.renderer().build().unwrap();

@@ -1,8 +1,5 @@
-//#![feature(unicode)]
-//extern crate rustc_unicode;
 extern crate worldsong_hierarchy;
 
-//use rustc_unicode::str::UnicodeStr;
 use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
 use std::env::consts;
@@ -126,6 +123,26 @@ pub fn rustc_compile_lib(project_dir: &Path, dep_dirs: &Vec<PathBuf>, src_file_p
     println!("Compiling {}.", src_file_path.file_stem().unwrap().to_str().unwrap());
     let target_dir = &worldsong_hierarchy::get_module_target_dir(&project_dir, &module_name);
     fs::create_dir_all(target_dir).unwrap();
+
+    let mut command = Command::new(worldsong_hierarchy::get_rustc_binary_path());
+    command.arg("--print").arg("crate-name").arg(src_file_path);
+
+    // clean target dir of libraries with the same crate name
+    let output = command.output().unwrap();
+    let crate_name = String::from_utf8_lossy(&output.stdout).trim().to_string();
+
+    for entry in fs::read_dir(target_dir).unwrap() {
+        let entry = entry.unwrap().path();
+        if fs::metadata(&entry).unwrap().is_file() {
+            let entry_name = entry.file_stem().unwrap().to_str().unwrap().trim_left_matches(consts::DLL_PREFIX).to_string();
+
+            //println!("{} == {}? {}", &entry_name, &crate_name, &entry_name == &crate_name);
+
+            if &entry_name == &crate_name {
+                fs::remove_file(entry).unwrap();
+            }
+        }
+    }
 
     let mut command = Command::new(worldsong_hierarchy::get_rustc_binary_path());
 

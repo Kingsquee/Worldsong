@@ -3,7 +3,6 @@ extern crate worldsong_hierarchy;
 extern crate system;
 
 use std::path::{PathBuf};
-use std::process;
 use std::dynamic_lib::DynamicLibrary;
 use std::process::{Command, Stdio};
 

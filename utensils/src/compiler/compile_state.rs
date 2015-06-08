@@ -71,14 +71,14 @@ fn generate_source(app_dir: &Path) -> PathBuf {
 
     for file in worldsong_hierarchy::get_module_all_src_files(app_dir, "state").iter() {
         let name = file.file_stem().unwrap().to_str().unwrap().to_string();
-        println!("Found state file: {}", &name);
+        //println!("Found state file: {}", &name);
         file_names.push(name.to_string().clone());
 
         type_names.push(to_camel_case(&name));
     }
 
     for i in 0 .. file_names.len() {
-        println!("State is {}", file_names[i]);
+        //println!("State is {}", file_names[i]);
         state_src_text.push_str(&format!("pub use {}::{};\n", &file_names[i], type_names[i]));
     }
     state_src_text.push_str("\n");
@@ -110,11 +110,11 @@ fn generate_source(app_dir: &Path) -> PathBuf {
     // save as state.rs
     // It's only used to generate the binary, so throw it in the temp dir.
     let state_src_dir = worldsong_hierarchy::get_temp_dir(&app_dir, "state");
-    println!("State tmp dir is {:?}", state_src_dir);
+    //println!("State tmp dir is {:?}", state_src_dir);
     worldsong_hierarchy::create_fresh_dir(&state_src_dir).unwrap();
     let state_src_path = state_src_dir.join("state.rs");
 
-    println!("Creating new state.rs");
+    //println!("Creating new state.rs");
     let mut state_src_file = worldsong_hierarchy::create_file_all(&state_src_path).unwrap();
     state_src_file.write_all(state_src_text.as_bytes()).unwrap();
     state_src_file.flush().unwrap();
