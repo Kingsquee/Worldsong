@@ -69,7 +69,7 @@ fn generate_source(app_dir: &Path) -> PathBuf {
     let mut file_names: Vec<String> = Vec::new();
     let mut type_names: Vec<String> = Vec::new();
 
-    for file in worldsong_hierarchy::get_module_all_src_files(app_dir, "state").iter() {
+    for file in worldsong_hierarchy::get_module_all_src_paths(app_dir, "state").iter() {
         let name = file.file_stem().unwrap().to_str().unwrap().to_string();
         //println!("Found state file: {}", &name);
         file_names.push(name.to_string().clone());

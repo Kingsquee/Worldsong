@@ -13,6 +13,7 @@ mod compile_scheduler;
 mod generate_schedules_tags;
 
 mod maybe_add_process;
+mod refactor_schedule_call_sigs;
 
 use std::env;
 use std::fs;
@@ -140,6 +141,7 @@ fn main() {
             }
             "processes" => {
                 worldsong_hierarchy::set_boolean_tag(&is_compiling, true).unwrap();
+                refactor_schedule_call_sigs::exec(&app_dir, &src_path);
                 compile_process::exec(&app_dir, &src_path);
                 compile_schedules_in_tag(&app_dir, &src_path);
                 compile_scheduler::exec(&app_dir);
@@ -168,13 +170,13 @@ fn main() {
 }
 
 fn compile_all_processes(app_dir: &Path) {
-    for src_path in worldsong_hierarchy::get_module_all_src_files(&app_dir, "processes").iter() {
+    for src_path in worldsong_hierarchy::get_module_all_src_paths(&app_dir, "processes").iter() {
         compile_process::exec(&app_dir, src_path);
     }
 }
 
 fn compile_all_schedules(app_dir: &Path) {
-    for src_path in worldsong_hierarchy::get_module_all_src_files(&app_dir, "schedules").iter() {
+    for src_path in worldsong_hierarchy::get_module_all_src_paths(&app_dir, "schedules").iter() {
         compile_schedule::exec(&app_dir, src_path);
     }
 }

@@ -10,10 +10,10 @@ use regex::Regex;
 // Generates tag files for each process, which define what schedule they're used in.
 pub fn exec(app_dir: &Path) {
     // find schedule names
-    let schedules_paths = worldsong_hierarchy::get_module_all_src_files(&app_dir, "schedules");
+    let schedules_paths = worldsong_hierarchy::get_module_all_src_paths(&app_dir, "schedules");
 
     // find processes
-    let processes_paths = worldsong_hierarchy::get_module_all_src_files(&app_dir, "processes");
+    let processes_paths = worldsong_hierarchy::get_module_all_src_paths(&app_dir, "processes");
 
     // Process:[Schedule, Schedule, ...]
     let mut tags: HashMap<String, HashSet<&str>> = HashMap::with_capacity(processes_paths.len());

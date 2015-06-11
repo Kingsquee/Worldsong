@@ -149,7 +149,7 @@ pub fn get_module_src_dir(project_dir: &Path, module_name: &str) -> PathBuf {
     project_dir.join(SRC!()).join(module_name)
 }
 
-pub fn get_module_all_src_files(project_dir: &Path, module_name: &str) -> Vec<PathBuf> {
+pub fn get_module_all_src_paths(project_dir: &Path, module_name: &str) -> Vec<PathBuf> {
     let dir = get_module_src_dir(project_dir, module_name);
     let mut files: Vec<PathBuf> = Vec::new();
 
