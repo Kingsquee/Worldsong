@@ -1,12 +1,10 @@
 use std::fs::File;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use regex::Regex;
 use regex::NoExpand;
 use std::io::{Read, Write};
 
-use worldsong_hierarchy;
-
-pub fn exec(app_dir: &Path, process_src_path: &Path) {
+pub fn exec(process_src_path: &Path, schedule_src_paths: &Vec<PathBuf>) {
 
     // find the execution sig
     // get the parameter names as snake_case
@@ -28,7 +26,11 @@ pub fn exec(app_dir: &Path, process_src_path: &Path) {
         execute_sig = cap.at(1).unwrap().to_string();
     }
 
-    println!("execute_sig: {}", &execute_sig);
+    if execute_sig == String::new() {
+        panic!("ERROR: Process has no parameters.");
+    }
+
+    //println!("execute_sig: {}", &execute_sig);
 
     for param_cap in execute_params_regex.captures_iter(&execute_sig) {
         //let reference_type = param_cap.at(1);
@@ -43,23 +45,18 @@ pub fn exec(app_dir: &Path, process_src_path: &Path) {
 
     for i in 0..execute_params.len() {
         new_call_sig.push_str(&execute_params[i]);
-        if i == execute_params.len() -1 {
-            new_call_sig.push(')');
-        } else {
+        if i != execute_params.len() -1  {
             new_call_sig.push_str(", ");
         }
     }
+    new_call_sig.push(')');
 
     println!("New call sig is {}", &new_call_sig);
 
     // regex-find the call sigs and parameters (as a group, not individually)
     // regex-replace the parameters with the snake_case'd parameter names
 
-    let schedule_src_paths = worldsong_hierarchy::get_module_all_src_paths(app_dir, "schedules");
-
     let schedule_call_sig_regex = Regex::new(&format!("{}({})", process_name, r"\((.+)+\)")).unwrap();
-
-    // TODO: Check schedule tags for what schedules to update.
 
     // open each schedule
     for schedule_src_path in schedule_src_paths.iter() {

@@ -1,6 +1,6 @@
 extern crate state;
-use state::{SimulationState};
+use state::{SimulationState, GraphicsState};
 
-pub fn execute(sim: &mut SimulationState) -> () {
+pub fn execute() -> () {
     //println!("Hello!");
 }

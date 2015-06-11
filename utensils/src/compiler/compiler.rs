@@ -141,9 +141,21 @@ fn main() {
             }
             "processes" => {
                 worldsong_hierarchy::set_boolean_tag(&is_compiling, true).unwrap();
-                refactor_schedule_call_sigs::exec(&app_dir, &src_path);
+
+                //println!("compiling the process");
                 compile_process::exec(&app_dir, &src_path);
-                compile_schedules_in_tag(&app_dir, &src_path);
+
+                //println!("modifying the schedule call signs for this process");
+                let schedule_src_paths = match get_schedule_src_paths_from_tag(&app_dir, &src_path) {
+                    Some(e) => e,
+                    None => return
+                };
+                //println!("{:?}", schedule_src_paths);
+                refactor_schedule_call_sigs::exec(&src_path, &schedule_src_paths);
+                //println!("compiling the schedules");
+                compile_schedules(&app_dir, &schedule_src_paths);
+
+                //println!("compiling the scheduler");
                 compile_scheduler::exec(&app_dir);
                 worldsong_hierarchy::set_boolean_tag(&is_compiling, false).unwrap();
             }
@@ -181,7 +193,7 @@ fn compile_all_schedules(app_dir: &Path) {
     }
 }
 
-fn compile_schedules_in_tag(app_dir: &Path, process_src_path: &Path) {
+fn get_schedule_src_paths_from_tag(app_dir: &Path, process_src_path: &Path) -> Option<Vec<PathBuf>> {
     let process_name = process_src_path.file_stem().unwrap().to_str().unwrap();
     let tag_path = worldsong_hierarchy::get_file_tag_path(&app_dir, "schedules_tag", process_name);
 
@@ -201,14 +213,16 @@ fn compile_schedules_in_tag(app_dir: &Path, process_src_path: &Path) {
 
     // at this point, process_name/schedules_tag should exist
 
-    // parse schedule names into schedule_paths
+    // parse schedule names into schedule_src_paths
     let mut contents = String::new();
     schedule_tags_file.read_to_string(&mut contents).unwrap();
 
     if contents.len() == 0 {
         println!("Warning: Process is not added to any schedules");
-        return
+        return None
     }
+
+    let mut schedule_src_paths = Vec::new();
 
     for line in contents.split('\n') {
         if line == "" {
@@ -216,10 +230,18 @@ fn compile_schedules_in_tag(app_dir: &Path, process_src_path: &Path) {
         }
         let schedule_src_path = worldsong_hierarchy::get_module_src_dir(&app_dir, "schedules").join(&format!("{}.rs", line));
         if fs::metadata(&schedule_src_path).is_ok() {
-            compile_schedule::exec(app_dir, &schedule_src_path);
+            schedule_src_paths.push(schedule_src_path);
         } else {
             println!("Warning: {} is not the name of any existing schedule. Perhaps it was removed?", &line);
             println!("  Please recompile one of the existing schedules directly to refresh the schedule tags and speed up compilation.")
         }
+    }
+
+    Some(schedule_src_paths)
+}
+
+fn compile_schedules(app_dir: &Path, schedule_src_paths: &Vec<PathBuf>) {
+    for schedule_src_path in schedule_src_paths.iter() {
+        compile_schedule::exec(app_dir, &schedule_src_path);
     }
 }
