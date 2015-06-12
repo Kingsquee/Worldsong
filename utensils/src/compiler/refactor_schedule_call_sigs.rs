@@ -27,7 +27,7 @@ pub fn exec(process_src_path: &Path, schedule_src_paths: &Vec<PathBuf>) {
     }
 
     if execute_sig == String::new() {
-        panic!("ERROR: Process has no parameters.");
+        return
     }
 
     //println!("execute_sig: {}", &execute_sig);
