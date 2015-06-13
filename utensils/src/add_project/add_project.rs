@@ -50,10 +50,10 @@ fn main() {
         let target_path = new_project_dir.join(&diff);
 
         if fs::metadata(&source_path).unwrap().is_file() {
-            println!("Copying from {} to {}", &source_path.display(), &target_path.display());
+            //println!("Copying from {} to {}", &source_path.display(), &target_path.display());
             fs::copy(&source_path, &target_path).unwrap();
         } else {
-            println!("Creating directory: {}", &target_path.display());
+            //println!("Creating directory: {}", &target_path.display());
             fs::create_dir_all(&target_path).unwrap();
         }
     }

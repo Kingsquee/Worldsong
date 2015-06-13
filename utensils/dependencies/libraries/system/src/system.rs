@@ -196,19 +196,26 @@ fn conditional_cargo_release_flags(command: &mut Command) {
 }
 
 pub fn distribute_utensils(utensils_dir: &Path, app_dir: &Path) {
-    println!("\nDistributing utensils for {}", app_dir.file_name().unwrap().to_str().unwrap());
+    println!("Distributing utensils for {}", app_dir.file_name().unwrap().to_str().unwrap());
 
-    distribute_utensil_to_project_dir          (&utensils_dir, app_dir, "run_kernel", "launch");
-    distribute_utensil_to_project_dir          (&utensils_dir, app_dir, "compiler", "compile");
-    distribute_utensil_to_dependencies_dir     (&utensils_dir, app_dir, "compiler", "compile");
-    distribute_utensil_to_module_src_dir       (&utensils_dir, app_dir, "compiler", "compile", "state");
-    distribute_utensil_to_module_src_dir       (&utensils_dir, app_dir, "compiler", "compile", "processes");
-    distribute_utensil_to_module_src_dir       (&utensils_dir, app_dir, "compiler", "compile", "schedules");
-    distribute_utensil_to_module_src_dir       (&utensils_dir, app_dir, "compiler", "compile", "scheduler");
-    distribute_utensil_to_module_src_dir       (&utensils_dir, app_dir, "compiler", "compile", "kernel");
+    distribute_utensil_to_project_dir           (&utensils_dir, app_dir, "run_kernel", "launch");
+    distribute_utensil_to_project_dir           (&utensils_dir, app_dir, "compiler", "compile");
+    distribute_utensil_to_dependencies_dir      (&utensils_dir, app_dir, "compiler", "compile");
+    distribute_utensil_to_module_src_dir        (&utensils_dir, app_dir, "compiler", "compile", "state");
+    distribute_utensil_to_module_src_dir        (&utensils_dir, app_dir, "compiler", "compile", "processes");
+    distribute_utensil_to_module_src_dir        (&utensils_dir, app_dir, "compiler", "compile", "schedules");
+    distribute_utensil_to_module_src_dir        (&utensils_dir, app_dir, "compiler", "compile", "scheduler");
+    distribute_utensil_to_module_src_dir        (&utensils_dir, app_dir, "compiler", "compile", "kernel");
 
-    distribute_utensil_to_module_src_dir       (&utensils_dir, app_dir, "add_state", "add", "state");
-    distribute_utensil_to_module_src_dir       (&utensils_dir, app_dir, "add_process", "add", "processes");
+    distribute_utensil_to_module_src_dir        (&utensils_dir, app_dir, "add_state", "add", "state");
+    distribute_utensil_to_module_src_dir        (&utensils_dir, app_dir, "add_process", "add", "processes");
+    distribute_utensil_to_projects_dir          (&utensils_dir, "add_project", "add");
+}
+
+fn distribute_utensil_to_projects_dir(utensils_dir: &Path,  tool_name: &str, tool_shortcut_name: &str) {
+    let file_origin = worldsong_hierarchy::get_module_target_bin(utensils_dir, tool_name);
+    let file_destination = worldsong_hierarchy::get_projects_dir().join(tool_shortcut_name);
+    soft_link(&file_origin, &file_destination);
 }
 
 fn distribute_utensil_to_project_dir(utensils_dir: &Path, app_dir: &Path, tool_name: &str, tool_shortcut_name: &str) {
@@ -232,9 +239,9 @@ fn distribute_utensil_to_module_src_dir(utensils_dir: &Path, app_dir: &Path, too
 #[cfg(target_os = "linux")]
 pub fn soft_link(origin: &Path, destination: &Path) {
     match std::os::unix::fs::symlink(origin, destination) {
-        Ok(_)                           => println!("    Created soft link between {} and {}", origin.display(), destination.display()),
+        Ok(_)                           => (), //println!("    Created soft link between {} and {}", origin.display(), destination.display()),
         Err(e) => match e.kind() {
-            ErrorKind::AlreadyExists    => println!("    Soft link already exists between {} and {}, skipping.", origin.display(), destination.display()),
+            ErrorKind::AlreadyExists    => (), //println!("    Soft link already exists between {} and {}, skipping.", origin.display(), destination.display()),
             _                           => println!("    Couldn't link {} and {}: {}", origin.display(), destination.display(), e),
         }
     }
@@ -243,9 +250,9 @@ pub fn soft_link(origin: &Path, destination: &Path) {
 #[cfg(target_os = "windows")]
 pub fn soft_link(origin: &Path, destination: &Path) {
     match std::os::windows::fs::symlink_file(origin, destination) {
-        Ok(_)                           => println!("    Created soft link between {} and {}", origin.display(), destination.display()),
+        Ok(_)                           => (), //println!("    Created soft link between {} and {}", origin.display(), destination.display()),
         Err(e) => match e.kind() {
-            ErrorKind::AlreadyExists    => println!("    Soft link already exists between {} and {}, skipping.", origin.display(), destination.display()),
+            ErrorKind::AlreadyExists    => (), //println!("    Soft link already exists between {} and {}, skipping.", origin.display(), destination.display()),
             _                           => println!("    Couldn't link {} and {}: {}", origin.display(), destination.display(), e),
         }
     }

@@ -109,13 +109,19 @@ pub fn get_worldsong_root_dir() -> PathBuf {
     WORLDSONG_ROOT_DIR.clone()
 }
 
+pub fn get_projects_dir() -> PathBuf {
+    get_worldsong_root_dir().join(PROJECTS!())
+}
+
 pub fn get_all_project_dirs() -> Vec<PathBuf> {
     let projects_dir = WORLDSONG_ROOT_DIR.join(PROJECTS!());
     let mut dirs = Vec::new();
 
     for entry in fs::read_dir(&projects_dir).unwrap() {
         let entry = entry.unwrap().path();
-        dirs.push(entry)
+        if fs::metadata(&entry).unwrap().is_dir() {
+            dirs.push(entry)
+        }
     }
     dirs
 }
@@ -180,9 +186,9 @@ pub fn get_dependencies_all_library_dirs(project_dir: &Path) -> Vec<PathBuf> {
 
     for entry in fs::read_dir(&dir).unwrap() {
         let entry = entry.unwrap().path();
-        //if entry.is_dir() {
+        if fs::metadata(&entry).unwrap().is_dir() {
             dirs.push(entry.clone());
-        //}
+        }
     }
     dirs
 }
@@ -214,9 +220,9 @@ pub fn get_global_dependencies_all_library_dirs() -> Vec<PathBuf> {
 
     for entry in fs::read_dir(&dir).unwrap() {
         let entry = entry.unwrap().path();
-        //if entry.is_dir() {
+        if fs::metadata(&entry).unwrap().is_dir() {
             dirs.push(entry.clone());
-        //}
+        }
     }
     dirs
 }
