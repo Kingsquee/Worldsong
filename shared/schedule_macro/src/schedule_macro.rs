@@ -5,13 +5,13 @@ macro_rules! schedule {
             extern crate state;
             $(
                 extern crate $process_name;
-            )+
+            )*
         }
-
+        #[allow(unused_variables)]
         pub fn execute(data: &mut _hack::state::Data) {
             $(
                 _hack::$process_name::execute($(&mut data.$param),*);
-            )+
+            )*
         }
-    }
+    };
 }

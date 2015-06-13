@@ -1,13 +1,12 @@
 [package]
 
-name = "compile_tools"
+name = "compile_utensils"
 version = "0.0.1"
 authors = ["Kingsley Tolmie <kingsley.tolmie@gmail.com>"]
 
 [[bin]]
-name = "compile_tools"
-path = "src/compile_tools.rs"
-#plugin = true
+name = "compile_utensils"
+path = "src/compile_utensils.rs"
 
 [dependencies.worldsong_hierarchy]
 path = "./../../shared/worldsong_hierarchy"

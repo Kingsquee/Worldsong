@@ -5,7 +5,7 @@ use std::process::{Command, Stdio};
 use std::env::consts;
 use std::fs;
 use std::fs::File;
-use std::io::Read;
+use std::io::{Read, ErrorKind};
 
 /*
 [Sunday, November 30, 2014] [12:28:23 ▾] <Kingsqueee>   Is there a way I can tell rustup.sh to install to a local directory?
@@ -195,13 +195,58 @@ fn conditional_cargo_release_flags(command: &mut Command) {
 
 }
 
-/*
+pub fn distribute_utensils(utensils_dir: &Path, app_dir: &Path) {
+    println!("\nDistributing utensils for {}", app_dir.file_name().unwrap().to_str().unwrap());
+
+    distribute_utensil_to_project_dir          (&utensils_dir, app_dir, "run_kernel", "launch");
+    distribute_utensil_to_project_dir          (&utensils_dir, app_dir, "compiler", "compile");
+    distribute_utensil_to_dependencies_dir     (&utensils_dir, app_dir, "compiler", "compile");
+    distribute_utensil_to_module_src_dir       (&utensils_dir, app_dir, "compiler", "compile", "state");
+    distribute_utensil_to_module_src_dir       (&utensils_dir, app_dir, "compiler", "compile", "processes");
+    distribute_utensil_to_module_src_dir       (&utensils_dir, app_dir, "compiler", "compile", "schedules");
+    distribute_utensil_to_module_src_dir       (&utensils_dir, app_dir, "compiler", "compile", "scheduler");
+    distribute_utensil_to_module_src_dir       (&utensils_dir, app_dir, "compiler", "compile", "kernel");
+
+    distribute_utensil_to_module_src_dir       (&utensils_dir, app_dir, "add_state", "add", "state");
+    distribute_utensil_to_module_src_dir       (&utensils_dir, app_dir, "add_process", "add", "processes");
+}
+
+fn distribute_utensil_to_project_dir(utensils_dir: &Path, app_dir: &Path, tool_name: &str, tool_shortcut_name: &str) {
+    let file_origin = worldsong_hierarchy::get_module_target_bin(utensils_dir, tool_name);
+    let file_destination = app_dir.join(tool_shortcut_name);
+    soft_link(&file_origin, &file_destination);
+}
+
+fn distribute_utensil_to_dependencies_dir(utensils_dir: &Path, app_dir: &Path, tool_name: &str, tool_shortcut_name: &str) {
+    let file_origin = worldsong_hierarchy::get_module_target_bin(utensils_dir, tool_name);
+    let file_destination = worldsong_hierarchy::get_dependencies_dir(app_dir).join(tool_shortcut_name);
+    soft_link(&file_origin, &file_destination);
+}
+
+fn distribute_utensil_to_module_src_dir(utensils_dir: &Path, app_dir: &Path, tool_name: &str, tool_shortcut_name: &str, app_module_name: &str) {
+    let file_origin = worldsong_hierarchy::get_module_target_bin(utensils_dir, tool_name);
+    let file_destination = worldsong_hierarchy::get_module_src_dir(app_dir, app_module_name).join(tool_shortcut_name);
+    soft_link(&file_origin, &file_destination);
+}
+
 #[cfg(target_os = "linux")]
-pub fn make_shortcut(origin: &Path, destination: &Path) -> std::io::Result<()> {
-    std::os::unix::fs::symlink(origin, destination)
+pub fn soft_link(origin: &Path, destination: &Path) {
+    match std::os::unix::fs::symlink(origin, destination) {
+        Ok(_)                           => println!("    Created soft link between {} and {}", origin.display(), destination.display()),
+        Err(e) => match e.kind() {
+            ErrorKind::AlreadyExists    => println!("    Soft link already exists between {} and {}, skipping.", origin.display(), destination.display()),
+            _                           => println!("    Couldn't link {} and {}: {}", origin.display(), destination.display(), e),
+        }
+    }
 }
 
 #[cfg(target_os = "windows")]
-pub fn make_shortcut(origin: &Path, destination: &Path) -> std::io::Result<()> {
-    std::os::windows::fs::symlink_file(origin, destination)
-}*/
+pub fn soft_link(origin: &Path, destination: &Path) {
+    match std::os::windows::fs::symlink_file(origin, destination) {
+        Ok(_)                           => println!("    Created soft link between {} and {}", origin.display(), destination.display()),
+        Err(e) => match e.kind() {
+            ErrorKind::AlreadyExists    => println!("    Soft link already exists between {} and {}, skipping.", origin.display(), destination.display()),
+            _                           => println!("    Couldn't link {} and {}: {}", origin.display(), destination.display(), e),
+        }
+    }
+}

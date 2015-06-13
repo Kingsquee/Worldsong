@@ -142,7 +142,7 @@ pub fn get_current_project_dir() -> PathBuf {
 }
 
 pub fn get_project_dir(project_name: &str) -> PathBuf {
-    WORLDSONG_ROOT_DIR.join(project_name)
+    WORLDSONG_ROOT_DIR.join(PROJECTS!()).join(project_name)
 }
 
 pub fn get_module_src_dir(project_dir: &Path, module_name: &str) -> PathBuf {
@@ -268,6 +268,10 @@ pub fn get_file_tag_path(project_dir: &Path, file_name: &str, tag_name: &str) ->
 pub fn set_boolean_tag(tag_path: &Path, value: bool) -> Result<(), io::Error> {
     match value {
         true => {
+            if fs::metadata(&tag_path).is_err() {
+                let parent_dir = tag_path.parent().unwrap();
+                fs::create_dir_all(parent_dir).unwrap();
+            }
             File::create(&tag_path).unwrap();
             Ok(())
         }
