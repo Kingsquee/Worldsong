@@ -119,7 +119,8 @@ pub fn get_all_project_dirs() -> Vec<PathBuf> {
 
     for entry in fs::read_dir(&projects_dir).unwrap() {
         let entry = entry.unwrap().path();
-        if fs::metadata(&entry).unwrap().is_dir() {
+        let metadata = fs::metadata(&entry);
+        if metadata.is_ok() && metadata.unwrap().is_dir() {
             dirs.push(entry)
         }
     }
@@ -186,8 +187,9 @@ pub fn get_dependencies_all_library_dirs(project_dir: &Path) -> Vec<PathBuf> {
 
     for entry in fs::read_dir(&dir).unwrap() {
         let entry = entry.unwrap().path();
-        if fs::metadata(&entry).unwrap().is_dir() {
-            dirs.push(entry.clone());
+        let metadata = fs::metadata(&entry);
+        if metadata.is_ok() && metadata.unwrap().is_dir() {
+            dirs.push(entry)
         }
     }
     dirs
@@ -220,8 +222,9 @@ pub fn get_global_dependencies_all_library_dirs() -> Vec<PathBuf> {
 
     for entry in fs::read_dir(&dir).unwrap() {
         let entry = entry.unwrap().path();
-        if fs::metadata(&entry).unwrap().is_dir() {
-            dirs.push(entry.clone());
+        let metadata = fs::metadata(&entry);
+        if metadata.is_ok() && metadata.unwrap().is_dir() {
+            dirs.push(entry)
         }
     }
     dirs
