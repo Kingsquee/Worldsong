@@ -236,6 +236,18 @@ fn distribute_utensil_to_module_src_dir(utensils_dir: &Path, app_dir: &Path, too
     soft_link(&file_origin, &file_destination);
 }
 
+pub fn soft_link(origin: &Path, destination: &Path) {
+    match fs::soft_link(origin, destination) {
+        Ok(_)                           => (), //println!("    Created soft link between {} and {}", origin.display(), destination.display()),
+        Err(e) => match e.kind() {
+            ErrorKind::AlreadyExists    => (), //println!("    Soft link already exists between {} and {}, skipping.", origin.display(), destination.display()),
+            _                           => println!("    Couldn't link {} and {}: {}", origin.display(), destination.display(), e),
+        }
+    }
+}
+
+// Below are link versions necessary for upcoming versions of rustc
+/*
 #[cfg(target_os = "linux")]
 pub fn soft_link(origin: &Path, destination: &Path) {
     match std::os::unix::fs::symlink(origin, destination) {
@@ -257,3 +269,4 @@ pub fn soft_link(origin: &Path, destination: &Path) {
         }
     }
 }
+*/

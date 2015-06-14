@@ -9,6 +9,9 @@ name = "utensils_dependencies"
 [dependencies.worldsong_hierarchy]
 path = "./../../shared/worldsong_hierarchy"
 
+[dependencies.dll]
+path = "./../../shared/dll"
+
 [dependencies.system]
 path = "./libraries/system"
 
@@ -16,6 +19,7 @@ path = "./libraries/system"
 git = "https://github.com/Kingsquee/wraped.git"
 
 [dependencies]
-getopts = "0.2"
+getopts = "*"
 regex = "*"
 toml = "*"
+walker = "*"

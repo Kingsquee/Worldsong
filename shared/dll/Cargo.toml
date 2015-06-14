@@ -1,0 +1,13 @@
+[package]
+name = "dll"
+version = "0.1.0"
+authors = ["Kingsquee <Kingsquee@users.noreply.github.com>, Simon Wollwage, Rustc Developers"]
+
+[lib]
+name = "dll"
+path = "src/dll.rs"
+crate-type = ["dylib", "rlib"]
+plugin = true
+
+[dependencies]
+libc = "*"

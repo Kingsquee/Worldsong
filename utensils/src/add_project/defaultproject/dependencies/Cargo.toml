@@ -1,5 +1,3 @@
-# Demo Cargo.toml
-
 [package]
 name = "dependencies"
 version = "0.1.0"
@@ -15,8 +13,11 @@ path = "./../../../shared/worldsong_hierarchy"
 [dependencies.schedule_macro]
 path = "./../../../shared/schedule_macro"
 
+[dependencies.dll]
+path = "./../../../shared/dll"
+
 [dependencies.data_macro]
 git = "https://github.com/Kingsquee/data-macro-rs.git"
 
 [dependencies]
-time = "0.1.25"
+time = "*"

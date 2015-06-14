@@ -1,11 +1,12 @@
-#![feature(fs_walk)]
 extern crate getopts;
 extern crate worldsong_hierarchy;
 extern crate system;
+extern crate walker;
 
 use std::env;
 use std::fs;
 use getopts::Options;
+use walker::Walker;
 
 fn print_usage(program: &str, opts: Options) {
     let brief = format!("Usage: {} [options]", program);
@@ -42,7 +43,7 @@ fn main() {
     //println!("new project dir: {}", new_project_dir.display());
 
     // copy ./defaultproject to projects_dir/{name}
-    for entry in fs::walk_dir(&default_project_dir).unwrap() {
+    for entry in Walker::new(&default_project_dir).unwrap() {
         let source_path = entry.unwrap().path();
         //println!("source path is {}", &source_path.display());
         let diff = source_path.to_str().unwrap().trim_left_matches(&format!("{}{}", default_project_dir.to_str().unwrap(), "/")).to_string();

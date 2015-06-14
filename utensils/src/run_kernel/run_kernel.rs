@@ -1,22 +1,20 @@
-#![feature(std_misc)]
 extern crate worldsong_hierarchy;
 extern crate system;
+extern crate dll;
 
-use std::path::{PathBuf};
-use std::dynamic_lib::DynamicLibrary;
+use std::path::PathBuf;
+use dll::DLL;
 use std::process::{Command, Stdio};
 
 const RELOAD_STATE_STATUS_CODE: i32 = 3;
 
 fn main() {
-
     loop {
         let status_code = run_kernel();
         if status_code != RELOAD_STATE_STATUS_CODE {
             break
         }
     }
-
 }
 
 fn run_kernel() -> i32 {
@@ -30,9 +28,9 @@ fn run_kernel() -> i32 {
 
     let mut library_dirs: Vec<PathBuf> = Vec::new();
 
-    let path_envvar = DynamicLibrary::envvar();
+    let path_envvar = DLL::envvar();
 
-    let current_search_path = DynamicLibrary::search_path();
+    let current_search_path = DLL::search_path();
 
     library_dirs.push(worldsong_hierarchy::get_module_target_dir(&app_dir, "processes"));
     library_dirs.push(worldsong_hierarchy::get_module_target_dir(&app_dir, "schedules"));
@@ -45,7 +43,7 @@ fn run_kernel() -> i32 {
         library_dirs.push(entry.clone());
     }
 
-    let formatted_path = DynamicLibrary::create_path(&library_dirs);
+    let formatted_path = DLL::create_path(&library_dirs);
 
     //println!("{}{:?}", path_envvar, formatted_path);
 

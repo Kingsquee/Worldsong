@@ -2,4 +2,5 @@
 
 schedule!(
     graphics_process(simulation_state, graphics_state)
+    another_process()
 );
