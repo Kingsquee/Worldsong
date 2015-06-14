@@ -155,7 +155,7 @@ pub fn execute({formatted_params}) -> () {{
         None => panic!("Sorry, that editor isn't supported."),
     };
 
-    wraped_editor.cursor(5,4);
+    wraped_editor.cursor(5,5);
     wraped_editor.open(&process_src_path);
     system::execute_command(&mut wraped_editor.get_command());
 }
