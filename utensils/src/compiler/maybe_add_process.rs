@@ -34,13 +34,13 @@ pub fn exec(app_dir: &Path, schedule_src_path: &Path) -> bool {
         let process_name = format!("{}{}", func_cap.at(1).unwrap(), "_process");
         let parameter_names = func_cap.at(2).unwrap().to_string();
 
-        println!("parameter names: {}", parameter_names);
+        //println!("parameter names: {}", parameter_names);
         let mut parameters: Vec<String> = Vec::new();
 
         for param_cap in param_regex.captures_iter(&parameter_names) {
             for i in 1..param_cap.len() {
                 let cap = param_cap.at(i).unwrap().to_string();
-                println!("Found parameter: {},", cap);
+                //println!("Found parameter: {},", cap);
                 parameters.push(cap);
             }
         }
@@ -56,10 +56,18 @@ pub fn exec(app_dir: &Path, schedule_src_path: &Path) -> bool {
 
     for entry in fs::read_dir(worldsong_hierarchy::get_module_src_dir(app_dir, "processes")).unwrap() {
         let e = entry.unwrap().path();
-        if fs::metadata(&e).unwrap().is_file() {
-            let name = e.as_path().file_stem().unwrap().to_str().unwrap().to_string();
-            process_names.push(name);
-        }
+
+        let metadata = fs::metadata(&e);
+        if metadata.is_err() { continue };
+
+        let extension = e.extension();
+        if extension.is_none() { continue };
+
+        let extension_str = e.extension().unwrap().to_str();
+        if extension_str.is_none() || extension_str.unwrap() != "rs" { continue };
+
+        let name = e.as_path().file_stem().unwrap().to_str().unwrap().to_string();
+        process_names.push(name);
     }
 
     // if it finds a process name in the schedule that doesn't have a file_stem equivelent
@@ -67,7 +75,7 @@ pub fn exec(app_dir: &Path, schedule_src_path: &Path) -> bool {
         //println!("{}: ", sig.process_name);
         let mut found = false;
         for process_name in process_names.iter() {
-            println!("{} == {}? {}", process_name, &sig.process_name, process_name == &sig.process_name);
+            //println!("{} == {}? {}", process_name, &sig.process_name, process_name == &sig.process_name);
             if process_name == &sig.process_name {
                 found = true;
                 break;
@@ -91,7 +99,7 @@ pub fn exec(app_dir: &Path, schedule_src_path: &Path) -> bool {
             add_parameters.push("kate");
 
             system::run(&worldsong_hierarchy::get_module_src_dir(app_dir, "processes").join(Path::new("add")), Some(add_parameters));
-            println!("Creating {}", &sig.process_name);
+            println!("You entered an unrecognized process name: creating {}", &sig.process_name);
             return true
         }
     }
