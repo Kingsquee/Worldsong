@@ -26,10 +26,6 @@ pub fn exec(process_src_path: &Path, schedule_src_paths: &Vec<PathBuf>) {
         execute_sig = cap.at(1).unwrap().to_string();
     }
 
-    if execute_sig == String::new() {
-        return
-    }
-
     //println!("execute_sig: {}", &execute_sig);
 
     for param_cap in execute_params_regex.captures_iter(&execute_sig) {
@@ -51,15 +47,17 @@ pub fn exec(process_src_path: &Path, schedule_src_paths: &Vec<PathBuf>) {
     }
     new_call_sig.push(')');
 
-    println!("New call sig is {}", &new_call_sig);
+    println!("{}'s new call signiature is {}", &process_name, &new_call_sig);
 
     // regex-find the call sigs and parameters (as a group, not individually)
     // regex-replace the parameters with the snake_case'd parameter names
 
-    let schedule_call_sig_regex = Regex::new(&format!("{}({})", process_name, r"\((.+)+\)")).unwrap();
+    let schedule_call_sig_regex = Regex::new(&format!("{}({})", process_name, r"\((.+)*\)")).unwrap();
 
     // open each schedule
     for schedule_src_path in schedule_src_paths.iter() {
+        println!("Refactoring call signiature in {}", schedule_src_path.file_stem().unwrap().to_str().unwrap());
+
         let mut schedule_src_file = File::open(schedule_src_path).unwrap();
         let mut schedule_src = String::new();
         schedule_src_file.read_to_string(&mut schedule_src).unwrap();

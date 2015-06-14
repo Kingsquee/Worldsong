@@ -35,9 +35,9 @@ fn main() {
     //get depot deps dir
     let deps_dirs = worldsong_hierarchy::get_dependencies_all_target_dirs(&utensils_dir);
 
-    rustc_compile_bin(&utensils_dir, &deps_dirs, "add_project");
-    rustc_compile_bin(&utensils_dir, &deps_dirs, "add_state");
     rustc_compile_bin(&utensils_dir, &deps_dirs, "add_process");
+    rustc_compile_bin(&utensils_dir, &deps_dirs, "add_state");
+    rustc_compile_bin(&utensils_dir, &deps_dirs, "add_project");
     rustc_compile_bin(&utensils_dir, &deps_dirs, "compiler");
     rustc_compile_bin(&utensils_dir, &deps_dirs, "run_kernel");
 

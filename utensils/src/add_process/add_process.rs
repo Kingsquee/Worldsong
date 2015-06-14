@@ -8,8 +8,6 @@ use std::io::Write;
 use wraped::{Editor, EditorTrait};
 use getopts::Options;
 
-
-
 fn print_usage(program: &str, opts: Options) {
     let brief = format!("Usage: {} [options]", program);
     print!("{}", opts.usage(&brief));
@@ -58,7 +56,7 @@ fn main() {
 
     let params = matches.opt_strs("s");
 
-    // Lets generate!
+    // Lets-a go!
     let app_dir = worldsong_hierarchy::get_current_project_dir();
 
     // Create new dir
@@ -70,12 +68,10 @@ fn main() {
     let process_src_path = process_dir.clone().join(process_src_file_name);
     let mut process_src_file = worldsong_hierarchy::create_file_all(&process_src_path).unwrap();
 
+    let mut formatted_imports = Vec::with_capacity(params.len());
 
-    let mut formatted_imports = "".to_string();
-    let mut formatted_params = "".to_string();
-    for i in 0..params.len() {
-        let raw = params[i].clone();
-
+    // generate imports
+    for raw in params.iter() {
         // Format the import names as CamelCase
         let mut formatted_import = String::new();
 
@@ -97,43 +93,44 @@ fn main() {
         formatted_import = formatted_import.trim_right_matches("_").to_string();
 
         formatted_import.push_str("State");
+        formatted_imports.push(formatted_import);
+    }
 
-        if i != params.len()-1 {
-            formatted_import.push_str(", ");
-        }
-
+    // generate parameters
+    let mut formatted_params = Vec::with_capacity(params.len());
+    for formatted_import in formatted_imports.iter() {
         // Format the parameter names as snake_case
-        let mut formatted_parameter = String::new();
+        let mut formatted_parameter = to_snake_case(formatted_import);
+        formatted_parameter.push_str(": &");
+        formatted_parameter.push_str(&formatted_import);
 
-        // they're using snake case
-        if raw.contains("_") {
-            // make sure they didn't use any capitals for some ungodly reason
-            for character in raw.chars() {
-                formatted_parameter.push(character.to_lowercase().next().unwrap());
-            }
-        } else { // they're using camel case
-            // convert to snake case
-            formatted_parameter = to_snake_case(&raw);
-        }
+        //println!("formatted_params: {:?}", &formatted_params);
+        formatted_params.push(formatted_parameter)
+    }
 
-        formatted_parameter = formatted_parameter.trim_right_matches(".rs").to_string();
-        formatted_parameter = formatted_parameter.trim_right_matches("state").to_string();
-        formatted_parameter = formatted_parameter.trim_right_matches("_").to_string();
+    // Remove duplicate imports
+    formatted_imports.sort_by(|a, b| a.cmp(b));
+    formatted_imports.dedup();
 
-        formatted_parameter.push_str("_state");
+    //println!("{:?}", formatted_imports);
 
-        // Push formatted import
-        formatted_imports.push_str(&formatted_import);
-
-        // Push formatted parameter with the imported type
-        formatted_params.push_str(&formatted_parameter);
-        formatted_params.push_str(": &");
-        formatted_params.push_str(&formatted_import);
-
-        if i != params.len()-1 {
-            formatted_params.push_str(", ");
+    // generate strings
+    let mut formatted_imports_string = String::new();
+    for i in 0..formatted_imports.len() {
+        formatted_imports_string.push_str(&formatted_imports[i]);
+        if i != formatted_imports.len()-1 {
+            formatted_imports_string.push_str(", ");
         }
     }
+
+    let mut formatted_params_string = String::new();
+    for i in 0..formatted_params.len() {
+        formatted_params_string.push_str(&formatted_params[i]);
+        if i != formatted_params.len()-1 {
+            formatted_params_string.push_str(", ");
+        }
+    }
+
 
 
     let process_src_text =
@@ -142,7 +139,7 @@ use state::{{{formatted_imports}}};
 
 pub fn execute({formatted_params}) -> () {{
 {indentation}
-}}",    formatted_imports = formatted_imports, formatted_params = formatted_params,
+}}",    formatted_imports = formatted_imports_string, formatted_params = formatted_params_string,
         indentation = "    ");
 
     process_src_file.write_all(process_src_text.as_bytes()).unwrap();

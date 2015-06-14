@@ -24,7 +24,7 @@ pub fn exec(app_dir: &Path, schedule_src_path: &Path) -> bool {
     // shove into schedule_process_sigs
 
     // parses function for name and parameter list
-    let func_regex = Regex::new(r"([a-z,_]+)_process\((.+)+\)").unwrap();
+    let func_regex = Regex::new(r"([a-z,_]+)_process\((.+)*\)").unwrap();
     // seperates parameter list into individual parameters
     let param_regex = Regex::new(r"([a-z_]+|[^,\s,\(,\)])+").unwrap();
 
@@ -32,18 +32,20 @@ pub fn exec(app_dir: &Path, schedule_src_path: &Path) -> bool {
 
     for func_cap in func_regex.captures_iter(&schedule_contents) {
         let process_name = format!("{}{}", func_cap.at(1).unwrap(), "_process");
-        let parameter_names = func_cap.at(2).unwrap().to_string();
 
-        //println!("parameter names: {}", parameter_names);
         let mut parameters: Vec<String> = Vec::new();
 
-        for param_cap in param_regex.captures_iter(&parameter_names) {
-            for i in 1..param_cap.len() {
-                let cap = param_cap.at(i).unwrap().to_string();
-                //println!("Found parameter: {},", cap);
-                parameters.push(cap);
+        if let Some(parameter_names) = func_cap.at(2) {
+            //println!("parameter names: {}", parameter_names);
+            for param_cap in param_regex.captures_iter(&parameter_names) {
+                for i in 1..param_cap.len() {
+                    let cap = param_cap.at(i).unwrap().to_string();
+                    //println!("Found parameter: {},", cap);
+                    parameters.push(cap);
+                }
             }
         }
+
         schedule_process_sigs.push(
             Signiature {
                 process_name: process_name,
@@ -98,8 +100,10 @@ pub fn exec(app_dir: &Path, schedule_src_path: &Path) -> bool {
             add_parameters.push("--editor");
             add_parameters.push("kate");
 
+            //println!("add_parameters: {:?}", add_parameters);
+
+            println!("You entered an unrecognized process name. Generating {}", &sig.process_name);
             system::run(&worldsong_hierarchy::get_module_src_dir(app_dir, "processes").join(Path::new("add")), Some(add_parameters));
-            println!("You entered an unrecognized process name: creating {}", &sig.process_name);
             return true
         }
     }
