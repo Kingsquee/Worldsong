@@ -59,7 +59,6 @@ pub fn exec(app_dir: &Path) {
     }
 }
 
-// TODO: Give up on this --pretty bullshit and just regex the data! macro.
 fn parse_schedule(schedule_path: &Path) -> Vec<String> {
 
     let mut process_names: Vec<String> = Vec::new();

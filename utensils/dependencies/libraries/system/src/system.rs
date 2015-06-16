@@ -1,4 +1,5 @@
 extern crate worldsong_hierarchy;
+extern crate regex;
 
 use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
@@ -6,6 +7,7 @@ use std::env::consts;
 use std::fs;
 use std::fs::File;
 use std::io::{Read, ErrorKind};
+use regex::Regex;
 
 /*
 [Sunday, November 30, 2014] [12:28:23 ▾] <Kingsqueee>   Is there a way I can tell rustup.sh to install to a local directory?
@@ -80,7 +82,14 @@ pub fn get_compile_config(compiler_config_path: &Path, command: &mut Command) {
 
 
 pub fn extract_library_name_from_file_name(lib_path: &Path) -> String {
-    lib_path.file_stem().unwrap().to_str().unwrap().split("-").next().unwrap().trim_left_matches(consts::DLL_PREFIX).to_string() // oh lordy
+    // TODO: USE REGEX
+    let lib_name = lib_path.file_stem().unwrap().to_str().unwrap();
+    //println!("lib name is {}", lib_name);
+    let lib_name_regex = Regex::new(&format!("{}{}", consts::DLL_PREFIX, r"(\w*)")).unwrap();
+    match lib_name_regex.captures(lib_name).unwrap().at(1) {
+        Some(cap) => return cap.to_string(),
+        None => panic!("ERROR: invalid library: {}", lib_name),
+    }
 }
 
 pub fn link_libraries(command: &mut Command, lib_dir: &Path) {
@@ -112,6 +121,7 @@ pub fn rustc_compile_bin(project_dir: &Path, dep_dirs: &Vec<PathBuf>, src_file_p
     conditional_rustc_release_flags(&mut command);
     command.arg(src_file_path);
 
+    //println!("{:?}", command);
 
     execute_command(&mut command);
 }
@@ -156,6 +166,7 @@ pub fn rustc_compile_lib(project_dir: &Path, dep_dirs: &Vec<PathBuf>, src_file_p
     conditional_rustc_release_flags(&mut command);
     command.arg(src_file_path);
 
+    //println!("{:?}", command);
 
     execute_command(&mut command);
 }

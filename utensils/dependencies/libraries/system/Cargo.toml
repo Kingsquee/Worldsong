@@ -9,3 +9,6 @@ path = "src/system.rs"
 
 [dependencies.worldsong_hierarchy]
 path = "./../../../../shared/worldsong_hierarchy"
+
+[dependencies]
+regex = "*"
