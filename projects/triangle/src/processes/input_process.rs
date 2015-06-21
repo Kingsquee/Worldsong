@@ -8,6 +8,9 @@ pub fn execute(graphics_state: &GraphicsState, core_state: &mut CoreState) -> ()
             glutin::Event::Closed => {
                 core_state.quit = true
             }
+            glutin::Event::KeyboardInput(glutin::ElementState::Pressed, _, Some(glutin::VirtualKeyCode::Escape)) => {
+                core_state.quit = true
+            }
             glutin::Event::KeyboardInput(glutin::ElementState::Pressed, _, Some(glutin::VirtualKeyCode::Space)) => {
                 core_state.reload = true
             }
