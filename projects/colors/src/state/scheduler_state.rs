@@ -1,7 +1,5 @@
 use time::precise_time_ns;
 
-//NOTE: I want to have the simulation update with a maximum speed
-//      so, the simulation can go as slow as it needs but it can't go faster than X
 data! (
     SchedulerState {
         current_time        : u64 = precise_time_ns()

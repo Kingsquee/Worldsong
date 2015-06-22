@@ -1,7 +1,9 @@
+# Triangle Demo Cargo.toml
+
 [package]
 name = "dependencies"
 version = "0.1.0"
-authors = ["Worldsong"]
+authors = ["Kingsquee <Kingsquee@users.noreply.github.com>"]
 
 [lib]
 name = "dependencies"
@@ -26,4 +28,3 @@ features = ["glutin","nalgebra", "gl_read_buffer", "gl_depth_textures"]
 
 [dependencies]
 time = "*"
-libc = "*"

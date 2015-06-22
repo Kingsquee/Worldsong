@@ -1,4 +1,4 @@
-# Demo Cargo.toml
+# Colors Demo Cargo.toml
 
 [package]
 name = "dependencies"
@@ -21,6 +21,10 @@ path = "./../../../shared/dll"
 [dependencies.data_macro]
 git = "https://github.com/Kingsquee/data-macro-rs.git"
 
+[dependencies.glium]
+version = "*"
+default-features = false
+features = ["glutin","nalgebra", "gl_read_buffer", "gl_depth_textures"]
+
 [dependencies]
-sdl2 = "*"
 time = "*"
