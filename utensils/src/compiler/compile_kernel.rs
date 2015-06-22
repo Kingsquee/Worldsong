@@ -2,7 +2,7 @@ use std::path::Path;
 use std::fs;
 use std::env::consts;
 use worldsong_hierarchy;
-use system;
+use utensils_common;
 
 pub fn exec(app_dir: &Path) {
 
@@ -39,5 +39,5 @@ pub fn exec(app_dir: &Path) {
         println!("Using {} override.", config_path.file_name().unwrap().to_str().unwrap());
     }
 
-    system::rustc_compile_bin(app_dir, &dep_dirs, &src_file_path, &config_path);
+    utensils_common::rustc_compile_bin(app_dir, &dep_dirs, &src_file_path, &config_path);
 }

@@ -1,7 +1,7 @@
 extern crate getopts;
 extern crate wraped;
 extern crate worldsong_hierarchy;
-extern crate system;
+extern crate utensils_common;
 
 use std::env;
 use std::io::Write;
@@ -40,7 +40,7 @@ fn main() {
             }
         } else { // they're using camel case
             // convert to snake case
-            formatted = to_snake_case(&raw);
+            formatted = utensils_common::to_snake_case(&raw);
         }
 
         formatted = formatted.trim_right_matches(".rs").to_string();
@@ -77,7 +77,7 @@ fn main() {
 
         // they're using snake case
         if raw.contains("_") {
-            formatted_import = to_camel_case(&raw);
+            formatted_import = utensils_common::to_camel_case(&raw);
         } else { // they're using camel case
             // make sure they didn't use underscores for some ungodly reason.
             for substring in raw.split('_') {
@@ -100,7 +100,7 @@ fn main() {
     let mut formatted_params = Vec::with_capacity(params.len());
     for formatted_import in formatted_imports.iter() {
         // Format the parameter names as snake_case
-        let mut formatted_parameter = to_snake_case(formatted_import);
+        let mut formatted_parameter = utensils_common::to_snake_case(formatted_import);
         formatted_parameter.push_str(": &");
         formatted_parameter.push_str(&formatted_import);
 
@@ -154,38 +154,5 @@ pub fn execute({formatted_params}) -> () {{
 
     wraped_editor.cursor(5,5);
     wraped_editor.open(&process_src_path);
-    system::execute_command(&mut wraped_editor.get_command());
-}
-
-fn to_snake_case(input: &str) -> String {
-    let mut formatted = String::new();
-    let mut first_letter = true;
-    for character in input.chars() {
-        if character.is_uppercase() && first_letter == false {
-            formatted.push('_');
-        }
-        formatted.push(character.to_lowercase().next().unwrap());
-        first_letter = false;
-    }
-    formatted
-}
-
-fn to_camel_case(input: &str) -> String {
-    let mut formatted = String::new();
-    let mut capitalize_next = false;
-    let mut first_letter = true;
-    for character in input.chars() {
-        if character == '_' {
-            capitalize_next = true;
-            continue
-        }
-        if capitalize_next == true || first_letter == true {
-            formatted.push(character.to_uppercase().next().unwrap());
-        } else {
-            formatted.push(character);
-        }
-        capitalize_next = false;
-        first_letter = false;
-    }
-    formatted
+    utensils_common::execute_command(&mut wraped_editor.get_command());
 }

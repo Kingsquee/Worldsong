@@ -8,7 +8,7 @@
 
 use toml;
 use worldsong_hierarchy;
-use system;
+use utensils_common;
 
 use std::io::{Read, Write};
 use std::fs;
@@ -25,7 +25,7 @@ pub fn exec(app_dir: &Path) {
 
     let module_dir = worldsong_hierarchy::get_module_src_dir(app_dir, "state");
     let config_file_path = worldsong_hierarchy::get_module_compile_config_path(&module_dir);
-    system::rustc_compile_lib(app_dir, &dep_dirs, &src_file_path, &config_file_path);
+    utensils_common::rustc_compile_lib(app_dir, &dep_dirs, &src_file_path, &config_file_path);
 }
 
 fn generate_source(app_dir: &Path) -> PathBuf {
@@ -62,7 +62,7 @@ fn generate_source(app_dir: &Path) -> PathBuf {
         }
     }
 
-    state_src_text.push_str("// State structs\n");
+    state_src_text.push_str("\n// State structs\n");
     let structs_dir = worldsong_hierarchy::get_module_src_dir(app_dir, "state");
 
     // Get the file_names of the modules
@@ -74,7 +74,7 @@ fn generate_source(app_dir: &Path) -> PathBuf {
         //println!("Found state file: {}", &name);
         file_names.push(name.to_string().clone());
 
-        type_names.push(to_camel_case(&name));
+        type_names.push(utensils_common::to_camel_case(&name));
     }
 
     for i in 0 .. file_names.len() {
@@ -107,6 +107,11 @@ fn generate_source(app_dir: &Path) -> PathBuf {
     state_src_text.push_str("    }\n");
     state_src_text.push_str("}\n");
 
+    // Types
+    state_src_text.push_str("\n// Shared types\n");
+    let types_dir = worldsong_hierarchy::get_module_src_dir(&app_dir, "types");
+    state_src_text.push_str(&generate_type_module_src(&types_dir));
+
     // save as state.rs
     // It's only used to generate the binary, so throw it in the temp dir.
     let state_src_dir = worldsong_hierarchy::get_temp_dir(&app_dir, "state");
@@ -134,26 +139,6 @@ fn generate_source(app_dir: &Path) -> PathBuf {
         [May 1, 2015] [04:10:22 ▴] <Kingsquee>  well at least the piping works
     */
 
-fn to_camel_case(input: &str) -> String {
-    let mut formatted = String::new();
-    let mut capitalize_next = false;
-    let mut first_letter = true;
-    for character in input.chars() {
-        if character == '_' {
-            capitalize_next = true;
-            continue
-        }
-        if capitalize_next == true || first_letter == true {
-            formatted.push(character.to_uppercase().next().unwrap());
-        } else {
-            formatted.push(character);
-        }
-        capitalize_next = false;
-        first_letter = false;
-    }
-    formatted
-}
-
 pub fn parse(toml: &str, file: &Path) -> toml::Table {
     let mut parser = toml::Parser::new(&toml);
     match parser.parse() {
@@ -180,4 +165,77 @@ pub fn parse(toml: &str, file: &Path) -> toml::Table {
     }
     println!("{}", error_str);
     panic!();
+}
+
+fn generate_type_module_src(dir: &Path) -> String {
+
+    fn src_gen(dir: &Path, depth: usize) -> String {
+        //println!("{:?}", dir);
+        if fs::metadata(dir).is_err() { return String::new() }
+
+        let mut use_vec = Vec::new();
+        let mut priv_mod_vec = Vec::new();
+        let mut pub_mod_vec = Vec::new();
+
+        for entry in fs::read_dir(&dir).unwrap() {
+            if entry.is_err() { continue }
+            let path = entry.unwrap().path();
+
+            let metadata = fs::metadata(&path);
+            if metadata.is_err() { continue }
+            let metadata = metadata.unwrap();
+
+            if metadata.is_file() && path.extension().unwrap().to_str().unwrap() == "rs" {
+                let name = path.file_stem().unwrap().to_str().unwrap();
+                use_vec.push(
+                    format!("{indent}pub use self::{name}::*;\n",
+                    indent = indent(depth + 1),
+                    name = name)
+                );
+
+                priv_mod_vec.push(
+                    format!("{indent}#[path = \"{path}\"]\n{indent}mod {name};\n",
+                    indent = indent(depth + 1),
+                    path = path.to_str().unwrap(),
+                    name = name)
+                );
+            } else if metadata.is_dir() {
+                pub_mod_vec.push(format!("\n{}", src_gen(&path, depth + 1)));
+            }
+        }
+
+        let mut src = String::new();
+        src.push_str(
+            &format!("{indent}pub mod {dirname} {{\n",
+            indent = indent(depth),
+            dirname = dir.file_stem().unwrap().to_str().unwrap())
+        );
+
+        for string in use_vec.iter() {
+            src.push_str(string);
+        }
+        for string in priv_mod_vec.iter() {
+            src.push_str(string);
+        }
+        for string in pub_mod_vec.iter() {
+            src.push_str(string);
+        }
+
+        src.push_str(
+            &format!("{indent}}}\n",
+            indent = indent(depth))
+        );
+
+        return src
+    }
+
+    fn indent(depth: usize) -> String {
+        let mut spaces = String::new();
+        for _ in 0..depth {
+            spaces.push_str("    ");
+        }
+        spaces
+    }
+
+    src_gen(dir, 0)
 }

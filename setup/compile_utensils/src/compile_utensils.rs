@@ -1,6 +1,6 @@
 extern crate getopts;
 extern crate worldsong_hierarchy;
-extern crate system;
+extern crate utensils_common;
 
 use getopts::Options;
 use std::env;
@@ -30,19 +30,19 @@ fn main() {
     let app_dirs = worldsong_hierarchy::get_all_project_dirs();
 
     println!("Compiling {} dependencies", utensils_dir.file_name().unwrap().to_str().unwrap() );
-    system::cargo_compile(&worldsong_hierarchy::get_dependencies_dir(&utensils_dir));
+    utensils_common::cargo_compile(&worldsong_hierarchy::get_dependencies_dir(&utensils_dir));
 
     //get depot deps dir
     let deps_dirs = worldsong_hierarchy::get_dependencies_all_target_dirs(&utensils_dir);
 
+    rustc_compile_bin(&utensils_dir, &deps_dirs, "compiler");
     rustc_compile_bin(&utensils_dir, &deps_dirs, "add_process");
     rustc_compile_bin(&utensils_dir, &deps_dirs, "add_state");
     rustc_compile_bin(&utensils_dir, &deps_dirs, "add_project");
-    rustc_compile_bin(&utensils_dir, &deps_dirs, "compiler");
     rustc_compile_bin(&utensils_dir, &deps_dirs, "run_kernel");
 
     for app_dir in app_dirs.iter() {
-        system::distribute_utensils(&utensils_dir, app_dir);
+        utensils_common::distribute_utensils(&utensils_dir, app_dir);
     }
 
     if !compile_everything { return }
@@ -52,7 +52,7 @@ fn main() {
         println!("Building {:?}", app_name);
 
         // Compiling dependencies will force a recompile of the whole project
-        system::run(&worldsong_hierarchy::get_dependencies_dir(&app_dir).join("compile"), None);
+        utensils_common::run(&worldsong_hierarchy::get_dependencies_dir(&app_dir).join("compile"), None);
     }
 }
 
@@ -63,6 +63,6 @@ fn rustc_compile_bin(utensils_dir: &Path, deps_dirs: &Vec<PathBuf>, module_name:
 
 
     let config_file_path = worldsong_hierarchy::get_module_compile_config_path(&module_dir);
-    system::rustc_compile_bin(utensils_dir, deps_dirs, &src_path, &config_file_path);
+    utensils_common::rustc_compile_bin(utensils_dir, deps_dirs, &src_path, &config_file_path);
 
 }

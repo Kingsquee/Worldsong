@@ -80,9 +80,7 @@ pub fn get_compile_config(compiler_config_path: &Path, command: &mut Command) {
     }
 }
 
-
 pub fn extract_library_name_from_file_name(lib_path: &Path) -> String {
-    // TODO: USE REGEX
     let lib_name = lib_path.file_stem().unwrap().to_str().unwrap();
     //println!("lib name is {}", lib_name);
     let lib_name_regex = Regex::new(&format!("{}{}", consts::DLL_PREFIX, r"(\w*)")).unwrap();
@@ -281,3 +279,36 @@ pub fn soft_link(origin: &Path, destination: &Path) {
     }
 }
 */
+
+pub fn to_snake_case(input: &str) -> String {
+    let mut formatted = String::new();
+    let mut first_letter = true;
+    for character in input.chars() {
+        if character.is_uppercase() && first_letter == false {
+            formatted.push('_');
+        }
+        formatted.push(character.to_lowercase().next().unwrap());
+        first_letter = false;
+    }
+    formatted
+}
+
+pub fn to_camel_case(input: &str) -> String {
+    let mut formatted = String::new();
+    let mut capitalize_next = false;
+    let mut first_letter = true;
+    for character in input.chars() {
+        if character == '_' {
+            capitalize_next = true;
+            continue
+        }
+        if capitalize_next == true || first_letter == true {
+            formatted.push(character.to_uppercase().next().unwrap());
+        } else {
+            formatted.push(character);
+        }
+        capitalize_next = false;
+        first_letter = false;
+    }
+    formatted
+}

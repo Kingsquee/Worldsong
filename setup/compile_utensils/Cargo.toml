@@ -11,8 +11,8 @@ path = "src/compile_utensils.rs"
 [dependencies.worldsong_hierarchy]
 path = "./../../shared/worldsong_hierarchy"
 
-[dependencies.system]
-path = "./../../utensils/dependencies/libraries/system"
+[dependencies.utensils_common]
+path = "./../../utensils/dependencies/libraries/utensils_common"
 
 [dependencies]
 getopts = "*"

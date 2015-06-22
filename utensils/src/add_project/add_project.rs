@@ -1,6 +1,6 @@
 extern crate getopts;
 extern crate worldsong_hierarchy;
-extern crate system;
+extern crate utensils_common;
 extern crate walker;
 
 use std::env;
@@ -60,9 +60,9 @@ fn main() {
     }
 
     // distribute soft links to projects_dir/{name}
-    system::distribute_utensils(&utensils_dir, &new_project_dir);
+    utensils_common::distribute_utensils(&utensils_dir, &new_project_dir);
 
     // compile it
     let compile_path = new_project_dir.join("compile");
-    system::run(&compile_path, None);
+    utensils_common::run(&compile_path, None);
 }

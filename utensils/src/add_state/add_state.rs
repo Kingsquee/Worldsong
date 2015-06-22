@@ -1,7 +1,7 @@
 extern crate getopts;
 extern crate wraped;
 extern crate worldsong_hierarchy;
-extern crate system;
+extern crate utensils_common;
 
 use std::env;
 use std::io::Write;
@@ -41,7 +41,7 @@ fn main() {
             }
         } else { // they're using camel case
             // convert to snake case
-            formatted = to_snake_case(&raw);
+            formatted = utensils_common::to_snake_case(&raw);
         }
 
         formatted = formatted.trim_right_matches(".rs").to_string();
@@ -93,18 +93,5 @@ data! (
 
     wraped_editor.cursor(4,9);
     wraped_editor.open(&state_src_path);
-    system::execute_command(&mut wraped_editor.get_command());
-}
-
-fn to_snake_case(input: &str) -> String {
-    let mut formatted = String::new();
-    let mut first_letter = true;
-    for character in input.chars() {
-        if character.is_uppercase() && first_letter == false {
-            formatted.push('_');
-        }
-        formatted.push(character.to_lowercase().next().unwrap());
-        first_letter = false;
-    }
-    formatted
+    utensils_common::execute_command(&mut wraped_editor.get_command());
 }

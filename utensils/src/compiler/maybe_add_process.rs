@@ -5,7 +5,7 @@ use std::io::Read;
 
 use regex::Regex;
 use worldsong_hierarchy;
-use system;
+use utensils_common;
 
 /// Returns true if a process is created.
 pub fn exec(app_dir: &Path, schedule_src_path: &Path) -> bool {
@@ -103,7 +103,7 @@ pub fn exec(app_dir: &Path, schedule_src_path: &Path) -> bool {
             //println!("add_parameters: {:?}", add_parameters);
 
             println!("You entered an unrecognized process name. Generating {}", &sig.process_name);
-            system::run(&worldsong_hierarchy::get_module_src_dir(app_dir, "processes").join(Path::new("add")), Some(add_parameters));
+            utensils_common::run(&worldsong_hierarchy::get_module_src_dir(app_dir, "processes").join(Path::new("add")), Some(add_parameters));
             return true
         }
     }

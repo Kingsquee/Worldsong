@@ -4,6 +4,8 @@ use regex::Regex;
 use regex::NoExpand;
 use std::io::{Read, Write};
 
+use utensils_common;
+
 pub fn exec(process_src_path: &Path, schedule_src_paths: &Vec<PathBuf>) {
 
     // find the execution sig
@@ -30,7 +32,7 @@ pub fn exec(process_src_path: &Path, schedule_src_paths: &Vec<PathBuf>) {
 
     for param_cap in execute_params_regex.captures_iter(&execute_sig) {
         //let reference_type = param_cap.at(1);
-        let state_type = to_snake_case(&param_cap.at(2).unwrap());
+        let state_type = utensils_common::to_snake_case(&param_cap.at(2).unwrap());
         // store the reference_type and state_type (as snake_case) in a vec
         execute_params.push(state_type);
     }
@@ -71,17 +73,4 @@ pub fn exec(process_src_path: &Path, schedule_src_paths: &Vec<PathBuf>) {
         schedule_src_file.write_all(&schedule_src.as_bytes()).unwrap_or_else(|e| println!("Could not write to schedule: {:?}", e.kind()));
         schedule_src_file.sync_all().unwrap();
     }
-}
-
-fn to_snake_case(input: &str) -> String {
-    let mut formatted = String::new();
-    let mut first_letter = true;
-    for character in input.chars() {
-        if character.is_uppercase() && first_letter == false {
-            formatted.push('_');
-        }
-        formatted.push(character.to_lowercase().next().unwrap());
-        first_letter = false;
-    }
-    formatted
 }

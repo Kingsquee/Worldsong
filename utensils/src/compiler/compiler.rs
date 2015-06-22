@@ -1,5 +1,5 @@
 extern crate worldsong_hierarchy;
-extern crate system;
+extern crate utensils_common;
 extern crate getopts;
 extern crate regex;
 extern crate toml;

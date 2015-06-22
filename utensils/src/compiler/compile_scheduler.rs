@@ -1,7 +1,7 @@
 use std::path::Path;
 
 use worldsong_hierarchy;
-use system;
+use utensils_common;
 
 pub fn exec(app_dir: &Path) {
 
@@ -20,4 +20,4 @@ pub fn exec(app_dir: &Path) {
     dep_dirs.push(worldsong_hierarchy::get_module_target_dir(app_dir, "processes"));
 
     let config_file_path = worldsong_hierarchy::get_module_compile_config_path(&module_dir);
-    system::rustc_compile_lib(app_dir, &dep_dirs, &src_file_path, &config_file_path);}
+    utensils_common::rustc_compile_lib(app_dir, &dep_dirs, &src_file_path, &config_file_path);}

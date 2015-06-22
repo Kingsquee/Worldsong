@@ -12,8 +12,8 @@ path = "./../../shared/worldsong_hierarchy"
 [dependencies.dll]
 path = "./../../shared/dll"
 
-[dependencies.system]
-path = "./libraries/system"
+[dependencies.utensils_common]
+path = "./libraries/utensils_common"
 
 [dependencies.wraped]
 git = "https://github.com/Kingsquee/wraped.git"

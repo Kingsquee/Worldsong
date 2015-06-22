@@ -1,15 +1,9 @@
 extern crate glium;
+use super::types::Vertex;
 use self::glium::{DisplayBuild, VertexBuffer, IndexBuffer, Program};
 use self::glium::index::PrimitiveType;
 use self::glium::backend::glutin_backend::GlutinFacade;
 use self::glium::glutin::WindowBuilder;
-
-#[derive(Copy, Clone)]
-pub struct Vertex {
-    position: [f32; 2],
-    color: [f32; 3],
-}
-implement_vertex!(Vertex, position, color);
 
 const VERTEX_SHADER_SOURCE: &'static str = r#"
     #version 140
