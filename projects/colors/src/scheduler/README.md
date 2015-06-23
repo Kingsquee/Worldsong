@@ -1,0 +1,3 @@
+The scheduler is the application's main loop, which determines which list of processes, (which 'schedule') should be called under what conditions. As it's a library, it can be hot-loaded at runtime if its --crate-type=dylib.
+
+Technically, the whole application could be written in traditional rust style using modules in this directory, with the scheduler as the root module. However, the scheduler/schedules/processes library separation allows increased compile speeds through iterative compiling, and the framework author (Kingsquee) find thinking in streams of execution much easier than deep hierarchical trees. :))
