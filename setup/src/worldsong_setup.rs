@@ -1,30 +1,9 @@
-extern crate getopts;
 extern crate worldsong_hierarchy;
 extern crate utensils_common;
 
-use getopts::Options;
-use std::env;
 use std::path::{PathBuf, Path};
 
 fn main() {
-
-    // Program args
-    let mut compile_everything: bool = false;
-
-    let args: Vec<String> = env::args().collect();
-
-    let mut opts = Options::new();
-    opts.optflag("a", "build-apps", "Builds the apps with the utensils.");
-
-    let matches = match opts.parse(&args[1..]) {
-        Ok(m) => { m }
-        Err(f) => { panic!(f.to_string()) }
-    };
-
-    if matches.opt_present("a") {
-        compile_everything = true
-    };
-
     let utensils_dir = worldsong_hierarchy::get_worldsong_root_dir().join("utensils");
 
     let app_dirs = worldsong_hierarchy::get_all_project_dirs();
@@ -44,8 +23,6 @@ fn main() {
     for app_dir in app_dirs.iter() {
         utensils_common::distribute_utensils(&utensils_dir, app_dir);
     }
-
-    if !compile_everything { return }
 
     for app_dir in app_dirs.iter() {
         let app_name = app_dir.file_name().unwrap();

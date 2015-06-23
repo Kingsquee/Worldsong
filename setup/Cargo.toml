@@ -1,0 +1,25 @@
+[package]
+
+name = "worldsong_setup"
+version = "0.0.1"
+authors = ["Kingsley Tolmie <kingsley.tolmie@gmail.com>"]
+build = "clean.rs"
+
+[[bin]]
+name = "worldsong_setup"
+path = "src/worldsong_setup.rs"
+
+[build-dependencies.worldsong_hierarchy]
+path = "./../shared/worldsong_hierarchy"
+
+[build-dependencies]
+walker = "*"
+
+[dependencies.worldsong_hierarchy]
+path = "./../shared/worldsong_hierarchy"
+
+[dependencies.utensils_common]
+path = "./../utensils/dependencies/libraries/utensils_common"
+
+[dependencies]
+getopts = "*"
