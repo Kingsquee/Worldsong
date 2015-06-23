@@ -7,8 +7,7 @@ use dll::DLL;
 use std::mem;
 use std::fs;
 use std::thread;
-use std::fs::File;
-use std::path::{PathBuf, Path};
+use std::path::Path;
 use std::env::consts;
 use std::process;
 
@@ -18,7 +17,7 @@ const RESET_STATE_STATUS_CODE: i32 = 3;
 
 fn main() {
     let app_dir = worldsong_hierarchy::get_current_project_dir();
-    let mut scheduler_dll_path = worldsong_hierarchy::get_module_target_dir(&app_dir, "scheduler").join(&format!("{}scheduler{}", consts::DLL_PREFIX, consts::DLL_SUFFIX));
+    let scheduler_dll_path = worldsong_hierarchy::get_module_target_dir(&app_dir, "scheduler").join(&format!("{}scheduler{}", consts::DLL_PREFIX, consts::DLL_SUFFIX));
 
     let mut scheduler_dll:          DLL                 = load_library(&app_dir, &scheduler_dll_path);
     let mut scheduler_run_symbol:   fn(&mut Data) -> () = load_scheduler_run_symbol(&scheduler_dll);

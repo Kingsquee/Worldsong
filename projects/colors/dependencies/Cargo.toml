@@ -24,7 +24,7 @@ git = "https://github.com/Kingsquee/data-macro-rs.git"
 [dependencies.glium]
 version = "*"
 default-features = false
-features = ["glutin","nalgebra", "gl_read_buffer", "gl_depth_textures"]
+features = ["glutin"]
 
 [dependencies]
 time = "*"
