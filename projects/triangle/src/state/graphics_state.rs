@@ -1,5 +1,5 @@
 extern crate glium;
-use super::types::Vertex;
+use super::types::{Vertex, Color};
 use self::glium::{DisplayBuild, VertexBuffer, IndexBuffer, Program};
 use self::glium::index::PrimitiveType;
 use self::glium::backend::glutin_backend::GlutinFacade;
@@ -28,6 +28,8 @@ const FRAGMENT_SHADER_SOURCE: &'static str = r#"
 data! (
     GraphicsState {
         display: GlutinFacade = WindowBuilder::new().build_glium().unwrap()
+
+        clear_color: Color = Color { r: 1f32, g: 1f32, b: 1f32, a: 1f32 }
 
         vertex_buffer: VertexBuffer<Vertex> = VertexBuffer::new(&display,
             vec![
