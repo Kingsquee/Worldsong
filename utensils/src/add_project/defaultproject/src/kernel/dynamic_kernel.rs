@@ -70,7 +70,7 @@ fn load_library(app_dir: &Path, path: &Path) -> DLL {
     }
 
     println!("Loading library: {}", path.as_os_str().to_str().unwrap());
-    DLL::open(Some(path)).unwrap();
+    DLL::open(Some(path)).unwrap()
 }
 
 fn load_scheduler_run_symbol(dll: &DLL) -> fn(&mut Data) -> () {
