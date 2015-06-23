@@ -11,7 +11,7 @@ pub fn execute(graphics_state: &GraphicsState, core_state: &mut CoreState) -> ()
             glutin::Event::KeyboardInput(glutin::ElementState::Pressed, _, Some(glutin::VirtualKeyCode::Escape)) => {
                 core_state.quit = true
             }
-            glutin::Event::KeyboardInput(glutin::ElementState::Pressed, _, Some(glutin::VirtualKeyCode::Space)) => {
+            glutin::Event::KeyboardInput(glutin::ElementState::Pressed, _, Some(glutin::VirtualKeyCode::F4)) => {
                 core_state.reload = true
             }
             glutin::Event::KeyboardInput(glutin::ElementState::Pressed, _, Some(glutin::VirtualKeyCode::F5)) => {
