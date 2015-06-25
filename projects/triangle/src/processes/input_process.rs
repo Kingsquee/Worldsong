@@ -2,7 +2,7 @@ extern crate glutin;
 extern crate state;
 use state::{GraphicsState, CoreState};
 
-pub fn execute(graphics_state: &GraphicsState, core_state: &mut CoreState) -> () {
+pub fn execute(graphics_state: &mut GraphicsState, core_state: &mut CoreState) -> () {
     for event in graphics_state.display.poll_events() {
         match event {
             glutin::Event::Closed => {
@@ -10,6 +10,9 @@ pub fn execute(graphics_state: &GraphicsState, core_state: &mut CoreState) -> ()
             }
             glutin::Event::KeyboardInput(glutin::ElementState::Pressed, _, Some(glutin::VirtualKeyCode::Escape)) => {
                 core_state.quit = true
+            }
+            glutin::Event::KeyboardInput(glutin::ElementState::Pressed, _, Some(glutin::VirtualKeyCode::F3)) => {
+                graphics_state.reload_shaders = true;
             }
             glutin::Event::KeyboardInput(glutin::ElementState::Pressed, _, Some(glutin::VirtualKeyCode::F4)) => {
                 core_state.reload = true

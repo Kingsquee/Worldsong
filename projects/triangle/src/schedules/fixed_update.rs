@@ -3,4 +3,5 @@
 schedule!(
     graphics_process(graphics_state)
     input_process(graphics_state, core_state)
+    reload_shaders_process(graphics_state)
 );

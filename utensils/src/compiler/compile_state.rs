@@ -35,7 +35,6 @@ fn generate_source(app_dir: &Path) -> PathBuf {
     state_src_text.push_str("\n\n");
 
     // Add the dependencies imports
-    // TODO: Libraries may not have the same name as their folders. Parse the library names in these dirs, or parse the cargo.toml
     state_src_text.push_str("// Dependencies\n");
 
     // extract manifest from cargo.toml
@@ -108,9 +107,9 @@ fn generate_source(app_dir: &Path) -> PathBuf {
     state_src_text.push_str("}\n");
 
     // Types
-    state_src_text.push_str("\n// Shared types\n");
+    state_src_text.push_str("\n// Types\n");
     let types_dir = worldsong_hierarchy::get_module_src_dir(&app_dir, "types");
-    state_src_text.push_str(&generate_type_module_src(&types_dir));
+    state_src_text.push_str(&generate_types_module_src(&types_dir));
 
     // save as state.rs
     // It's only used to generate the binary, so throw it in the temp dir.
@@ -167,7 +166,7 @@ pub fn parse(toml: &str, file: &Path) -> toml::Table {
     panic!();
 }
 
-fn generate_type_module_src(dir: &Path) -> String {
+fn generate_types_module_src(dir: &Path) -> String {
 
     fn src_gen(dir: &Path, depth: usize) -> String {
         //println!("{:?}", dir);

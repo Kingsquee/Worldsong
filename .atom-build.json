@@ -1,0 +1,8 @@
+{
+  "cmd": "{FILE_ACTIVE_PATH}/compile",
+  "sh": true,
+  "args": [ "{FILE_ACTIVE}" ],
+  "cwd": "{FILE_ACTIVE_PATH}",
+  "env": {"RUST_BACKTRACE": "1"},
+  "errorMatch": "^(?<file>[^\\.]+.rs):(?<line>\\d+):(?<col>\\d+):"
+}
