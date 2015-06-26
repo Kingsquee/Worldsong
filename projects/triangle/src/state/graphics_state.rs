@@ -9,7 +9,7 @@ data! (
     GraphicsState {
         display: GlutinFacade = WindowBuilder::new().build_glium().unwrap()
 
-        clear_color: Color = Color { r: 1f32, g: 1f32, b: 1f32, a: 1f32 }
+        clear_color: Color = Color { r: 0f32, g: 0f32, b: 0f32, a: 1f32 }
 
         vertex_buffer: VertexBuffer<Vertex> = VertexBuffer::new(&display,
             vec![

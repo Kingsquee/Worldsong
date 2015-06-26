@@ -12,9 +12,9 @@ pub fn execute(gs: &mut GraphicsState) -> () {
 
     // Change these values while the application is running,
     // and push the reload key defined in input_process.rs
-    clear_color.r += 0.0003f32;
-    clear_color.g += 0.002f32;
-    clear_color.b += 0.01f32;
+    clear_color.r += 0.01f32;
+    clear_color.g += 0.001f32;
+    clear_color.b += 0.0005f32;
 
     // Sin waves remapped from -1, 1 to 0, 1
     let r = (clear_color.r.sin() + 1f32) / 2f32;
