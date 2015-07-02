@@ -3,6 +3,7 @@ Worldsong
 
 Worldsong is a framework that enables safe, easy runtime editing of your application's behaviour, without sacrificing performance or state data integrity.
 
+(NOTE: Current working branch is [WS2](https://github.com/Kingsquee/Worldsong/tree/WS2))
 
 Quickstart
 ----------
