@@ -171,7 +171,7 @@ pub fn rustc_compile_lib(project_dir: &Path, dep_dirs: &Vec<PathBuf>, src_file_p
 
 #[cfg(not(debug_assertions))]
 fn conditional_rustc_release_flags(command: &mut Command) {
-    command.arg("-C").arg("--opt-level=3");
+    command.arg("-C").arg("opt-level=3");
 }
 
 #[cfg(debug_assertions)]
