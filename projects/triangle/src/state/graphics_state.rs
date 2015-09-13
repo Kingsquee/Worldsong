@@ -12,13 +12,13 @@ data! (
         clear_color: Color = Color { r: 0f32, g: 0f32, b: 0f32, a: 1f32 }
 
         vertex_buffer: VertexBuffer<Vertex> = VertexBuffer::new(&display,
-            vec![
+            &[
                 Vertex { position: [-0.5, -0.5], color: [0.0, 1.0, 0.0] },
                 Vertex { position: [ 0.0,  0.5], color: [0.0, 0.0, 1.0] },
                 Vertex { position: [ 0.5, -0.5], color: [1.0, 1.0, 0.0] },
             ]
-        )
-        index_buffer: IndexBuffer<u16> = IndexBuffer::new(&display, PrimitiveType::TrianglesList, vec![0u16, 1, 2])
+        ).unwrap()
+        index_buffer: IndexBuffer<u16> = IndexBuffer::new(&display, PrimitiveType::TrianglesList, &[0u16, 1, 2]).unwrap()
 
         program: Program = Program::from_source(&display, &VertexShader::load("default"), &FragmentShader::load("default"), None).unwrap()
 
