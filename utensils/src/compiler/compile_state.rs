@@ -52,7 +52,14 @@ fn generate_source(app_dir: &Path) -> PathBuf {
             if let Some(t) = d.as_table() {
                 for (name,_) in t.iter() {
                     state_src_text.push_str("#[macro_use]");
-                    state_src_text.push_str(&format!("extern crate {};\n", name));
+                    let mut chars: Vec<char> = name.chars().collect();
+                    for i in 0..chars.len() {
+                        if chars[i] == '-' {
+                            chars[i] = '_'
+                        }
+                    }
+                    let formatted_name: String = chars.into_iter().collect();
+                    state_src_text.push_str(&format!("extern crate {};\n", formatted_name));
                 }
             }
         }
