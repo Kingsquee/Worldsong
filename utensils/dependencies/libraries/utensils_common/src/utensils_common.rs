@@ -224,27 +224,41 @@ pub fn distribute_utensils(utensils_dir: &Path, app_dir: &Path) {
 fn distribute_utensil_to_projects_dir(utensils_dir: &Path,  tool_name: &str, tool_shortcut_name: &str) {
     let file_origin = worldsong_hierarchy::get_module_target_bin(utensils_dir, tool_name);
     let file_destination = worldsong_hierarchy::get_projects_dir().join(tool_shortcut_name);
-    soft_link(&file_origin, &file_destination);
+    new_soft_link(&file_origin, &file_destination);
 }
 
 fn distribute_utensil_to_project_dir(utensils_dir: &Path, app_dir: &Path, tool_name: &str, tool_shortcut_name: &str) {
     let file_origin = worldsong_hierarchy::get_module_target_bin(utensils_dir, tool_name);
     let file_destination = app_dir.join(tool_shortcut_name);
-    soft_link(&file_origin, &file_destination);
+    new_soft_link(&file_origin, &file_destination);
 }
 
 fn distribute_utensil_to_dependencies_dir(utensils_dir: &Path, app_dir: &Path, tool_name: &str, tool_shortcut_name: &str) {
     let file_origin = worldsong_hierarchy::get_module_target_bin(utensils_dir, tool_name);
     let file_destination = worldsong_hierarchy::get_dependencies_dir(app_dir).join(tool_shortcut_name);
-    soft_link(&file_origin, &file_destination);
+    new_soft_link(&file_origin, &file_destination);
 }
 
 fn distribute_utensil_to_module_src_dir(utensils_dir: &Path, app_dir: &Path, tool_name: &str, tool_shortcut_name: &str, app_module_name: &str) {
     let file_origin = worldsong_hierarchy::get_module_target_bin(utensils_dir, tool_name);
     let file_destination = worldsong_hierarchy::get_module_src_dir(app_dir, app_module_name).join(tool_shortcut_name);
-    soft_link(&file_origin, &file_destination);
+    new_soft_link(&file_origin, &file_destination);
 }
 
+pub fn new_soft_link(origin: &Path, destination: &Path) {
+
+    match fs::remove_file("boo.txt") {
+        Ok(_) => (),
+        Err(e) => match e.kind() {
+            std::io::ErrorKind::NotFound => (),
+            _ => panic!("{}", e),
+        }
+    }
+    soft_link(origin, destination);
+}
+
+// Deprecated version of soft_link, from rust 1.0
+/*
 pub fn soft_link(origin: &Path, destination: &Path) {
     match fs::soft_link(origin, destination) {
         Ok(_)                           => (), //println!("    Created soft link between {} and {}", origin.display(), destination.display()),
@@ -253,10 +267,10 @@ pub fn soft_link(origin: &Path, destination: &Path) {
             _                           => println!("    Couldn't link {} and {}: {}", origin.display(), destination.display(), e),
         }
     }
-}
+}*/
 
-// Below are link versions necessary for upcoming versions of rustc
-/*
+// Below are link versions desired for current versions of rustc
+
 #[cfg(target_os = "linux")]
 pub fn soft_link(origin: &Path, destination: &Path) {
     match std::os::unix::fs::symlink(origin, destination) {
@@ -278,7 +292,7 @@ pub fn soft_link(origin: &Path, destination: &Path) {
         }
     }
 }
-*/
+
 
 pub fn to_snake_case(input: &str) -> String {
     let mut formatted = String::new();
