@@ -1,23 +1,26 @@
 extern crate glutin;
 extern crate state;
 use state::{GraphicsState, CoreState};
+use glutin::Event::{Closed, KeyboardInput};
+use glutin::ElementState::{Pressed};
+use glutin::VirtualKeyCode as VK;
 
 pub fn execute(graphics_state: &mut GraphicsState, core_state: &mut CoreState) -> () {
     for event in graphics_state.display.poll_events() {
         match event {
-            glutin::Event::Closed => {
+            Closed => {
                 core_state.quit = true
             }
-            glutin::Event::KeyboardInput(glutin::ElementState::Pressed, _, Some(glutin::VirtualKeyCode::Escape)) => {
+            KeyboardInput(Pressed, _, Some(VK::Escape)) => {
                 core_state.quit = true
             }
-            glutin::Event::KeyboardInput(glutin::ElementState::Pressed, _, Some(glutin::VirtualKeyCode::F3)) => {
+            KeyboardInput(Pressed, _, Some(VK::F3)) => {
                 graphics_state.reload_shaders = true;
             }
-            glutin::Event::KeyboardInput(glutin::ElementState::Pressed, _, Some(glutin::VirtualKeyCode::F4)) => {
+            KeyboardInput(Pressed, _, Some(VK::F4)) => {
                 core_state.reload = true
             }
-            glutin::Event::KeyboardInput(glutin::ElementState::Pressed, _, Some(glutin::VirtualKeyCode::F5)) => {
+            KeyboardInput(Pressed, _, Some(VK::F5)) => {
                 core_state.reset = true
             }
             _ => ()
