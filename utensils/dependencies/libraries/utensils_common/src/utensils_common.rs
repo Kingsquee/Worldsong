@@ -68,7 +68,7 @@ pub fn get_compile_config(compiler_config_path: &Path, command: &mut Command) {
                     if file_contents.is_empty() /*|| file_contents.is_whitespace()*/ {
                         command.args(&get_default_rustc_flags());
                     } else {
-                        for line in file_contents.lines_any() {
+                        for line in file_contents.lines() {
                             for arg in line.split(' ') {
                                 command.arg(arg);
                             }
