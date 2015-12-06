@@ -82,7 +82,7 @@ lazy_static!{
         let mut current_dir = env::current_exe().unwrap();
         current_dir.pop();
 
-        let mut wsroot;
+        let wsroot;
         'l: loop {
             for entry in fs::read_dir(&current_dir).unwrap() {
                 let entry = entry.unwrap().path();
