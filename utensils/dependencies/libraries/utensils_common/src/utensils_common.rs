@@ -247,7 +247,7 @@ fn distribute_utensil_to_module_src_dir(utensils_dir: &Path, app_dir: &Path, too
 
 pub fn new_soft_link(origin: &Path, destination: &Path) {
 
-    match fs::remove_file("boo.txt") {
+    match fs::remove_file(&destination){
         Ok(_) => (),
         Err(e) => match e.kind() {
             std::io::ErrorKind::NotFound => (),
