@@ -2,7 +2,9 @@
 Worldsong
 =========
 
-Worldsong is a framework that enables safe, easy runtime editing of your application's behaviour, without sacrificing performance or state data integrity.
+Worldsong is a framework that enables safe, easy, and _fast_ runtime editing of your application's behaviour, without sacrificing performance or state data integrity. 
+
+We do this by maintaining a hard separation between data and process, and further splitting them into the smallest compilation crates that make sense. This allows anything on the 'process' side to be changed with minimal compilation, leaving your application's state data untouched.
 
 Quickstart
 ----------
@@ -54,9 +56,6 @@ Simple lists of which processes should be run, and in what order, when the sched
 #####/processes/
 Small groups of functions that modify state data.
 
-
-
-
 Of course, you can add your own directores as you see fit - /resources/, /shaders/, etc.
 
 *In practice, it works something like this:*
@@ -72,11 +71,8 @@ I used to use Unity, but the complicated, fickle state preservation of their hot
 
 Hopefully, I've accomplished that.
 
-#####*"So it's an abstracted main loop?"*
-An abstracted, hotloadable, state-preserving main loop!
-
-#####*"Shouldn't this be threaded up the ying yang like all the cool kids do?"*
-Sure, but I'm not making that decision for you. It was designed to be used with some form of parallel job execution, like [this](https://github.com/mcpherrinm/parallel). The _/scheduler/_ is your playground, my friend.
+#####*"So it's a modular main loop?"*
+A modular, hotloadable, state-preserving main loop!
 
 #####*"Isn't all data technically global?"*
 _/schedules/_ define what state a process can access, so unintended side effects would require exceptionally bad coding practices and probably copious amounts of alcohol.
