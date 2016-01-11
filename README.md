@@ -7,7 +7,7 @@ Worldsong is a framework that enables safe, easy runtime editing of your applica
 Quickstart
 ----------
 
-1. Run 'cargo run --release' in the setup directory.
+1. Run _cargo run --release_ in the setup directory.
 2. Navigate to the project of your choice - lets say, _projects/triangle_ - and run _./launch_.
 3. While it's running, try editing _projects/triangle/src/processes/graphics_process.rs_.
 4. Run _./compile_ in the same directory.
@@ -34,27 +34,35 @@ A Worldsong project is made of various submodules:
 
 #####/state/
 State data (instances of types stored on the heap) are described in here. Processes modify these.
+
 Changes made here requires a program restart (F5)
 
 #####/types/ (Optional)
 Types used throughout the program, but don't deserve a third party library.
+
 Changes made here requires a program restart (F5)
 
 #####/kernel/
 Initializes the state data, hotloads the scheduler, and sends it a reference to the state library.
+
 Changes made here requires a program restart (F5)
 
 #####/scheduler/
 The main loop. Sets the conditions and timing for when schedules should be run.
+
 Changes made here can be hotloaded at runtime! (F4)
 
 #####/schedules/
 Simple lists of which processes should be run, and in what order, when the schedule is called. Used for things like variable or fixed update loops.
+
 Changes made here can be hotloaded at runtime! (F4)
 
 #####/processes/
 Small groups of functions that modify state data.
+
 Changes made here can be hotloaded at runtime! (F4)
+
+
 
 Of course, you can add your own directores as you see fit - /resources/, /shaders/, etc.
 
@@ -67,7 +75,9 @@ Questions and Skepticism
 ------------------------
 
 #####*"Why did you write this?"*
-I used to use Unity, but the complicated, fickle state preservation of their hotloading bothered me. I wanted a framework that was reliable, performant, easy to understand, and capable of being used for any kind of software project.
+I used to use Unity, but the complicated, fickle state preservation of their hotloading bothered me. I wanted a framework that was reliable, performant, easy to understand, and capable of being used for any kind of software project. 
+
+Hopefully, I've accomplished that.
 
 #####*"So it's an abstracted main loop?"*
 An abstracted, hotloadable, state-preserving main loop!
