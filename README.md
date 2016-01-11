@@ -32,35 +32,28 @@ Have fun!
 A Worldsong project is made of various submodules:
 --------------------------------------------------
 
+_Changes made the following requires a program restart (F5)_
+
 #####/state/
 State data (instances of types stored on the heap) are described in here. Processes modify these.
-
-Changes made here requires a program restart (F5)
 
 #####/types/ (Optional)
 Types used throughout the program, but don't deserve a third party library.
 
-Changes made here requires a program restart (F5)
-
 #####/kernel/
 Initializes the state data, hotloads the scheduler, and sends it a reference to the state library.
 
-Changes made here requires a program restart (F5)
+_Changes made to the following can be hotloaded at runtime! (F4)_
 
 #####/scheduler/
 The main loop. Sets the conditions and timing for when schedules should be run.
 
-Changes made here can be hotloaded at runtime! (F4)
-
 #####/schedules/
 Simple lists of which processes should be run, and in what order, when the schedule is called. Used for things like variable or fixed update loops.
-
-Changes made here can be hotloaded at runtime! (F4)
 
 #####/processes/
 Small groups of functions that modify state data.
 
-Changes made here can be hotloaded at runtime! (F4)
 
 
 
