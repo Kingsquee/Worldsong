@@ -4,7 +4,7 @@ Worldsong
 
 Worldsong is a framework that enables safe, easy, and _fast_ runtime editing of your application's behaviour, without sacrificing performance or state data integrity. 
 
-We do this by maintaining a hard separation between data and process, and further splitting them into the smallest compilation crates that make sense. This allows anything on the 'process' side to be changed with minimal compilation, leaving your application's state data untouched.
+We do this by maintaining a hard separation between data and process, and further splitting these into the smallest compilation crates that make sense. This allows anything on the 'process' side to be changed with minimal compilation, leaving your application's state data untouched.
 
 Quickstart
 ----------
@@ -34,7 +34,7 @@ Have fun!
 A Worldsong project is made of various submodules:
 --------------------------------------------------
 
-_Changes made the following requires a program restart (F5)_
+######Changes made to the following require a program restart (F5):
 
 #####/state/
 State data (instances of types stored on the heap) are described in here. Processes modify these.
@@ -43,9 +43,9 @@ State data (instances of types stored on the heap) are described in here. Proces
 Types used throughout the program, but don't deserve a third party library.
 
 #####/kernel/
-Initializes the state data, hotloads the scheduler, and sends it a reference to the state library.
+Initializes the state data, hotloads the scheduler, and sends it a reference to the state library. Handles the hotloading.
 
-_Changes made to the following can be hotloaded at runtime! (F4)_
+######Changes made to the following can be hotloaded at runtime (F4):
 
 #####/scheduler/
 The main loop. Sets the conditions and timing for when schedules should be run.
