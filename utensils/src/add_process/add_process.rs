@@ -9,7 +9,7 @@ use wraped::{Editor, EditorTrait};
 use getopts::Options;
 
 fn print_usage(program: &str, opts: Options) {
-    let brief = format!("Usage: {} [options]", program);
+    let brief = format!("Usage: {} NAME [options]", program);
     print!("{}", opts.usage(&brief));
 }
 
@@ -21,13 +21,18 @@ fn main() {
     let mut opts = Options::new();
     opts.optopt("e", "editor", "Open the process in the editor of choice.", "EDITOR");
     opts.optmulti("s", "state", "Adds a state parameter to the process", "STATE");
-
+    opts.optflag("h", "help", "print this help menu"); 
     let matches = match opts.parse(&args[1..]) {
         Ok(m) => { m }
         Err(f) => { panic!(f.to_string()) }
     };
+    
+    if matches.free.is_empty() || matches.opt_present("h") {
+        print_usage(&program, opts);
+        return
+    }
 
-    let name = if !matches.free.is_empty() {
+    let name = {
 
         let raw = matches.free[0].clone();
         let mut formatted = String::new();
@@ -43,15 +48,11 @@ fn main() {
             formatted = utensils_common::to_snake_case(&raw);
         }
 
-        formatted = formatted.trim_right_matches(".rs").to_string();
-        formatted = formatted.trim_right_matches("process").to_string();
-        formatted = formatted.trim_right_matches("_").to_string();
-        formatted
-
-    } else {
-        print_usage(&program, opts);
-        return;
-    };
+        formatted.trim_right_matches(".rs")
+                 .trim_right_matches("process")
+                 .trim_right_matches("_").to_string()
+    }; 
+    
     let editor = matches.opt_str("e");
 
     let params = matches.opt_strs("s");

@@ -22,25 +22,38 @@ use std::io::Read;
 use std::path::{Path, PathBuf};
 use getopts::Options;
 
+// TODO: Add submodule specific help readouts based on the current_dir_name
+fn print_usage(program: &str, current_dir_name: &str) {
+    println!("This \'{}\' program compiles the {} submodule. If this directory contains a README.md, see it for more details.", program, current_dir_name);
+}
+
 fn main() {
     let args: Vec<String> = env::args().collect();
-
-
-    let opts = Options::new();
+    let program = args[0].clone();
+    let mut opts = Options::new();
+    opts.optflag("h", "help", "print this help menu"); 
+    
     let matches = match opts.parse(&args[1..]) {
         Ok(m) => { m }
         Err(f) => { panic!(f.to_string()) }
     };
 
     let app_dir = worldsong_hierarchy::get_current_project_dir();
+    let current_dir_name_osstr = env::current_dir().unwrap();
+    let current_dir_name = current_dir_name_osstr.file_name().unwrap().to_str().unwrap();
+    
+    if matches.opt_present("h") {
+        print_usage(&program, &current_dir_name);
+        return
+    }
 
     let is_compiling = worldsong_hierarchy::get_global_tag_path(&app_dir, "is_compiling");
 
-    // If we didn't pass any arguments, we're either being run from the project root directory or a module.
+    // If we didn't pass any arguments, we're either being run from the project root directory or a submodule.
     if matches.free.is_empty() {
         let app_dir_name = app_dir.file_name().unwrap().to_str().unwrap();
 
-        match env::current_dir().unwrap().file_name().unwrap().to_str().unwrap() {
+        match current_dir_name {
             "dependencies" => {
                 worldsong_hierarchy::set_boolean_tag(&is_compiling, true).unwrap();
                 compile_dependencies::exec(&app_dir);

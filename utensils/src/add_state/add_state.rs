@@ -11,7 +11,7 @@ use getopts::Options;
 
 
 fn print_usage(program: &str, opts: Options) {
-    let brief = format!("Usage: {} [options]", program);
+    let brief = format!("Usage: {} NAME [options]", program);
     print!("{}", opts.usage(&brief));
 }
 
@@ -22,13 +22,19 @@ fn main() {
     let program = args[0].clone();
     let mut opts = Options::new();
     opts.optopt("e", "editor", "Open the state in the editor of choice.", "EDITOR");
-
+    opts.optflag("h", "help", "print this help menu"); 
+    
     let matches = match opts.parse(&args[1..]) {
         Ok(m) => { m }
         Err(f) => { panic!(f.to_string()) }
     };
 
-    let name = if !matches.free.is_empty() {
+    if matches.free.is_empty() || matches.opt_present("h") {
+        print_usage(&program, opts);
+        return
+    }
+
+    let name = {
 
         let raw = matches.free[0].clone();
         let mut formatted = String::new();
@@ -44,15 +50,11 @@ fn main() {
             formatted = utensils_common::to_snake_case(&raw);
         }
 
-        formatted = formatted.trim_right_matches(".rs").to_string();
-        formatted = formatted.trim_right_matches("state").to_string();
-        formatted = formatted.trim_right_matches("_").to_string();
-        formatted
-
-    } else {
-        print_usage(&program, opts);
-        return;
-    };
+        formatted.trim_right_matches(".rs")
+                 .trim_right_matches("state")
+                 .trim_right_matches("_").to_string()
+    }; 
+    
     let editor = matches.opt_str("e");
 
     // Lets generate!

@@ -19,13 +19,14 @@ fn main() {
     let args: Vec<String> = env::args().collect();
     let program = args[0].clone();
 
-    let opts = Options::new();
+    let mut opts = Options::new();
     let matches = match opts.parse(&args[1..]) {
         Ok(m) => { m }
         Err(f) => { panic!(f.to_string()) }
     };
-
-    if matches.free.is_empty() {
+    opts.optflag("h", "help", "print this help menu"); 
+    
+    if matches.free.is_empty() || matches.opt_present("h") {
         print_usage(&program, opts);
         return
     }
