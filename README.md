@@ -77,7 +77,7 @@ A modular, hotloadable, state-preserving main loop!
 #####*"Isn't all data technically global?"*
 _/schedules/_ define what state a process can access, so unintended side effects would require exceptionally bad coding practices and probably copious amounts of alcohol.
 
-#####*"State data can't be modified at runtime!"*
+#####*"State can't be recompiled at runtime!"*
 Well yeah, that would invalidate the state. Go cry in your erlang-flavoured beer.
 
 #####*"GPL!??!?"*
