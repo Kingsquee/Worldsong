@@ -16,13 +16,13 @@ Quickstart
 5. Refocus the running application and hit F4.
 6. Smile!
 
-Worldsong projects are made of various subsystems, each having its own custom _compile_.
+Worldsong projects are made of various subsystems, each having its own custom _./compile_.
 
 To add your own functionality:
 
-1. Run _add --name yourstructname --editor youreditor_ in the state directory
-2. Add some state data definitions.
-3. Run _add --name yourprocessname --editor youreditor_ in the processes directory
+1. Run _add yourstructname_ in the state directory.
+2. Add some state data you want modified to yourstructname.
+3. Run _add yourprocessname_ in the processes directory.
 4. Write some code that modifies yourstructname.
 5. Add your process to the appropriate schedule, passing it yourstructname.
 
