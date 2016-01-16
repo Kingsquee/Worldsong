@@ -20,9 +20,9 @@ Worldsong projects are made of various subsystems, each having its own custom _.
 
 To add your own functionality:
 
-1. Run _add yourstructname_ in the state directory.
+1. Run _./add yourstructname_ in the state directory.
 2. Add some state data you want modified to yourstructname.
-3. Run _add yourprocessname_ in the processes directory.
+3. Run _./add yourprocessname_ in the processes directory.
 4. Write some code that modifies yourstructname.
 5. Add your process to the appropriate schedule, passing it yourstructname.
 
