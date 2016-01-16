@@ -14,14 +14,15 @@ fn print_usage(program: &str, opts: Options) {
 }
 
 fn main() {
-    // Program args
 
+    // Program args
     let args: Vec<String> = env::args().collect();
     let program = args[0].clone();
+
     let mut opts = Options::new();
     opts.optopt("e", "editor", "Open the process in the editor of choice.", "EDITOR");
     opts.optmulti("s", "state", "Adds a state parameter to the process", "STATE");
-    opts.optflag("h", "help", "print this help menu"); 
+    opts.optflag("h", "help", "print this help menu");
     let matches = match opts.parse(&args[1..]) {
         Ok(m) => { m }
         Err(f) => { panic!(f.to_string()) }

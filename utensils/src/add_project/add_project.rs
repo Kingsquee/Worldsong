@@ -20,11 +20,11 @@ fn main() {
     let program = args[0].clone();
 
     let mut opts = Options::new();
+    opts.optflag("h", "help", "print this help menu");
     let matches = match opts.parse(&args[1..]) {
         Ok(m) => { m }
         Err(f) => { panic!(f.to_string()) }
     };
-    opts.optflag("h", "help", "print this help menu"); 
     
     if matches.free.is_empty() || matches.opt_present("h") {
         print_usage(&program, opts);
